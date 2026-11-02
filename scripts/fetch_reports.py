@@ -23,6 +23,7 @@ import gzip
 import hashlib
 import io
 import json
+import subprocess
 import sys
 import time
 from datetime import UTC, datetime
@@ -91,6 +92,21 @@ def download(url: str, dest: Path, attempts: int = 3) -> str | None:
                 return f"not a PDF (starts {head[:40]!r})"
             tmp.replace(dest)
             return None
+        except requests.exceptions.SSLError as e:
+            # certifi lacks the chain some hosts serve; curl verifies against the operating system's store instead
+            reason = str(e)
+            r = subprocess.run(["curl", "-sSfL", "-A", HEADERS["User-Agent"], "-o", str(tmp), url],
+                               capture_output=True, text=True)
+            if r.returncode == 0:
+                with open(tmp, "rb") as f:
+                    head = f.read(1024)
+                if b"%PDF" in head:
+                    tmp.replace(dest)
+                    return None
+                tmp.unlink()
+                return f"not a PDF (starts {head[:40]!r})"
+            reason += f"; curl: {r.stderr.strip()}"
+            break
         except requests.RequestException as e:
             reason = str(e)
             print(f"  attempt {i + 1} failed: {e}", file=sys.stderr)
