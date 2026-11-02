@@ -23,6 +23,9 @@ FIRST_KPI_DATE = "2021-12-31"  # kickoff Section 3.3 and Correction 3: the first
 PENDING_SECTION_3 = {"rote", "income_fte", "cost_fte", "cost_customer"}  # instruction 01 step 1.5
 FAMILY_ORDER = ["eba", "p3", "report"]  # a KPI at 2025-06-30 stays eba (OPEN-03); one family per value
 OK = "ok"
+# statuses that describe how a value was built but leave it usable (instruction 01b B.2; instruction 02 B.2)
+USABLE = (OK, "fx_combined", "levies_in_admin")
+LEVIES = "resolution_dgs_contrib"
 
 
 @cache
@@ -83,6 +86,18 @@ def derived(facts: pd.DataFrame, rates: pd.DataFrame) -> pd.DataFrame:
                 if all(f in gg.index for f in inputs):
                     new.append(_combine(name, bank, ref_date, terms, [gg.loc[f] for f in inputs], fam, rates))
                     done = True
+                elif fam == "report" and LEVIES in inputs and all(f in gg.index for f in inputs if f != LEVIES):
+                    # instruction 02 B.2: no levy line in the income statement means the levies sit in admin
+                    # expenses; opex takes them as 0 with status levies_in_admin, never a missing input
+                    ref = gg.loc[next(f for f in inputs if f != LEVIES)]
+                    zero = pd.Series({"value": 0.0, "ccy": ref["ccy"], "period_months": ref["period_months"],
+                                      "family": fam, "lineage_id": "", "status": OK}, name=LEVIES)
+                    picks = [zero if f == LEVIES else gg.loc[f] for f in inputs]
+                    row = _combine(name, bank, ref_date, terms, picks, fam, rates)
+                    if row["status"] == OK:
+                        row["status"] = "levies_in_admin"
+                    new.append(row)
+                    done = True
             if done:
                 continue
             picks = []
@@ -107,13 +122,15 @@ def derived(facts: pd.DataFrame, rates: pd.DataFrame) -> pd.DataFrame:
 
 def _combine(name, bank, ref_date, terms, rows, family, rates) -> dict:
     lineage = _join(r["lineage_id"] for r in rows)
-    bad = [r for r in rows if r["status"] != OK and not str(r["status"]).startswith("fx_combined")]
+    bad = [r for r in rows if r["status"] not in USABLE]
     pm = next((r["period_months"] for r in rows if pd.notna(r["period_months"])), pd.NA)
     if bad:
         return {"bank_id": bank, "ref_date": ref_date, "field": name, "value": np.nan, "ccy": "",
                 "period_months": pm, "family": family, "lineage_id": lineage, "status": bad[0]["status"]}
     ccys = {r["ccy"] for r in rows}
     status, ccy = OK, next(iter(ccys))
+    if any(r["status"] == "levies_in_admin" for r in rows):
+        status = "levies_in_admin"
     values = [float(r["value"]) for r in rows]
     if len(ccys) > 1:  # instruction 01b B.2: convert the non-EUR values to EUR first
         status, ccy = "fx_combined", "EUR"
@@ -139,7 +156,7 @@ def _pieces(df: pd.DataFrame) -> dict:
 
 def _piece_status(r) -> str:
     st = getattr(r, "status", OK)
-    return OK if st in (OK, "fx_combined") or pd.isna(st) else st
+    return OK if st in USABLE or pd.isna(st) else st
 
 
 def _span(index, bank: str, field: str, dates: list[str]):

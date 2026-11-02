@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 import json
+import re
 from functools import cache
 from pathlib import Path
 
+import numpy as np
 import pandas as pd
 import yaml
 
@@ -136,6 +138,143 @@ def apply_source_map(facts: pd.DataFrame, source_map: dict) -> tuple[pd.DataFram
     return kept, rejected.reset_index(drop=True)
 
 
+# --- report and Pillar 3 entries (instruction 02 B.1, B.2, B.4) --------------------------------------------------
+
+ENTRY_COLUMNS = ["bank_id", "ref_date", "field", "value_as_printed", "unit_scale", "value", "ccy", "period_months",
+                 "doc_type", "report_sha256", "page", "snippet", "entered_utc"]
+COMPONENT = re.compile(r"component (\d+)/(\d+)")  # the `component` note of a summed field's snippet (B.2)
+VALUE_REL_TOL = 1e-9  # |value| against |value_as_printed| x unit_scale: equal up to float rounding
+
+
+def parse_printed(text: str, decimal_mark: str = ".") -> float:
+    """A number as printed: brackets or a leading minus mean negative; thousands separators (`,` `.` space or thin
+    space, whichever is not the declared decimal mark), currency signs and `%` are dropped."""
+    s = str(text).strip()
+    neg = s.startswith("(") and s.endswith(")") or s[:1] in "-−–"
+    digits = "".join(ch for ch in s if ch.isdigit() or ch == decimal_mark)
+    digits = digits.replace(decimal_mark, ".")
+    if not any(ch.isdigit() for ch in digits) or digits.count(".") > 1:
+        raise ValueError(f"not a number: {text!r}")
+    v = float(digits)
+    return -v if neg else v
+
+
+def read_entries(path: Path) -> pd.DataFrame:
+    e = pd.read_csv(path, dtype=str, keep_default_na=False)
+    if list(e.columns[:len(ENTRY_COLUMNS)]) != ENTRY_COLUMNS:
+        raise ValueError(f"{path}: columns {list(e.columns)} != {ENTRY_COLUMNS}")
+    return e
+
+
+def entry_values(e: pd.DataFrame) -> pd.Series:
+    """Each entry's value in reporting-currency units (Convention 4.1). The magnitude is |value_as_printed| x
+    unit_scale. The sign is the entered `value`'s (Convention 4.2 is applied on entry); a blank `value` gives a
+    positive amount for a field stored positive (expenses, impairments, allowances, deductions) and the printed sign
+    otherwise. An entered value whose magnitude differs gives NaN."""
+    marks = e["decimal_mark"] if "decimal_mark" in e else pd.Series(".", index=e.index)
+    out = []
+    for printed, scale, value, field, mark in zip(e["value_as_printed"], e["unit_scale"], e["value"], e["field"],
+                                                 marks, strict=True):
+        mag = abs(parse_printed(printed, mark or ".")) * float(scale)
+        if str(value).strip() == "":
+            sign = 1.0 if field in POSITIVE_FIELDS else (-1.0 if parse_printed(printed, mark or ".") < 0 else 1.0)
+            out.append(sign * mag)
+            continue
+        v = float(value)
+        out.append(v if abs(abs(v) - mag) <= VALUE_REL_TOL * max(mag, 1.0) else np.nan)
+    return pd.Series(out, index=e.index, dtype=float)
+
+
+# Convention 4.2: fields stored as positive amounts whatever sign the statement prints
+POSITIVE_FIELDS = {"interest_expense", "admin_expenses", "resolution_dgs_contrib", "depreciation", "impairments_fin",
+                   "provisions", "impairments_nonfin", "loans_customers_allowance", "npl_allowance",
+                   "intangibles_deduction"}
+
+
+def _family(source_map: dict, bank: str, field: str, ref_date: str, doc_type: str) -> str:
+    """p3 for a pillar3 entry whose field the source map assigns to p3 at that bank group and date, else report
+    (instruction 02 B.1: the family comes from the source map, doc_type only names the document)."""
+    if doc_type != "pillar3":
+        return "report"
+    group = "uk" if bank in set(source_map["bank_groups"]["uk"]) else "eu"
+    rules = source_map["fields"].get(field, [])
+    return "p3" if any(_rule_allows(r, group, "p3", ref_date) for r in rules) else "report"
+
+
+def entries_facts(entries: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame:
+    """Every entry as FACTS rows, family from the source map, summed fields summed (B.2).
+
+    A summed field is entered as 1 row per printed number, each snippet carrying `component k/n`; the field is the
+    sum when all n components are present and absent otherwise (decision B.1 of decisions/section_1_review.md).
+    locator = report sha256 and page (`sha256@page`, `+` joined for a sum). An entry whose document is not in the
+    manifest raises. Status: ok, or `value_mismatch` when an entered value disagrees with its printed number, or the
+    status a caller already set in an `entry_status` column (provenance, step 2.4).
+    """
+    if entries.empty:
+        return pd.DataFrame(columns=FACTS_COLUMNS)
+    unknown = sorted(set(entries["report_sha256"]) - set(manifest["sha256"]))
+    if unknown:
+        raise ValueError(f"entries cite documents not in report_manifest.csv: {unknown}")
+    smap = read_source_map(ROOT)
+    universe = read_universe(ROOT)
+    lei = dict(zip(universe["bank_id"], universe["lei"], strict=True))
+    e = entries.copy()
+    e["_value"] = entry_values(e)
+    e["_status"] = e.get("entry_status", "ok")
+    e.loc[e["_value"].isna() & (e["_status"] == "ok"), "_status"] = "value_mismatch"
+    e["_family"] = [_family(smap, b, f, d, t) for b, f, d, t in
+                    zip(e["bank_id"], e["field"], e["ref_date"], e["doc_type"], strict=True)]
+    rows = []
+    for (bank, ref_date, field, fam), g in e.groupby(["bank_id", "ref_date", "field", "_family"], sort=True):
+        comps = [COMPONENT.search(s) for s in g["snippet"]]
+        if len(g) > 1 or any(comps):
+            if not all(comps):
+                raise ValueError(f"{bank} {ref_date} {field}: several entries, not all marked as components")
+            n = {int(m.group(2)) for m in comps}
+            ks = [int(m.group(1)) for m in comps]
+            if len(n) != 1 or len(set(ks)) != len(ks):
+                raise ValueError(f"{bank} {ref_date} {field}: inconsistent component notes {ks} / {n}")
+            if set(ks) != set(range(1, n.pop() + 1)):
+                continue  # a missing component makes the field missing, never a partial sum
+        locator = "+".join(dict.fromkeys(f"{s}@{p}" for s, p in zip(g["report_sha256"], g["page"], strict=True)))
+        bad = [s for s in g["_status"] if s != "ok"]
+        scales = sorted(set(g["unit_scale"].astype(float)))
+        pm = g["period_months"].iloc[0]
+        rows.append({
+            "bank_id": bank, "lei": lei.get(bank, ""), "ref_date": ref_date, "field": field,
+            "value": np.nan if bad else float(g["_value"].sum()), "ccy": g["ccy"].iloc[0],
+            "unit_scale": scales[0] if len(scales) == 1 else np.nan,
+            "period_months": int(pm) if str(pm).strip() else None, "family": fam, "locator": locator,
+            "lineage_id": lineage_id(bank, ref_date, field, fam, locator), "status": bad[0] if bad else "ok",
+        })
+    out = pd.DataFrame(rows, columns=FACTS_COLUMNS)
+    out["period_months"] = out["period_months"].astype("Int64")
+    return out.reset_index(drop=True)
+
+
+def read_manifest(raw_root: Path) -> pd.DataFrame:
+    return pd.read_csv(Path(raw_root) / "report_manifest.csv", dtype=str, keep_default_na=False)
+
+
+def load_report_entries(path: Path, manifest: pd.DataFrame) -> pd.DataFrame:
+    """FACTS rows with family `report` from data/manual/report_entries.csv: every entry the source map does not
+    assign to p3 (instruction 02 B.1). Rows that the source map does not allow are rejected later by
+    apply_source_map."""
+    f = entries_facts(read_entries(path), manifest)
+    return f[f["family"] == "report"].reset_index(drop=True)
+
+
+def load_p3(raw_root: Path, universe: pd.DataFrame) -> pd.DataFrame:
+    """FACTS rows with family `p3`: the report_entries.csv rows whose doc_type is pillar3 and whose field the source
+    map assigns to p3 for that bank group and date (instruction 02 B.1). raw_root is data/raw; the entries are read
+    from data/manual next to it and the documents from data/raw/report_manifest.csv."""
+    raw_root = Path(raw_root)
+    e = read_entries(raw_root.parent / "manual" / "report_entries.csv")
+    e = e[e["bank_id"].isin(universe["bank_id"])]
+    f = entries_facts(e, read_manifest(raw_root))
+    return f[f["family"] == "p3"].reset_index(drop=True)
+
+
 def read_universe(root: Path) -> pd.DataFrame:
     return pd.read_csv(Path(root) / "data" / "manual" / "universe.csv", dtype=str, keep_default_na=False)
 
@@ -158,9 +297,44 @@ def eba_facts(cfg) -> tuple[pd.DataFrame, pd.DataFrame]:
     return apply_source_map(facts, read_source_map(root))
 
 
+def entries_with_marks(root: Path) -> pd.DataFrame:
+    """report_entries.csv with each entry's declared decimal mark, from its document's row in report_urls.csv
+    (blank = `.`)."""
+    e = read_entries(Path(root) / "data" / "manual" / "report_entries.csv")
+    urls = pd.read_csv(Path(root) / "data" / "manual" / "report_urls.csv", dtype=str, keep_default_na=False)
+    man = read_manifest(Path(root) / "data" / "raw")
+    if "decimal_mark" not in urls:
+        urls["decimal_mark"] = ""
+    marks = man.merge(urls[["bank_id", "doc_type", "period", "decimal_mark"]], how="left",
+                      on=["bank_id", "doc_type", "period"])
+    by_sha = dict(zip(marks["sha256"], marks["decimal_mark"].fillna(""), strict=True))
+    e["decimal_mark"] = [by_sha.get(s, "") or "." for s in e["report_sha256"]]
+    return e
+
+
+def report_p3_facts(cfg) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """report and p3 rows with provenance applied (check 1): (facts, provenance CHECKS rows). A failed entry keeps
+    its row with a blank value and status `provenance_failed` (Convention 4.9), so it is excluded from every KPI."""
+    from bpb.checks import provenance  # checks imports this module
+
+    root = cfg.root
+    e = entries_with_marks(root)
+    man = read_manifest(root / "data" / "raw")
+    if e.empty:
+        return pd.DataFrame(columns=FACTS_COLUMNS), provenance(e, root / "data" / "raw" / "report_text")
+    prov = provenance(e, root / "data" / "raw" / "report_text")
+    failed = set(prov.loc[~prov["passed"], "note"].str.extract(r"entry (\d+)")[0].astype(int))
+    e["entry_status"] = ["provenance_failed" if i in failed else "ok" for i in range(len(e))]
+    return entries_facts(e, man), prov
+
+
 def build_facts(cfg) -> pd.DataFrame:
-    """Loads every source, applies the source map and writes data/processed/facts.parquet (EBA rows in Section 1)."""
+    """Loads every source, applies the source map and writes data/processed/facts.parquet: eba rows, and the report
+    and p3 rows of data/manual/report_entries.csv after provenance (Section 2)."""
     kept, _ = eba_facts(cfg)
+    rp, _ = report_p3_facts(cfg)
+    rp_kept, _ = apply_source_map(rp, read_source_map(cfg.root))
+    kept = pd.concat([kept, rp_kept], ignore_index=True) if len(rp_kept) else kept
     kept = kept.sort_values(["bank_id", "ref_date", "field", "family"]).reset_index(drop=True)
     out = cfg.root / "data" / "processed" / "facts.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)
