@@ -1,32 +1,32 @@
-bank_id,name,country,market,listed,ticker,price_ccy,report_ccy,lei
-LLOY,Lloyds Banking Group,GB,UK,1,LLOY.L,GBP,GBP,
-NWG,NatWest Group,GB,UK,1,NWG.L,GBP,GBP,
-BARC,Barclays,GB,UK,1,BARC.L,GBP,GBP,
-HSBA,HSBC Holdings,GB,UK,1,HSBA.L,GBP,USD,
-SANUK,Santander UK Group Holdings,GB,UK,0,,,GBP,
-NDA,Nordea Bank,FI,Nordics,1,NDA-FI.HE,EUR,EUR,
-DNB,DNB Bank,NO,Nordics,1,DNB.OL,NOK,NOK,
-DANSKE,Danske Bank,DK,Nordics,1,DANSKE.CO,DKK,DKK,
-SEB,Skandinaviska Enskilda Banken,SE,Nordics,1,SEB-A.ST,SEK,SEK,
-SHB,Svenska Handelsbanken,SE,Nordics,1,SHB-A.ST,SEK,SEK,
-SWED,Swedbank,SE,Nordics,1,SWED-A.ST,SEK,SEK,
-INGA,ING Groep,NL,Benelux,1,INGA.AS,EUR,EUR,
-ABN,ABN AMRO Bank,NL,Benelux,1,ABN.AS,EUR,EUR,
-KBC,KBC Group,BE,Benelux,1,KBC.BR,EUR,EUR,
-RABO,Rabobank,NL,Benelux,0,,,EUR,
-BNP,BNP Paribas,FR,France,1,BNP.PA,EUR,EUR,
-GLE,Société Générale,FR,France,1,GLE.PA,EUR,EUR,
-ACA,Crédit Agricole SA,FR,France,1,ACA.PA,EUR,EUR,
-DBK,Deutsche Bank,DE,Germany,1,DBK.DE,EUR,EUR,
-CBK,Commerzbank,DE,Germany,1,CBK.DE,EUR,EUR,
-SAN,Banco Santander,ES,Spain,1,SAN.MC,EUR,EUR,
-BBVA,BBVA,ES,Spain,1,BBVA.MC,EUR,EUR,
-CABK,CaixaBank,ES,Spain,1,CABK.MC,EUR,EUR,
-SAB,Banco Sabadell,ES,Spain,1,SAB.MC,EUR,EUR,
-BKT,Bankinter,ES,Spain,1,BKT.MC,EUR,EUR,
-UNI,Unicaja Banco,ES,Spain,1,UNI.MC,EUR,EUR,
-UCG,UniCredit,IT,Italy,1,UCG.MI,EUR,EUR,
-ISP,Intesa Sanpaolo,IT,Italy,1,ISP.MI,EUR,EUR,
-BAMI,Banco BPM,IT,Italy,1,BAMI.MI,EUR,EUR,
-BPE,BPER Banca,IT,Italy,1,BPE.MI,EUR,EUR,
-BMPS,Banca Monte dei Paschi di Siena,IT,Italy,1,BMPS.MI,EUR,EUR,
+bank_id,lei,name,country,market,listed,ticker,price_ccy,report_ccy
+LLOY,,Lloyds Banking Group,GB,UK,1,LLOY.L,GBP,GBP
+NWG,,NatWest Group,GB,UK,1,NWG.L,GBP,GBP
+BARC,,Barclays,GB,UK,1,BARC.L,GBP,GBP
+HSBA,,HSBC Holdings,GB,UK,1,HSBA.L,GBP,USD
+SANUK,,Santander UK Group Holdings,GB,UK,0,,,GBP
+NDA,,Nordea Bank,FI,Nordics,1,NDA-FI.HE,EUR,EUR
+DNB,,DNB Bank,NO,Nordics,1,DNB.OL,NOK,NOK
+DANSKE,,Danske Bank,DK,Nordics,1,DANSKE.CO,DKK,DKK
+SEB,,Skandinaviska Enskilda Banken,SE,Nordics,1,SEB-A.ST,SEK,SEK
+SHB,,Svenska Handelsbanken,SE,Nordics,1,SHB-A.ST,SEK,SEK
+SWED,,Swedbank,SE,Nordics,1,SWED-A.ST,SEK,SEK
+INGA,,ING Groep,NL,Benelux,1,INGA.AS,EUR,EUR
+ABN,,ABN AMRO Bank,NL,Benelux,1,ABN.AS,EUR,EUR
+KBC,,KBC Group,BE,Benelux,1,KBC.BR,EUR,EUR
+RABO,,Rabobank,NL,Benelux,0,,,EUR
+BNP,,BNP Paribas,FR,France,1,BNP.PA,EUR,EUR
+GLE,,Société Générale,FR,France,1,GLE.PA,EUR,EUR
+CAG,,Crédit Agricole Group,FR,France,0,,,EUR
+DBK,,Deutsche Bank,DE,Germany,1,DBK.DE,EUR,EUR
+CBK,,Commerzbank,DE,Germany,1,CBK.DE,EUR,EUR
+SAN,,Banco Santander,ES,Spain,1,SAN.MC,EUR,EUR
+BBVA,,BBVA,ES,Spain,1,BBVA.MC,EUR,EUR
+CABK,,CaixaBank,ES,Spain,1,CABK.MC,EUR,EUR
+SAB,,Banco Sabadell,ES,Spain,1,SAB.MC,EUR,EUR
+BKT,,Bankinter,ES,Spain,1,BKT.MC,EUR,EUR
+UNI,,Unicaja Banco,ES,Spain,1,UNI.MC,EUR,EUR
+UCG,,UniCredit,IT,Italy,1,UCG.MI,EUR,EUR
+ISP,,Intesa Sanpaolo,IT,Italy,1,ISP.MI,EUR,EUR
+BAMI,,Banco BPM,IT,Italy,1,BAMI.MI,EUR,EUR
+BPE,,BPER Banca,IT,Italy,1,BPE.MI,EUR,EUR
+BMPS,,Banca Monte dei Paschi di Siena,IT,Italy,1,BMPS.MI,EUR,EUR

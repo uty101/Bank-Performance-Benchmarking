@@ -137,3 +137,15 @@ Arguments this document does not imply go to OPEN; session 0 lists them in `PLAN
 ---
 
 ## Amendments
+
+### Amendments from instructions/01_section_1.md (step 1.0; decisions in `decisions/section_0_review.md`)
+
+1. **Changed signatures.**
+   - `bpb/peers.py`: `def features(kpi: pd.DataFrame, facts: pd.DataFrame, year: int, rates: pd.DataFrame) -> pd.DataFrame` (OPEN-08).
+   - `bpb/benchmark.py`: `def benchmark(kpi: pd.DataFrame, peers: pd.DataFrame, universe: pd.DataFrame, cfg) -> pd.DataFrame` (OPEN-09).
+   - `bpb/valuation.py`: `def uplift(gaps_joint: pd.DataFrame, fits: pd.DataFrame, pooled: dict, ptbv: pd.DataFrame) -> pd.DataFrame`, with `pooled` the dict returned by `fit_pooled` (OPEN-10).
+2. **Convention 4.5 (OPEN-04).** For EU banks at bridge dates, cet1, tier1, rwa and leverage_exposure are `p3`; at1_instruments, intangibles_deduction, lcr and nsfr are `report`. For UK banks every field is `report`; a Pillar 3 PDF is entered as a document with doc_type `pillar3` and family `report`.
+3. **New field (OPEN-07).** `cet1_ratio_reported` (kind ratio): mapped from the EBA capital template, later from KM1 and reports. Check 4 runs wherever it exists.
+4. **Role `bridge_input` (OPEN-03).** `report` rows for EU banks at 2024-12-31 and 2025-06-30 may be opening balances and rolling components for report-family KPIs at 2025-12-31 and 2026-06-30. The KPI value at 2025-06-30 itself stays `eba`.
+5. **Output paths (OPEN-13).** PDF profiles `outputs/reports/{bank_id}_{date}.pdf`; page renders `outputs/figures/{bank_id}_{date}.png`; league table pages `outputs/tables/league_{kpi}.html`; charts are drawn in memory and not saved separately.
+6. **Crédit Agricole (B.1).** The universe row ACA is replaced by bank_id `CAG`, name `Crédit Agricole Group`, listed 0, ticker blank, price_ccy blank, report_ccy EUR. CAG is benchmarked and left out of valuation. Its bridge figures come from the Group figures published in Crédit Agricole SA's universal registration document and half year report.

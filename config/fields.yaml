@@ -36,6 +36,7 @@ fields:
   - {field: tier1, kind: bs, meaning: "as in the EBA capital template"}
   - {field: rwa, kind: bs, meaning: "as in the EBA RWA template"}
   - {field: leverage_exposure, kind: bs, meaning: "as in the EBA leverage template"}
+  - {field: cet1_ratio_reported, kind: ratio, meaning: "reported CET1 ratio: EBA capital template, later KM1 and reports (OPEN-07 decided (a))"}
   - {field: at1_instruments, kind: bs, meaning: "capital instruments eligible as AT1"}
   - {field: intangibles_deduction, kind: bs, meaning: "the CET1 deduction for intangible assets including goodwill (stored positive)"}
   - {field: lcr, kind: ratio, meaning: "as reported in KM1 (p3 and report families only)"}
@@ -57,6 +58,7 @@ derived:
   profit_to_ordinary: "profit_owners - at1_coupons"
 
 # Check 3 (Section 5.3): total_operating_income against nii + dividend_income + net_fees
-# + "other components listed in fields.yaml". Section 5.1 lists no further component field: OPEN-06.
+# + "other components listed in fields.yaml" (OPEN-06 decided (a)): every EBA P&L line between net fees
+# and TOTAL OPERATING INCOME, NET, mapped in step 1.2. Used by check 3 only; other_income stays the residual.
 income_components: [nii, dividend_income, net_fees]
-income_components_other: OPEN-06
+income_components_other: []

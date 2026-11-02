@@ -2,32 +2,33 @@
 # and Section 3.2 / step 3.2 (AT1 coupons, shares, FTE and customers from reports at every date).
 # One entry per field. Each rule names the banks it covers (eu = universe country not GB, uk = GB),
 # the reference dates (an inclusive from/to range of quarter ends, or a list), and the one family allowed.
-# role: kpi = the value used for KPIs at that date; seam = loaded for the seam checks only (5.3 items 7, 8).
-# A family written as OPEN-NN is undecided and listed in decisions/OPEN.md; the loader rejects nothing
-# against it until the reviewer decides.
-#
-# Not encoded, pending OPEN-03: report comparatives at 2024-12-31 (step 2.3) and the role of report
-# rows at 2025-06-30 as the opening balance and rolling component of later report-family KPIs.
+# role: kpi = the value used for KPIs at that date; seam = loaded for the seam checks only (5.3 items 7, 8);
+# bridge_input = an opening balance or rolling component for report-family KPIs at 2025-12-31 and
+# 2026-06-30, never a KPI value at its own date (OPEN-03 decided (a), decisions/section_0_review.md).
+# OPEN-04 decided (b): EU bridge cet1, tier1, rwa, leverage_exposure are p3; at1_instruments,
+# intangibles_deduction, lcr and nsfr are report; every UK field is report.
+# OPEN-05 decided (a): lcr and nsfr have no family for EU banks to 2025-06-30 (blank, missing_input).
 
 rules:
   standard: &standard          # P&L and balance sheet fields
     - {banks: eu, from: "2020-09-30", to: "2025-06-30", family: eba, role: kpi}
     - {banks: eu, dates: ["2025-06-30"], family: report, role: seam}
+    - {banks: eu, dates: ["2024-12-31", "2025-06-30"], family: report, role: bridge_input}
     - {banks: eu, dates: ["2025-12-31", "2026-06-30"], family: report, role: kpi}
     - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: report, role: kpi}
   capital: &capital            # Correction 1 and check 7
     - {banks: eu, from: "2020-09-30", to: "2025-06-30", family: eba, role: kpi}
     - {banks: eu, dates: ["2025-06-30"], family: p3, role: seam}
     - {banks: eu, dates: ["2025-12-31", "2026-06-30"], family: p3, role: kpi}
-    - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: OPEN-04, role: kpi}
-  own_funds_other: &own_funds_other
+    - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: report, role: kpi}
+  own_funds_other: &own_funds_other   # tangible_equity parts: averaged, so report bridge inputs too
     - {banks: eu, from: "2020-09-30", to: "2025-06-30", family: eba, role: kpi}
-    - {banks: eu, dates: ["2025-12-31", "2026-06-30"], family: OPEN-04, role: kpi}
-    - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: OPEN-04, role: kpi}
-  liquidity: &liquidity        # "as reported in KM1 (p3 and report families only)"
-    - {banks: eu, from: "2020-09-30", to: "2025-06-30", family: OPEN-05, role: kpi}
-    - {banks: eu, dates: ["2025-12-31", "2026-06-30"], family: OPEN-04, role: kpi}
-    - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: OPEN-04, role: kpi}
+    - {banks: eu, dates: ["2024-12-31", "2025-06-30"], family: report, role: bridge_input}
+    - {banks: eu, dates: ["2025-12-31", "2026-06-30"], family: report, role: kpi}
+    - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: report, role: kpi}
+  liquidity: &liquidity        # "as reported in KM1 (p3 and report families only)"; none for EU to 2025-06-30
+    - {banks: eu, dates: ["2025-12-31", "2026-06-30"], family: report, role: kpi}
+    - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: report, role: kpi}
   report_all: &report_all      # step 3.2: every 31 Dec from 2020-12-31 and every 30 Jun from 2021-06-30
     - {banks: eu, from: "2020-12-31", to: "2026-06-30", family: report, role: kpi}
     - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: report, role: kpi}
@@ -65,6 +66,7 @@ fields:
   tier1: *capital
   rwa: *capital
   leverage_exposure: *capital
+  cet1_ratio_reported: *capital
   at1_instruments: *own_funds_other
   intangibles_deduction: *own_funds_other
   lcr: *liquidity
