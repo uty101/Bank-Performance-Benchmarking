@@ -206,7 +206,34 @@ def stage_eba(cfg: dict) -> None:
     write_manifest(entries)
 
 
-STAGES = {"eba": stage_eba}
+# --- stage fx --------------------------------------------------------------
+
+ECB_URL = "https://data-api.ecb.europa.eu/service/data/EXR/D.{ccy}.EUR.SP00.A?format=csvdata"  # kickoff 3.2
+FX_START, FX_END = "2020-01-01", "2026-07-31"  # instruction 01 step 1.4
+
+
+def stage_fx(cfg: dict) -> None:
+    entries = []
+    for ccy in cfg["fx"]["currencies"]:
+        url = f"{ECB_URL.format(ccy=ccy)}&startPeriod={FX_START}&endPeriod={FX_END}"
+        print(f"fx {ccy}")
+        dest = RAW / "fx" / f"{ccy}.csv"
+        pulled = now_utc()
+        download(url, dest)
+        with open(dest, encoding="utf-8", newline="") as f:
+            recs = list(csv.DictReader(f))
+        dates = sorted(r["TIME_PERIOD"] for r in recs)
+        if not dates:
+            raise SystemExit(f"data pull failed: no rows for {ccy}")
+        entries.append({
+            "path": rel(dest), "committed": True, "url": url, "pulled_utc": pulled,
+            "sha256": sha256_file(dest), "bytes": dest.stat().st_size, "rows": len(recs),
+            "first_date": dates[0], "last_date": dates[-1], "encoding": "utf-8",
+        })
+    write_manifest(entries)
+
+
+STAGES = {"eba": stage_eba, "fx": stage_fx}
 
 
 def main(argv: list[str] | None = None) -> int:

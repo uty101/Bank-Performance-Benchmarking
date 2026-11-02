@@ -369,6 +369,66 @@
       "rows": 62443,
       "sha256": "20ff5b533a852c3c9c28ff70f8e90164d7aab8fe0ae66a5384c1568d384c90ff",
       "url": "https://www.eba.europa.eu/assets/TE2025/Full_database/883401/tr_oth.csv"
+    },
+    {
+      "bytes": 360956,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": "2020-01-02",
+      "last_date": "2026-07-31",
+      "path": "data/raw/fx/DKK.csv",
+      "pulled_utc": "2026-11-02T14:41:17Z",
+      "rows": 1686,
+      "sha256": "0e88b5cd7eda62fe6c404781634e58f79e54a10051fa0798f6cfe1110221dfd4",
+      "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.DKK.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"
+    },
+    {
+      "bytes": 368943,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": "2020-01-02",
+      "last_date": "2026-07-31",
+      "path": "data/raw/fx/GBP.csv",
+      "pulled_utc": "2026-11-02T14:38:50Z",
+      "rows": 1686,
+      "sha256": "6854d03c862bc480c73aa62f45290442866b44757cd287895543af96e1f33818",
+      "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.GBP.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"
+    },
+    {
+      "bytes": 372132,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": "2020-01-02",
+      "last_date": "2026-07-31",
+      "path": "data/raw/fx/NOK.csv",
+      "pulled_utc": "2026-11-02T14:41:06Z",
+      "rows": 1686,
+      "sha256": "64fab2602fe09e7f71b9027af5b23e3e81b6d13ab9333660b20579122c16a2e0",
+      "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.NOK.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"
+    },
+    {
+      "bytes": 365497,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": "2020-01-02",
+      "last_date": "2026-07-31",
+      "path": "data/raw/fx/SEK.csv",
+      "pulled_utc": "2026-11-02T14:41:05Z",
+      "rows": 1686,
+      "sha256": "4a8a716c8722d76770f167f3ca9c4f902fed3c1a325edcca0df8bec3f609813f",
+      "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.SEK.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"
+    },
+    {
+      "bytes": 350826,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": "2020-01-02",
+      "last_date": "2026-07-31",
+      "path": "data/raw/fx/USD.csv",
+      "pulled_utc": "2026-11-02T14:41:28Z",
+      "rows": 1686,
+      "sha256": "e74a73fa578f678bf0176eb46f077dacb4fdcda6d91d6f1208d68f4dad1596d7",
+      "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"
     }
   ]
 }
