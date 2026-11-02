@@ -1,0 +1,75 @@
+# Source by period: instructions/00_kickoff.md Section 3.3, with Correction 1 (bridge capital from p3)
+# and Section 3.2 / step 3.2 (AT1 coupons, shares, FTE and customers from reports at every date).
+# One entry per field. Each rule names the banks it covers (eu = universe country not GB, uk = GB),
+# the reference dates (an inclusive from/to range of quarter ends, or a list), and the one family allowed.
+# role: kpi = the value used for KPIs at that date; seam = loaded for the seam checks only (5.3 items 7, 8).
+# A family written as OPEN-NN is undecided and listed in decisions/OPEN.md; the loader rejects nothing
+# against it until the reviewer decides.
+#
+# Not encoded, pending OPEN-03: report comparatives at 2024-12-31 (step 2.3) and the role of report
+# rows at 2025-06-30 as the opening balance and rolling component of later report-family KPIs.
+
+rules:
+  standard: &standard          # P&L and balance sheet fields
+    - {banks: eu, from: "2020-09-30", to: "2025-06-30", family: eba, role: kpi}
+    - {banks: eu, dates: ["2025-06-30"], family: report, role: seam}
+    - {banks: eu, dates: ["2025-12-31", "2026-06-30"], family: report, role: kpi}
+    - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: report, role: kpi}
+  capital: &capital            # Correction 1 and check 7
+    - {banks: eu, from: "2020-09-30", to: "2025-06-30", family: eba, role: kpi}
+    - {banks: eu, dates: ["2025-06-30"], family: p3, role: seam}
+    - {banks: eu, dates: ["2025-12-31", "2026-06-30"], family: p3, role: kpi}
+    - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: OPEN-04, role: kpi}
+  own_funds_other: &own_funds_other
+    - {banks: eu, from: "2020-09-30", to: "2025-06-30", family: eba, role: kpi}
+    - {banks: eu, dates: ["2025-12-31", "2026-06-30"], family: OPEN-04, role: kpi}
+    - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: OPEN-04, role: kpi}
+  liquidity: &liquidity        # "as reported in KM1 (p3 and report families only)"
+    - {banks: eu, from: "2020-09-30", to: "2025-06-30", family: OPEN-05, role: kpi}
+    - {banks: eu, dates: ["2025-12-31", "2026-06-30"], family: OPEN-04, role: kpi}
+    - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: OPEN-04, role: kpi}
+  report_all: &report_all      # step 3.2: every 31 Dec from 2020-12-31 and every 30 Jun from 2021-06-30
+    - {banks: eu, from: "2020-12-31", to: "2026-06-30", family: report, role: kpi}
+    - {banks: uk, from: "2020-12-31", to: "2026-06-30", family: report, role: kpi}
+
+fields:
+  interest_income: *standard
+  interest_expense: *standard
+  dividend_income: *standard
+  net_fees: *standard
+  total_operating_income: *standard
+  admin_expenses: *standard
+  resolution_dgs_contrib: *standard
+  depreciation: *standard
+  impairments_fin: *standard
+  provisions: *standard
+  impairments_nonfin: *standard
+  pbt: *standard
+  pat: *standard
+  profit_owners: *standard
+  total_assets: *standard
+  total_liabilities: *standard
+  total_equity: *standard
+  minority_interests: *standard
+  cash_cb: *standard
+  debt_securities: *standard
+  loans_all: *standard
+  loans_customers_gross: *standard
+  loans_customers_allowance: *standard
+  loans_households_gross: *standard
+  npl_gross: *standard
+  npl_allowance: *standard
+  deposits_customers: *standard
+  trading_assets: *standard
+  cet1: *capital
+  tier1: *capital
+  rwa: *capital
+  leverage_exposure: *capital
+  at1_instruments: *own_funds_other
+  intangibles_deduction: *own_funds_other
+  lcr: *liquidity
+  nsfr: *liquidity
+  fte: *report_all
+  customers: *report_all
+  at1_coupons: *report_all
+  shares_out: *report_all

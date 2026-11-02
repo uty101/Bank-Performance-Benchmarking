@@ -1,0 +1,62 @@
+# Internal fields and derived quantities: instructions/00_kickoff.md Section 5.1.
+# kind: pl = year to date P&L value (Convention 4.3); bs = balance at the reference date;
+#       ratio = a ratio as reported (lcr, nsfr); count = a period end count (fte, customers, shares_out).
+# Signs follow Convention 4.2: expenses, impairments and tax stored positive, a net release negative.
+
+fields:
+  - {field: interest_income, kind: pl, meaning: "as in the EBA P&L template"}
+  - {field: interest_expense, kind: pl, meaning: "as in the EBA P&L template"}
+  - {field: dividend_income, kind: pl, meaning: "as in the EBA P&L template"}
+  - {field: net_fees, kind: pl, meaning: "as in the EBA P&L template"}
+  - {field: total_operating_income, kind: pl, meaning: "TOTAL OPERATING INCOME, NET"}
+  - {field: admin_expenses, kind: pl, meaning: "as in the EBA P&L template"}
+  - {field: resolution_dgs_contrib, kind: pl, meaning: "as in the EBA P&L template"}
+  - {field: depreciation, kind: pl, meaning: "as in the EBA P&L template"}
+  - {field: impairments_fin, kind: pl, meaning: "impairment or reversal on financial assets not at fair value through profit or loss"}
+  - {field: provisions, kind: pl, meaning: "as in the EBA P&L template"}
+  - {field: impairments_nonfin, kind: pl, meaning: "as in the EBA P&L template"}
+  - {field: pbt, kind: pl, meaning: "profit or loss before tax from continuing operations"}
+  - {field: pat, kind: pl, meaning: "profit or loss after tax from continuing operations"}
+  - {field: profit_owners, kind: pl, meaning: "profit attributable to owners of the parent"}
+  - {field: total_assets, kind: bs, meaning: "as in the EBA balance sheet templates"}
+  - {field: total_liabilities, kind: bs, meaning: "as in the EBA balance sheet templates"}
+  - {field: total_equity, kind: bs, meaning: "as in the EBA balance sheet templates"}
+  - {field: minority_interests, kind: bs, meaning: "non controlling interests in equity"}
+  - {field: cash_cb, kind: bs, meaning: "cash, cash balances at central banks and other demand deposits"}
+  - {field: debt_securities, kind: bs, meaning: "debt securities, all accounting portfolios, carrying amount"}
+  - {field: loans_all, kind: bs, meaning: "loans and advances, all accounting portfolios, gross carrying amount"}
+  - {field: loans_customers_gross, kind: bs, meaning: "loans and advances to counterparties other than central banks and credit institutions, gross"}
+  - {field: loans_customers_allowance, kind: bs, meaning: "loans and advances to counterparties other than central banks and credit institutions, accumulated impairment"}
+  - {field: loans_households_gross, kind: bs, meaning: "loans and advances to households, gross"}
+  - {field: npl_gross, kind: bs, meaning: "non performing loans and advances, gross"}
+  - {field: npl_allowance, kind: bs, meaning: "non performing loans and advances, accumulated impairment"}
+  - {field: deposits_customers, kind: bs, meaning: "deposits from households, non financial corporations, other financial corporations and general governments"}
+  - {field: trading_assets, kind: bs, meaning: "financial assets held for trading"}
+  - {field: cet1, kind: bs, meaning: "as in the EBA capital template"}
+  - {field: tier1, kind: bs, meaning: "as in the EBA capital template"}
+  - {field: rwa, kind: bs, meaning: "as in the EBA RWA template"}
+  - {field: leverage_exposure, kind: bs, meaning: "as in the EBA leverage template"}
+  - {field: at1_instruments, kind: bs, meaning: "capital instruments eligible as AT1"}
+  - {field: intangibles_deduction, kind: bs, meaning: "the CET1 deduction for intangible assets including goodwill (stored positive)"}
+  - {field: lcr, kind: ratio, meaning: "as reported in KM1 (p3 and report families only)"}
+  - {field: nsfr, kind: ratio, meaning: "as reported in KM1 (p3 and report families only)"}
+  - {field: fte, kind: count, meaning: "period end headcount (full time equivalent), where reported"}
+  - {field: customers, kind: count, meaning: "period end customer count, where reported"}
+  - {field: at1_coupons, kind: pl, meaning: "AT1 coupons paid in the period, from the statement of changes in equity"}
+  - {field: shares_out, kind: count, meaning: "ordinary shares outstanding net of treasury shares at the reference date"}
+
+derived:
+  nii: "interest_income - interest_expense"
+  other_income: "total_operating_income - nii - net_fees"
+  opex: "admin_expenses + resolution_dgs_contrib + depreciation"
+  ppp: "total_operating_income - opex"
+  iea: "cash_cb + debt_securities + loans_all"
+  loans_customers_net: "loans_customers_gross - loans_customers_allowance"
+  tangible_equity: "total_equity - minority_interests - at1_instruments - intangibles_deduction"
+  tax: "pbt - pat"
+  profit_to_ordinary: "profit_owners - at1_coupons"
+
+# Check 3 (Section 5.3): total_operating_income against nii + dividend_income + net_fees
+# + "other components listed in fields.yaml". Section 5.1 lists no further component field: OPEN-06.
+income_components: [nii, dividend_income, net_fees]
+income_components_other: OPEN-06

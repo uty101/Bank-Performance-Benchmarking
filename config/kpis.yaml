@@ -1,0 +1,28 @@
+# KPI definitions: instructions/00_kickoff.md Section 5.2.
+# average: the denominator is averaged per Convention 4.4.
+# direction: higher or lower is better; context = computed and shown, never ranked, sized or given a verdict.
+# A denominator of 1 means the KPI is the reported ratio itself.
+
+kpis:
+  - {kpi: rote, numerator: profit_to_ordinary, denominator: tangible_equity, average: true, unit: pct, direction: higher}
+  - {kpi: roa, numerator: profit_owners, denominator: total_assets, average: true, unit: bps, direction: higher}
+  - {kpi: ppp_assets, numerator: ppp, denominator: total_assets, average: true, unit: bps, direction: higher}
+  - {kpi: nim, numerator: nii, denominator: iea, average: true, unit: bps, direction: higher}
+  - {kpi: fee_share, numerator: net_fees, denominator: total_operating_income, average: false, unit: pct, direction: higher}
+  - {kpi: cost_income, numerator: opex, denominator: total_operating_income, average: false, unit: pct, direction: lower}
+  - {kpi: cost_assets, numerator: opex, denominator: total_assets, average: true, unit: bps, direction: lower}
+  - {kpi: cost_of_risk, numerator: impairments_fin, denominator: loans_customers_gross, average: true, unit: bps, direction: lower}
+  - {kpi: npl_ratio, numerator: npl_gross, denominator: loans_all, average: false, unit: pct, direction: lower}
+  - {kpi: npl_coverage, numerator: npl_allowance, denominator: npl_gross, average: false, unit: pct, direction: higher}
+  - {kpi: cet1_ratio, numerator: cet1, denominator: rwa, average: false, unit: pct, direction: higher}
+  - {kpi: leverage_ratio, numerator: tier1, denominator: leverage_exposure, average: false, unit: pct, direction: higher}
+  - {kpi: rwa_density, numerator: rwa, denominator: total_assets, average: false, unit: pct, direction: context}
+  - {kpi: loan_deposit, numerator: loans_customers_net, denominator: deposits_customers, average: false, unit: pct, direction: context}
+  - {kpi: lcr, numerator: lcr, denominator: 1, average: false, unit: pct, direction: higher}
+  - {kpi: nsfr, numerator: nsfr, denominator: 1, average: false, unit: pct, direction: higher}
+  - {kpi: income_fte, numerator: total_operating_income, denominator: fte, average: true, unit: eur_k, direction: higher}
+  - {kpi: cost_fte, numerator: opex, denominator: fte, average: true, unit: eur_k, direction: lower}
+  - {kpi: cost_customer, numerator: opex, denominator: customers, average: false, unit: eur, direction: lower}
+
+# Section 5.2: the only KPIs converted to EUR before ranking (P&L rate for the numerator, Convention 4.6).
+eur_converted: [income_fte, cost_fte, cost_customer]

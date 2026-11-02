@@ -1,0 +1,22 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Create venv with Python 3.12
+        run: uv venv --python 3.12
+      - name: Install from the lock
+        run: uv pip install -r requirements-lock.txt
+      - name: Install the package
+        run: uv pip install -e . --no-deps
+      - name: Ruff
+        run: .venv/bin/ruff check .
+      - name: Tests, sockets disabled
+        run: .venv/bin/pytest -p socket --disable-socket -q

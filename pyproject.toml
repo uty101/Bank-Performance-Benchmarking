@@ -1,0 +1,45 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "bpb"
+version = "0.1.0"
+description = "Bank Performance Benchmarking"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy",
+    "pandas",
+    "scipy",
+    "statsmodels",
+    "scikit-learn",
+    "pyarrow",
+    "duckdb",
+    "openpyxl",
+    "pyyaml",
+    "requests",
+    "yfinance",
+    "pdfplumber",
+    "matplotlib",
+    "reportlab",
+    "streamlit",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest",
+    "pytest-socket",
+    "ruff",
+    "pypdf",
+    "pymupdf",
+]
+
+[project.scripts]
+bpb = "bpb.cli:main"
+
+[tool.setuptools]
+packages = ["bpb"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
