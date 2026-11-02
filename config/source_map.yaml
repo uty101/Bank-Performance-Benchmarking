@@ -75,3 +75,9 @@ fields:
   customers: *report_all
   at1_coupons: *report_all
   shares_out: *report_all
+  gains_derecognition_not_fvtpl: *standard
+  gains_held_for_trading: *standard
+  gains_designated_fvtpl: *standard
+  gains_hedge_accounting: *standard
+  exchange_differences: *standard
+  other_operating_net: *standard

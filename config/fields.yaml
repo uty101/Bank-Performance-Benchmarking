@@ -45,6 +45,13 @@ fields:
   - {field: customers, kind: count, meaning: "period end customer count, where reported"}
   - {field: at1_coupons, kind: pl, meaning: "AT1 coupons paid in the period, from the statement of changes in equity"}
   - {field: shares_out, kind: count, meaning: "ordinary shares outstanding net of treasury shares at the reference date"}
+  # OPEN-06 (a): EBA P&L lines between net fees and TOTAL OPERATING INCOME, NET (step 1.2); check 3 only
+  - {field: gains_derecognition_not_fvtpl, kind: pl, meaning: "EBA P&L: Gains or (-) losses on derecognition of financial assets and liabilities not measured at fair value through profit or loss_ and of non financial assets_ net"}
+  - {field: gains_held_for_trading, kind: pl, meaning: "EBA P&L: Gains or (-) losses on financial assets and liabilities held for trading_ net"}
+  - {field: gains_designated_fvtpl, kind: pl, meaning: "EBA P&L: Gains or (-) losses on financial assets and liabilities designated at fair value through profit or loss_ net"}
+  - {field: gains_hedge_accounting, kind: pl, meaning: "EBA P&L: Gains or (-) losses from hedge accounting_ net"}
+  - {field: exchange_differences, kind: pl, meaning: "EBA P&L: Exchange differences [gain or (-) loss]_ net"}
+  - {field: other_operating_net, kind: pl, meaning: "EBA P&L: Net other operating income /(expenses)"}
 
 derived:
   nii: "interest_income - interest_expense"
@@ -61,4 +68,4 @@ derived:
 # + "other components listed in fields.yaml" (OPEN-06 decided (a)): every EBA P&L line between net fees
 # and TOTAL OPERATING INCOME, NET, mapped in step 1.2. Used by check 3 only; other_income stays the residual.
 income_components: [nii, dividend_income, net_fees]
-income_components_other: []
+income_components_other: [gains_derecognition_not_fvtpl, gains_held_for_trading, gains_designated_fvtpl, gains_hedge_accounting, exchange_differences, other_operating_net]

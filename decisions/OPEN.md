@@ -159,3 +159,97 @@ Raised in session 0 (step 0.0). Section 3.1 gives the column order without `lei`
 
 - (a) Keep `lei` as the last column.
 - (b) Move `lei` to the second column, after `bank_id`, matching FACTS (bank_id, lei, ...).
+
+---
+
+## OPEN-17: Deutsche Bank has no unique name match in the 2025 release
+
+Raised in session 1 (step 1.2). "Deutsche Bank" normalises to `deutsche` ("bank" is a listed suffix). No 2025 EU name normalises to exactly `deutsche`, and `deutsche` is contained, as whole words, in 5:
+
+| EBA name (2025 TR_Metadata) | LEI |
+|---|---|
+| DEUTSCHE APOTHEKER- UND ÄRZTEBANK EG | 5299007S3UH5RKUYDA52 |
+| DEUTSCHE BANK AKTIENGESELLSCHAFT | 7LTWFZYICNSX8D621K86 |
+| DZ BANK AG Deutsche Zentral-Genossenschaftsbank, Frankfurt am Main | 529900HNOAA1KXQJUQ27 |
+| DekaBank Deutsche Girozentrale | 0W2PZJM8XOY22M4GG883 |
+| Deutsche Pfandbriefbank AG | DZZ47B9A52ZJ6LT6VV95 |
+
+DBK's `lei` is left blank, so DBK has no EBA rows until this is decided.
+
+- (a) Add a second alias before matching, DBK matched as `Deutsche Bank Aktiengesellschaft`, which matches `DEUTSCHE BANK AKTIENGESELLSCHAFT` (7LTWFZYICNSX8D621K86) exactly.
+- (b) The reviewer fixes DBK's LEI in the next instruction file as 7LTWFZYICNSX8D621K86, entered by hand into `universe.csv`.
+
+## OPEN-18: `cet1` has 2 candidate lines in the EBA Capital template
+
+Raised in session 1 (step 1.2). Both exist in every release (2025 item codes; earlier releases use the same last 5 digits):
+
+- 2520102 `COMMON EQUITY TIER 1 CAPITAL (net of deductions and after applying transitional adjustments)`
+- 2520143 `COMMON EQUITY TIER 1 CAPITAL (fully loaded)`
+
+`cet1` is not mapped, so the cet1_ratio KPI and check 4 are blank until this is decided. `tier1` (2520133, the only Tier 1 line in the Capital template) is transitional.
+
+- (a) Transitional, 2520102 (consistent with tier1 2520133 and rwa).
+- (b) Fully loaded, 2520143.
+
+## OPEN-19: `cet1_ratio_reported` has 2 candidate lines (3 in 2025)
+
+Raised in session 1 (step 1.2), for check 4. Capital template:
+
+- 2520140 `COMMON EQUITY TIER 1 CAPITAL RATIO (transitional period)` (every release)
+- 2520146 `COMMON EQUITY TIER 1 CAPITAL RATIO (fully loaded)` (every release)
+- 2520155 `COMMON EQUITY TIER 1 CAPITAL RATIO (transitional period - pre floor)` (2025 only)
+
+Check 4 compares it with cet1 / rwa, so the choice should follow OPEN-18.
+
+- (a) Transitional, 2520140 in every release.
+- (b) Fully loaded, 2520146 in every release.
+
+## OPEN-20: `leverage_exposure` has 2 candidate lines in the EBA Leverage template
+
+Raised in session 1 (step 1.2). Both exist in every release:
+
+- 2520903 `Total leverage ratio exposures - using a transitional definition of Tier 1 capital`
+- 2520904 `Total leverage ratio exposures - using a fully phased-in definition of Tier 1 capital`
+
+The leverage_ratio KPI (tier1 / leverage_exposure) is blank until this is decided.
+
+- (a) Transitional, 2520903 (consistent with tier1 2520133, which is transitional).
+- (b) Fully phased-in, 2520904.
+
+## OPEN-21: `debt_securities` has no single carrying-amount line for all accounting portfolios
+
+Raised in session 1 (step 1.2). Section 5.1 defines debt_securities as "all accounting portfolios, carrying amount". No EBA line carries that. The nearest lines are:
+
+- NPE 2520602 `Gross carrying amount on Debt securities (including at amortised cost  and fair value)` (gross, all portfolios other than held for trading);
+- Assets 2521016 and 2521018, gross carrying amount of FVOCI and amortised-cost debt securities, each split by stage (ASSETS_Stages 1, 2, 3).
+
+iea = cash_cb + debt_securities + loans_all, so nim is blank until this is decided.
+
+- (a) NPE 2520602 with every dimension 0 (gross, all portfolios other than held for trading).
+- (b) The sum of Assets 2521016 and 2521018 over ASSETS_Stages 1, 2 and 3. The map then needs several rows per field, summed (see OPEN-22).
+
+## OPEN-22: `loans_customers_gross` and `loans_customers_allowance` need a sum over dimension rows
+
+Raised in session 1 (step 1.2). No Exposure code means "other than central banks and credit institutions". In the NPE template:
+
+- gross: 2520605 `... - by exposure` has 1 row per Exposure (101 central banks, 102 general governments, 201 credit institutions, 202 other financial corporations, 301 non-financial corporations, 401 households), with no Exposure 0 total;
+- allowance: 2520615 has rows only for Perf_Status 1 (performing) and 2 (non performing), with no Perf_Status 0 total.
+
+The map format (field, item, template, label, dim_filter) holds one row per field. loans_customers_net (loan_deposit), cost_of_risk and, in Section 4, the peer features need these.
+
+- (a) Allow several map rows per field, summed by `load_eba`: gross = 2520605 over Exposure 102, 202, 301 and 401; allowance = 2520615 over the same 4 Exposures × Perf_Status 1 and 2.
+- (b) Gross = 2520603 (all loans, every dimension 0) minus 2520605 at Exposure 101 and 201. Allowance = 2520613 at Perf_Status 1 plus 2, minus 2520615 at Exposure 101 and 201 × Perf_Status 1 and 2. This needs a sign column in the map.
+
+## OPEN-23: `deposits_customers` needs a sum over 4 counterparty sectors
+
+Raised in session 1 (step 1.2). Liabilities 2521215 `Financial liabilities -  by instrument and by counterparty sector`, Financial_instruments 30 (Deposits), has 1 row per Exposure: 101, 102, 201, 202, 301 and 401. Section 5.1 wants 102 + 202 + 301 + 401. loan_deposit is blank until this is decided.
+
+- (a) As OPEN-22 (a): several map rows summed, 2521215 at Financial_instruments 30 × Exposure 102, 202, 301 and 401.
+- (b) Total deposits (Financial_instruments 30 summed over every Exposure present) minus Exposure 101 and 201.
+
+## OPEN-24: `minority_interests` has no EBA line
+
+Raised in session 1 (step 1.2). No Liabilities, Assets or Capital line in any release is non-controlling interests in equity. `Minority interest given recognition in CET1 capital` (Capital 2520108) is a regulatory amount, not the accounting one. tangible_equity, and so rote (Section 3), need it.
+
+- (a) minority_interests comes from the `report` family at every EU date (annual and half year reports, entered in Section 3 alongside at1_coupons and shares_out). The source map changes accordingly.
+- (b) Use Capital 2520108 `Minority interest given recognition in CET1 capital` as a stand-in, stated as a caveat.

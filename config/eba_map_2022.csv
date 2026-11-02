@@ -1,0 +1,34 @@
+field,item,template,label,dim_filter
+interest_income,2220301,P&L,Interest income,{}
+interest_expense,2220304,P&L,Interest expenses,{}
+dividend_income,2220308,P&L,Dividend income,{}
+net_fees,2220309,P&L,Net Fee and commission income,{}
+total_operating_income,2220316,P&L,TOTAL OPERATING INCOME_ NET,{}
+admin_expenses,2220317,P&L,(Administrative expenses),{}
+resolution_dgs_contrib,2220339,P&L,(Cash contributions to resolution funds and deposit guarantee schemes),{}
+depreciation,2220318,P&L,(Depreciation),{}
+impairments_fin,2220324,P&L,(Impairment or (-) reversal of impairment on financial assets not measured at fair value through profit or loss),{}
+provisions,2220319,P&L,(Provisions or (-) reversal of provisions),{}
+impairments_nonfin,2220327,P&L,(Impairment or (-) reversal of impairment of investments in subsidaries_ joint ventures and associates and on non-financial assets),{}
+pbt,2220332,P&L,PROFIT OR (-) LOSS BEFORE TAX FROM CONTINUING OPERATIONS,{}
+pat,2220333,P&L,PROFIT OR (-) LOSS AFTER TAX FROM CONTINUING OPERATIONS,{}
+profit_owners,2220336,P&L,PROFIT OR (-) LOSS FOR THE YEAR - Of which attributable to owners of the parent,{}
+total_assets,2221010,Assets,Total Assets,{}
+total_liabilities,2221214,Liabilities,TOTAL LIABILITIES,{}
+total_equity,2221216,Liabilities,TOTAL EQUITY,{}
+cash_cb,2221001,Assets,"Cash, cash balances at central banks and other demand deposits",{}
+loans_all,2220603,NPE,Gross carrying amount on Loans and advances (including at amortised cost  and fair value),{}
+loans_households_gross,2220605,NPE,Gross carrying amount on Loans and advances (including at amortised cost  and fair value) - by exposure,"{""Exposure"": ""401""}"
+npl_gross,2220603,NPE,Gross carrying amount on Loans and advances (including at amortised cost  and fair value),"{""Perf_Status"": ""2""}"
+npl_allowance,2220613,NPE,"Accumulated impairment, accumulated changes in fair value due to credit risk and provisions on Loans and advances (including at amortised cost  and fair value)","{""Perf_Status"": ""2""}"
+trading_assets,2221002,Assets,Financial assets held for trading,{}
+tier1,2220133,Capital,TIER 1 CAPITAL (net of deductions and after transitional adjustments),{}
+rwa,2220220,RWA OV1,Total Risk exposure amount,{}
+at1_instruments,2220129,Capital,Additional Tier 1 Capital instruments,{}
+intangibles_deduction,2220110,Capital,(-) Intangible assets (including Goodwill),{}
+gains_derecognition_not_fvtpl,2220310,P&L,Gains or (-) losses on derecognition of financial assets and liabilities not measured at fair value through profit or loss_ and of non financial assets_ net,{}
+gains_held_for_trading,2220311,P&L,Gains or (-) losses on financial assets and liabilities held for trading_ net,{}
+gains_designated_fvtpl,2220312,P&L,Gains or (-) losses on financial assets and liabilities designated at fair value through profit or loss_ net,{}
+gains_hedge_accounting,2220313,P&L,Gains or (-) losses from hedge accounting_ net,{}
+exchange_differences,2220314,P&L,Exchange differences [gain or (-) loss]_ net,{}
+other_operating_net,2220315,P&L,Net other operating income /(expenses),{}
