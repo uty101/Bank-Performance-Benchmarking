@@ -96,7 +96,7 @@ def download(url: str, dest: Path, attempts: int = 3) -> str | None:
             # certifi lacks the chain some hosts serve; curl verifies against the operating system's store instead
             reason = str(e)
             r = subprocess.run(["curl", "-sSfL", "-A", HEADERS["User-Agent"], "-o", str(tmp), url],
-                               capture_output=True, text=True)
+                               capture_output=True, text=True, check=False)
             if r.returncode == 0:
                 with open(tmp, "rb") as f:
                     head = f.read(1024)
