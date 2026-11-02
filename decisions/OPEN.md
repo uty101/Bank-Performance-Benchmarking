@@ -253,3 +253,19 @@ Raised in session 1 (step 1.2). No Liabilities, Assets or Capital line in any re
 
 - (a) minority_interests comes from the `report` family at every EU date (annual and half year reports, entered in Section 3 alongside at1_coupons and shares_out). The source map changes accordingly.
 - (b) Use Capital 2520108 `Minority interest given recognition in CET1 capital` as a stand-in, stated as a caveat.
+
+## OPEN-25: the EBA unit is not in SDD.xlsx, and EBA amounts are in EUR for every bank
+
+Raised in session 1 (step 1.3). This is the stop reason for session 1. Instruction 01 step 1.3 says to "read the unit from `SDD.xlsx`" for `test_load_eba_synthetic`. No `SDD.xlsx` (2021 to 2025) and no `TR_Metadata.xlsx` states a unit. Every cell, cell comment and sheet was searched, and the 2024 CSV guide PDF does not state one either.
+
+The unit is printed in 2 other EBA files of each release:
+
+- the template headings of `{year}_EU-wide_Transparency_exercise_Mapped_templates.xlsx`: `(mln EUR)` on P&L, Assets, Liabilities, NPE and the rest, and `(mln EUR,  %)` on Capital, Leverage, RWA OV1 and the credit risk sheets;
+- each bank's PDF, for example `SE_M312WZV08Y7LYUC71685_TR_2025.pdf` (Swedbank): `(mln EUR, %)`.
+
+The data agree. Total assets (item 2521010) at 2024-12-31 are 226,125.3 for Swedbank, 276,393.4 for DNB and 425,547.2 for Danske Bank, which are EUR millions, not SEK, NOK or DKK. Ratio items are decimals, for example Intesa Sanpaolo's CET1 ratio of 0.138004 at 2022-12-31.
+
+So the unit cannot be read where the test says. EBA amounts are also in EUR for DNB, Danske, SEB, SHB and Swedbank, which conflicts with Convention 4.1 ("units of the reporting currency") and with the FACTS `ccy` column.
+
+- (a) Read the unit from the release's `Mapped_templates.xlsx` heading. That file is added to `[eba] files` and pulled in step 1.1; the 2021 file is linked from the 2021 page under a `document_library` path. Amounts get `unit_scale` 1e6, ratios are stored as reported, and `ccy` is `EUR` for every EBA row. Convention 4.1 is amended: the `eba` family is in EUR for every bank. KPIs are pure ratios and are unaffected, except that an average of 2 EUR balances carries the EUR/SEK, NOK or DKK move between its 2 ends.
+- (b) The same unit rule, with `load_eba` converting EBA amounts for SEK, NOK and DKK banks back to `report_ccy`: balance sheet values at the reference-date ECB rate, P&L values at the period mean (Convention 4.6 in reverse). This keeps Convention 4.1 but needs `bpb/fx.py` (step 1.4) before step 1.3, and the rate EBA itself used is not published.
