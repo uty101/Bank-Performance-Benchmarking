@@ -1,1 +1,10 @@
-bank_id,doc_type,period,url
+bank_id,doc_type,period,url,decimal_mark
+BAMI,merger_target,2024-12-31,https://www.animasgr.it/d/EN/downloads/HoldingBilanciERelazioni/Consolidated%20Financial%20Statements%20at%2031%20December%202024%20(in%20english%20language).pdf,
+BMPS,merger_target,2024-12-31,https://www.mediobanca.com/static/upload_new/med/0001/mediobanca-semestrale-2024-en_def.pdf,
+BPE,merger_target,2021-12-31,https://www.assilea.it/repository/doc/Bilanci/2021/BancaCarigeSpA.pdf,","
+BPE,merger_target,2024-12-31,https://emarketstorage.it/sites/default/files/comunicati/2025-02/20250206_160405.pdf,","
+CABK,merger_target,2020-12-31,https://www.caixabank.com/deployedfiles/caixabank_com/Estaticos/PDFs/Accionistasinversores/consolidated-financial-statements-2020.pdf,
+DBK,merger_target,2022-09-30,https://web.archive.org/web/20240803225040id_/https://numisweb-prod-cd.azurewebsites.net/-/media/numiscorp/documents/financial-report-files/2022/annual-report-2022.pdf,
+GLE,merger_target,2022-12-31,https://www.ayvens.com/-/media/ayvens/public/cp/files/leaseplan-documents-and-publication-archives/white-papers-and-reports/2023/22-mar-2023-leaseplan-2022-annual-report.pdf?rev=c373f50c16c84083b79ca401e9c95dba,
+UCG,merger_target,2023-12-31,https://www.alpha.gr/-/media/AlphaHoldings/Files/group/oikonomikes-katastaseis-etairion-omilou/2023/2023-ABR-IFRS-Financial-Statements.pdf,
+UNI,merger_target,2020-12-31,https://www.unicajabanco.com/content/dam/unicaja/unicaja-corporacion/documentos-corporacion/junta-general-de-accionistas/2021-extraordinaria/2021-extraordinaria-Cuentas-anuales-individuales-consolidadas-liberbank-2020-en.pdf,","

@@ -10,6 +10,11 @@
 # OPEN-05 decided (a): lcr and nsfr have no family for EU banks to 2025-06-30 (blank, missing_input).
 # OPEN-24 decided (a): minority_interests is report family at every date (instruction 01b).
 # bank_groups: uk lists the UK banks; every other universe bank is eu.
+# Instruction 02 step 2.0 (decisions/section_1_completion_review.md B.1, B.2): p3 = cet1, tier1, rwa,
+# leverage_exposure and cet1_ratio_reported for EU banks at 2025-06-30 (seam), 2025-12-31 and 2026-06-30, read
+# from each bank's own Pillar 3 report (KM1); report = every other bridge field, including the CC1 and CR1
+# fields and lcr and nsfr, even when the figure is printed in a Pillar 3 report. A row's family is decided
+# here, by bank group, field and date, never by the entry's doc_type. The bridge_input dates stand.
 
 bank_groups:
   uk: [LLOY, NWG, BARC, HSBA, SANUK]

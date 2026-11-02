@@ -14,7 +14,7 @@ files = ["tr_oth.csv", "tr_cre.csv", "TR_Metadata.xlsx", "SDD.xlsx"]
 max_commit_mb = 50
 
 [fx]
-currencies = ["GBP", "SEK", "NOK", "DKK", "USD"]
+currencies = ["GBP", "SEK", "NOK", "DKK", "USD", "CHF"]
 
 [sovereign]
 countries = ["GB", "SE", "NO", "DK", "FI", "NL", "BE", "FR", "DE", "ES", "IT"]
