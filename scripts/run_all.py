@@ -1,6 +1,7 @@
 """Regenerates every output built so far from committed raw and manual files (no network).
 
-Section 1: data/processed/facts.parquet and outputs/tables/kpi.csv (EU banks, 2021-12-31 to 2025-06-30).
+Section 1: data/processed/facts.parquet, outputs/tables/kpi.csv (EU banks, 2021-12-31 to 2025-06-30) and
+outputs/tables/checks.csv (checks 2, 3, 4, 5, 6 and 9 on EBA rows).
 usage: python scripts/run_all.py
 """
 
@@ -14,6 +15,7 @@ import yaml
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
+from bpb.checks import run_checks
 from bpb.config import load_config
 from bpb.fx import ecb_rates
 from bpb.ingest import build_facts, read_source_map
@@ -35,7 +37,9 @@ def main() -> int:
     uk = set(read_source_map(root)["bank_groups"]["uk"])
     kpi = kpi[~kpi["bank_id"].isin(uk) & (kpi["date"] <= KPI_LAST_SECTION_1)]
     write_csv(kpi, root / "outputs" / "tables" / "kpi.csv")
-    print(f"facts {len(facts)} rows, kpi {len(kpi)} rows")
+    checks = run_checks(facts[facts["family"] == "eba"], cfg)
+    write_csv(checks, root / "outputs" / "tables" / "checks.csv")
+    print(f"facts {len(facts)} rows, kpi {len(kpi)} rows, checks {len(checks)} rows")
     return 0
 
 
