@@ -134,6 +134,7 @@ def outliers(facts: pd.DataFrame, cfg) -> pd.DataFrame:
 # --- check 1: provenance (kickoff 5.3 item 1, instruction 02 B.4) -------------------------------------------------
 
 SPACES = "    "  # space, no-break space, thin space, narrow no-break space
+DIGITS = "0123456789"  # ASCII only: str.isdigit() also accepts superscripts such as a footnote mark
 
 
 def _page_numbers(text: str, decimal_mark: str) -> list[tuple[float, int]]:
@@ -145,25 +146,25 @@ def _page_numbers(text: str, decimal_mark: str) -> list[tuple[float, int]]:
     seps = ("," if decimal_mark == "." else ".") + SPACES
     out = []
     n = len(text)
-    starts = [i for i in range(n) if text[i].isdigit() and (i == 0 or not text[i - 1].isdigit())]
+    starts = [i for i in range(n) if text[i] in DIGITS and (i == 0 or text[i - 1] not in DIGITS)]
     for i in starts:
         j = i
-        while j < n and text[j].isdigit():
+        while j < n and text[j] in DIGITS:
             j += 1
         head = text[i:j]
         cands = [(head, j)]
         if len(head) <= 3:  # a first group can carry thousands groups after it
             k, acc = j, head
-            while k + 3 < n + 1 and k < n and text[k] in seps and text[k + 1:k + 4].isdigit() \
-                    and (k + 4 >= n or not text[k + 4].isdigit()):
+            while k + 3 < n + 1 and k < n and text[k] in seps and all(c in DIGITS for c in text[k + 1:k + 4]) \
+                    and (k + 4 >= n or text[k + 4] not in DIGITS):
                 acc += text[k + 1:k + 4]
                 k += 4
                 cands.append((acc, k))
         for digits, end in cands:
             out.append((float(digits), 0))
-            if end < n - 1 and text[end] == decimal_mark and text[end + 1].isdigit():
+            if end < n - 1 and text[end] == decimal_mark and text[end + 1] in DIGITS:
                 e = end + 1
-                while e < n and text[e].isdigit():
+                while e < n and text[e] in DIGITS:
                     e += 1
                 out.append((float(f"{digits}.{text[end + 1:e]}"), e - end - 1))
     return out
