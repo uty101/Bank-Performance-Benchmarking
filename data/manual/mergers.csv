@@ -1,1 +1,27 @@
 acquirer_id,target_name,completion_date,target_total_assets,target_ccy,source_url
+KBC,OTP Banka Slovensko a.s.,2020-11-26,1433000000,EUR,https://cdn.assets.prezly.com/8b650d62-c523-41df-b3ec-23bf419680d1/-/inline/no/20201126_PB_closing%20OTP_ENG.pdf
+BPE,UBI Banca business unit sold by Intesa Sanpaolo (branches),2021-02-22,,EUR,https://group.bper.it/documents/133577364/0/21.02.19_ComSt_Accordo_Gruppo_Intesa_ENG_.pdf/37706018-c10c-0719-33bf-cc9fb050841d?t=1613760496854
+CABK,Bankia S.A.,2021-03-26,209841949000,EUR,https://www.caixabank.com/StaticFiles/pdfs/210326_OIR_merger_registration_en.pdf
+CAG,Credito Valtellinese S.p.A.,2021-04-30,23881672000,EUR,https://credit-agricole.it/media/filer_public/c5/ac/c5acfa20-7b56-47ae-87ca-e9aa5ae886db/cs-opa-creval-successo-dell-offerta-pubblica-di-acquisto-volontaria-promossa-da-credit-agricole-italia-sulla-totalita-delle-azioni-di-credito-valtellinese-eng-sito.pdf
+ISP,REYL & Cie S.A.,2021-05-28,2060197900,CHF,https://emarketstorage.it/sites/default/files/comunicati/2022-05/20210903_101936.pdf
+UNI,Liberbank S.A.,2021-07-30,47510103000,EUR,https://unicajabanco.com/en/sala-de-comunicacion/buscador-noticias/2021/07/unicaja-banco-culmina-la-integracion-legal-de-liberbank-que-conv
+DNB,Sbanken ASA,2022-03-30,102273586000,NOK,https://ir.dnb.no/sites/default/files/pr/202204281231-1.pdf
+BPE,Banca Carige S.p.A.,2022-06-03,,EUR,https://group.bper.it/documents/133577364/0/1654292264_22.06.03_-_BPER_-_Acquisizione_partecipazione_di_controllo_di_Carige_e_cessione_sportelli_h_1545_EN+s.pdf/5e409d8b-bf67-0235-e702-bfd17072ab3c?t=1654293236327
+KBC,Raiffeisenbank (Bulgaria) EAD,2022-07-07,5200000000,EUR,https://www.kbc.com/content/dam/kbccom/doc/newsroom/pressreleases/2022/20220707_Closing%20KBC_Raiffeisenbank%20Bulgaria_EN.pdf
+HSBA,Silicon Valley Bank UK Limited,2023-03-13,11490000000,USD,https://www.hsbc.com/-/files/hsbc/media/media-release/2023/230313-hsbc-acquires-silicon-valley-bank-uk-limited.pdf
+GLE,LeasePlan Corporation N.V. (via ALD/Ayvens),2023-05-22,,EUR,https://www.ayvens.com/en-cp/news/newsroom/press-releases-2023/press-release-ald-successfully-completes-the-acquisition-of-leaseplan-and-announces-management-changes
+DBK,Numis Corporation plc,2023-10-13,,GBP,https://www.db.com/news/detail/20231013-deutsche-bank-completes-acquisition-of-numis
+ISP,First Bank S.A.,2024-05-31,1500000000,EUR,https://group.intesasanpaolo.com/en/newsroom/press-releases/2024/05/intesa-sanpaolo-finalizes-acquisition-of-first-bank
+CAG,Banque Degroof Petercam S.A.,2024-06-04,8129909000,EUR,https://ca-indosuez.com/press/press-releases/indosuez-wealth-management-finalises-the-acquisition-of-degroof-petercam
+BARC,Tesco Bank retail banking business,2024-11-01,,GBP,https://www.sec.gov/Archives/edgar/data/312069/000165495424013575/a5037k.htm
+UCG,Alpha Bank Romania S.A.,2024-11-04,,,https://www.unicreditgroup.eu/en/press-media/press-releases/2024/november/unicredit-and-alpha-services-and-holdings-announce-completion-of.html
+NDA,Danske Bank personal customer and private banking business in Norway,2024-11-18,,EUR,https://www.nordea.com/en/press/2024-11-18/nordea-completes-the-acquisition-of-danske-banks-personal-customer-and-private-banking-business-in-norway
+UCG,Aion Bank SA/NV and Vodeno Sp. z o.o.,2025-03-07,1283866000,EUR,https://www.unicreditgroup.eu/en/press-media/press-releases-price-sensitive/2025/march/unicredit-completes-acquisition-of-aion-bank-and-vodeno--kicking.html
+DNB,Carnegie Holding AB,2025-03-06,16325992000,SEK,https://ir.dnb.no/press-and-reports/press-releases/fulfillment-conditions-dnb-bank-asas-acquisition-carnegie-2306571
+NWG,Sainsbury's Bank retail banking business,2025-05-01,,GBP,https://www.sec.gov/Archives/edgar/data/844150/000165495425005032/a1510h.htm
+ABN,Hauck Aufhäuser Lampe Privatbank AG,2025-07-01,11777000000,EUR,https://www.abnamro.com/en/news/abn-amro-completes-acquisition-of-hauck-aufhaeuser-lampe-in-germany
+BNP,AXA Investment Managers (via BNP Paribas Cardif),2025-07-01,,EUR,https://group.bnpparibas/en/press-release/bnp-paribas-cardif-completes-the-acquisition-of-axa-investment-managers
+BPE,Banca Popolare di Sondrio S.p.A.,2025-07-18,56628582000,EUR,https://group.bper.it/documents/133577364/2795795058/Consolidated+Half-Year+Report+as+at+30+06+2025.pdf/ee8e303c-519c-d986-4655-01592227dfab?version=1.0&t=1758275603287
+BMPS,Mediobanca S.p.A.,2025-09-15,99911654000,EUR,https://www.gruppomps.it/en/media-and-news/press-releases/pr-15-09-2025.html
+KBC,365.bank a.s.,2026-01-15,4700000000,EUR,https://www.kbc.com/content/dam/kbccom/doc/newsroom/pressreleases/2026/20260115-pb-closing-365-bank-en-2.pdf
+SANUK,TSB Banking Group plc,2026-04-30,45286000000,GBP,https://www.santander.co.uk/about-santander/media-centre/press-releases/santander-uk-completes-cash-acquisition-of-tsb-banking
