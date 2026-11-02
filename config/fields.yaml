@@ -1,57 +1,59 @@
 # Internal fields and derived quantities: instructions/00_kickoff.md Section 5.1.
-# kind: pl = year to date P&L value (Convention 4.3); bs = balance at the reference date;
-#       ratio = a ratio as reported (lcr, nsfr); count = a period end count (fte, customers, shares_out).
+# kind (instruction 01b step 1.2b): amount = a value in currency units, or a count; ratio = a decimal stored
+#       as reported (eba ratio items: unit_scale 1, ccy blank).
+# period: pl = year to date P&L value (Convention 4.3); bs = balance or ratio at the reference date;
+#         count = a period end count (fte, customers, shares_out).
 # Signs follow Convention 4.2: expenses, impairments and tax stored positive, a net release negative.
 
 fields:
-  - {field: interest_income, kind: pl, meaning: "as in the EBA P&L template"}
-  - {field: interest_expense, kind: pl, meaning: "as in the EBA P&L template"}
-  - {field: dividend_income, kind: pl, meaning: "as in the EBA P&L template"}
-  - {field: net_fees, kind: pl, meaning: "as in the EBA P&L template"}
-  - {field: total_operating_income, kind: pl, meaning: "TOTAL OPERATING INCOME, NET"}
-  - {field: admin_expenses, kind: pl, meaning: "as in the EBA P&L template"}
-  - {field: resolution_dgs_contrib, kind: pl, meaning: "as in the EBA P&L template"}
-  - {field: depreciation, kind: pl, meaning: "as in the EBA P&L template"}
-  - {field: impairments_fin, kind: pl, meaning: "impairment or reversal on financial assets not at fair value through profit or loss"}
-  - {field: provisions, kind: pl, meaning: "as in the EBA P&L template"}
-  - {field: impairments_nonfin, kind: pl, meaning: "as in the EBA P&L template"}
-  - {field: pbt, kind: pl, meaning: "profit or loss before tax from continuing operations"}
-  - {field: pat, kind: pl, meaning: "profit or loss after tax from continuing operations"}
-  - {field: profit_owners, kind: pl, meaning: "profit attributable to owners of the parent"}
-  - {field: total_assets, kind: bs, meaning: "as in the EBA balance sheet templates"}
-  - {field: total_liabilities, kind: bs, meaning: "as in the EBA balance sheet templates"}
-  - {field: total_equity, kind: bs, meaning: "as in the EBA balance sheet templates"}
-  - {field: minority_interests, kind: bs, meaning: "non controlling interests in equity"}
-  - {field: cash_cb, kind: bs, meaning: "cash, cash balances at central banks and other demand deposits"}
-  - {field: debt_securities, kind: bs, meaning: "debt securities, all accounting portfolios, carrying amount"}
-  - {field: loans_all, kind: bs, meaning: "loans and advances, all accounting portfolios, gross carrying amount"}
-  - {field: loans_customers_gross, kind: bs, meaning: "loans and advances to counterparties other than central banks and credit institutions, gross"}
-  - {field: loans_customers_allowance, kind: bs, meaning: "loans and advances to counterparties other than central banks and credit institutions, accumulated impairment"}
-  - {field: loans_households_gross, kind: bs, meaning: "loans and advances to households, gross"}
-  - {field: npl_gross, kind: bs, meaning: "non performing loans and advances, gross"}
-  - {field: npl_allowance, kind: bs, meaning: "non performing loans and advances, accumulated impairment"}
-  - {field: deposits_customers, kind: bs, meaning: "deposits from households, non financial corporations, other financial corporations and general governments"}
-  - {field: trading_assets, kind: bs, meaning: "financial assets held for trading"}
-  - {field: cet1, kind: bs, meaning: "as in the EBA capital template"}
-  - {field: tier1, kind: bs, meaning: "as in the EBA capital template"}
-  - {field: rwa, kind: bs, meaning: "as in the EBA RWA template"}
-  - {field: leverage_exposure, kind: bs, meaning: "as in the EBA leverage template"}
-  - {field: cet1_ratio_reported, kind: ratio, meaning: "reported CET1 ratio: EBA capital template, later KM1 and reports (OPEN-07 decided (a))"}
-  - {field: at1_instruments, kind: bs, meaning: "capital instruments eligible as AT1"}
-  - {field: intangibles_deduction, kind: bs, meaning: "the CET1 deduction for intangible assets including goodwill (stored positive)"}
-  - {field: lcr, kind: ratio, meaning: "as reported in KM1 (p3 and report families only)"}
-  - {field: nsfr, kind: ratio, meaning: "as reported in KM1 (p3 and report families only)"}
-  - {field: fte, kind: count, meaning: "period end headcount (full time equivalent), where reported"}
-  - {field: customers, kind: count, meaning: "period end customer count, where reported"}
-  - {field: at1_coupons, kind: pl, meaning: "AT1 coupons paid in the period, from the statement of changes in equity"}
-  - {field: shares_out, kind: count, meaning: "ordinary shares outstanding net of treasury shares at the reference date"}
+  - {field: interest_income, kind: amount, period: pl, meaning: "as in the EBA P&L template"}
+  - {field: interest_expense, kind: amount, period: pl, meaning: "as in the EBA P&L template"}
+  - {field: dividend_income, kind: amount, period: pl, meaning: "as in the EBA P&L template"}
+  - {field: net_fees, kind: amount, period: pl, meaning: "as in the EBA P&L template"}
+  - {field: total_operating_income, kind: amount, period: pl, meaning: "TOTAL OPERATING INCOME, NET"}
+  - {field: admin_expenses, kind: amount, period: pl, meaning: "as in the EBA P&L template"}
+  - {field: resolution_dgs_contrib, kind: amount, period: pl, meaning: "as in the EBA P&L template"}
+  - {field: depreciation, kind: amount, period: pl, meaning: "as in the EBA P&L template"}
+  - {field: impairments_fin, kind: amount, period: pl, meaning: "impairment or reversal on financial assets not at fair value through profit or loss"}
+  - {field: provisions, kind: amount, period: pl, meaning: "as in the EBA P&L template"}
+  - {field: impairments_nonfin, kind: amount, period: pl, meaning: "as in the EBA P&L template"}
+  - {field: pbt, kind: amount, period: pl, meaning: "profit or loss before tax from continuing operations"}
+  - {field: pat, kind: amount, period: pl, meaning: "profit or loss after tax from continuing operations"}
+  - {field: profit_owners, kind: amount, period: pl, meaning: "profit attributable to owners of the parent"}
+  - {field: total_assets, kind: amount, period: bs, meaning: "as in the EBA balance sheet templates"}
+  - {field: total_liabilities, kind: amount, period: bs, meaning: "as in the EBA balance sheet templates"}
+  - {field: total_equity, kind: amount, period: bs, meaning: "as in the EBA balance sheet templates"}
+  - {field: minority_interests, kind: amount, period: bs, meaning: "non controlling interests in equity"}
+  - {field: cash_cb, kind: amount, period: bs, meaning: "cash, cash balances at central banks and other demand deposits"}
+  - {field: debt_securities, kind: amount, period: bs, meaning: "debt securities, gross carrying amount, all accounting portfolios other than held for trading (instruction 01b OPEN-21)"}
+  - {field: loans_all, kind: amount, period: bs, meaning: "loans and advances, gross carrying amount, all accounting portfolios other than held for trading (instruction 01b OPEN-21)"}
+  - {field: loans_customers_gross, kind: amount, period: bs, meaning: "loans and advances to counterparties other than central banks and credit institutions, gross"}
+  - {field: loans_customers_allowance, kind: amount, period: bs, meaning: "loans and advances to counterparties other than central banks and credit institutions, accumulated impairment"}
+  - {field: loans_households_gross, kind: amount, period: bs, meaning: "loans and advances to households, gross"}
+  - {field: npl_gross, kind: amount, period: bs, meaning: "non performing loans and advances, gross"}
+  - {field: npl_allowance, kind: amount, period: bs, meaning: "non performing loans and advances, accumulated impairment"}
+  - {field: deposits_customers, kind: amount, period: bs, meaning: "deposits from households, non financial corporations, other financial corporations and general governments"}
+  - {field: trading_assets, kind: amount, period: bs, meaning: "financial assets held for trading"}
+  - {field: cet1, kind: amount, period: bs, meaning: "as in the EBA capital template"}
+  - {field: tier1, kind: amount, period: bs, meaning: "as in the EBA capital template"}
+  - {field: rwa, kind: amount, period: bs, meaning: "as in the EBA RWA template"}
+  - {field: leverage_exposure, kind: amount, period: bs, meaning: "as in the EBA leverage template"}
+  - {field: cet1_ratio_reported, kind: ratio, period: bs, meaning: "reported CET1 ratio: EBA capital template, later KM1 and reports (OPEN-07 decided (a))"}
+  - {field: at1_instruments, kind: amount, period: bs, meaning: "capital instruments eligible as AT1"}
+  - {field: intangibles_deduction, kind: amount, period: bs, meaning: "the CET1 deduction for intangible assets including goodwill (stored positive)"}
+  - {field: lcr, kind: ratio, period: bs, meaning: "as reported in KM1 (p3 and report families only)"}
+  - {field: nsfr, kind: ratio, period: bs, meaning: "as reported in KM1 (p3 and report families only)"}
+  - {field: fte, kind: amount, period: count, meaning: "period end headcount (full time equivalent), where reported"}
+  - {field: customers, kind: amount, period: count, meaning: "period end customer count, where reported"}
+  - {field: at1_coupons, kind: amount, period: pl, meaning: "AT1 coupons paid in the period, from the statement of changes in equity"}
+  - {field: shares_out, kind: amount, period: count, meaning: "ordinary shares outstanding net of treasury shares at the reference date"}
   # OPEN-06 (a): EBA P&L lines between net fees and TOTAL OPERATING INCOME, NET (step 1.2); check 3 only
-  - {field: gains_derecognition_not_fvtpl, kind: pl, meaning: "EBA P&L: Gains or (-) losses on derecognition of financial assets and liabilities not measured at fair value through profit or loss_ and of non financial assets_ net"}
-  - {field: gains_held_for_trading, kind: pl, meaning: "EBA P&L: Gains or (-) losses on financial assets and liabilities held for trading_ net"}
-  - {field: gains_designated_fvtpl, kind: pl, meaning: "EBA P&L: Gains or (-) losses on financial assets and liabilities designated at fair value through profit or loss_ net"}
-  - {field: gains_hedge_accounting, kind: pl, meaning: "EBA P&L: Gains or (-) losses from hedge accounting_ net"}
-  - {field: exchange_differences, kind: pl, meaning: "EBA P&L: Exchange differences [gain or (-) loss]_ net"}
-  - {field: other_operating_net, kind: pl, meaning: "EBA P&L: Net other operating income /(expenses)"}
+  - {field: gains_derecognition_not_fvtpl, kind: amount, period: pl, meaning: "EBA P&L: Gains or (-) losses on derecognition of financial assets and liabilities not measured at fair value through profit or loss_ and of non financial assets_ net"}
+  - {field: gains_held_for_trading, kind: amount, period: pl, meaning: "EBA P&L: Gains or (-) losses on financial assets and liabilities held for trading_ net"}
+  - {field: gains_designated_fvtpl, kind: amount, period: pl, meaning: "EBA P&L: Gains or (-) losses on financial assets and liabilities designated at fair value through profit or loss_ net"}
+  - {field: gains_hedge_accounting, kind: amount, period: pl, meaning: "EBA P&L: Gains or (-) losses from hedge accounting_ net"}
+  - {field: exchange_differences, kind: amount, period: pl, meaning: "EBA P&L: Exchange differences [gain or (-) loss]_ net"}
+  - {field: other_operating_net, kind: amount, period: pl, meaning: "EBA P&L: Net other operating income /(expenses)"}
 
 derived:
   nii: "interest_income - interest_expense"

@@ -149,3 +149,13 @@ Arguments this document does not imply go to OPEN; session 0 lists them in `PLAN
 4. **Role `bridge_input` (OPEN-03).** `report` rows for EU banks at 2024-12-31 and 2025-06-30 may be opening balances and rolling components for report-family KPIs at 2025-12-31 and 2026-06-30. The KPI value at 2025-06-30 itself stays `eba`.
 5. **Output paths (OPEN-13).** PDF profiles `outputs/reports/{bank_id}_{date}.pdf`; page renders `outputs/figures/{bank_id}_{date}.png`; league table pages `outputs/tables/league_{kpi}.html`; charts are drawn in memory and not saved separately.
 6. **Crédit Agricole (B.1).** The universe row ACA is replaced by bank_id `CAG`, name `Crédit Agricole Group`, listed 0, ticker blank, price_ccy blank, report_ccy EUR. CAG is benchmarked and left out of valuation. Its bridge figures come from the Group figures published in Crédit Agricole SA's universal registration document and half year report.
+
+### Amendments from instructions/01b_section_1_completion.md (step 1.2b; decisions in `decisions/section_1_review.md`)
+
+7. **Convention 4.1 (OPEN-25).** `eba` rows are in EUR for every bank; `report` and `p3` rows are in the reporting currency. Every `eba` amount is EUR millions (`unit_scale` 1e6, `ccy` `EUR`); every `eba` item whose field has `kind: ratio` in `fields.yaml` is a decimal stored as reported (`unit_scale` 1, `ccy` blank).
+8. **Map rules (B.1).**
+   1. Unnamed dimensions: every dimension column of the source CSV that a map row does not name in `dim_filter` must equal 0 for the row to match. In `tr_oth.csv` the dimension columns are ASSETS_FV, ASSETS_Stages, Exposure and Financial_instruments. In `tr_cre.csv` they are Portfolio, Country, Exposure, Status, Perf_Status and NACE_codes.
+   2. Summed fields: a field with several map rows is the sum of their amounts. If any listed row is absent for a bank and date, the field is missing for that bank and date. It is never a partial sum.
+   3. Period length: for P&L items, period_months = 3 × `n_quarters`. Check 5 requires 6 at 30 Jun and 12 at 31 Dec.
+9. **Mixed currencies (B.2).** When a derived quantity or check combines values with different `ccy`, the non EUR value is converted to EUR first, using the Convention 4.6 rates: balance sheet values at the reference date rate, P&L values at the mean over the period. The derived row's status gains `fx_combined`. README caveat: averages and rolling figures of `eba` balances for the 5 non EUR banks carry the currency move between their 2 ends.
+10. **Changed signature (B.2).** `bpb/kpi.py`: `def derived(facts: pd.DataFrame, rates: pd.DataFrame) -> pd.DataFrame`.

@@ -32,3 +32,23 @@ gains_designated_fvtpl,2220312,P&L,Gains or (-) losses on financial assets and l
 gains_hedge_accounting,2220313,P&L,Gains or (-) losses from hedge accounting_ net,{}
 exchange_differences,2220314,P&L,Exchange differences [gain or (-) loss]_ net,{}
 other_operating_net,2220315,P&L,Net other operating income /(expenses),{}
+cet1,2220102,Capital,COMMON EQUITY TIER 1 CAPITAL (net of deductions and after applying transitional adjustments),{}
+cet1_ratio_reported,2220140,Capital,COMMON EQUITY TIER 1 CAPITAL RATIO (transitional period),{}
+leverage_exposure,2220903,Leverage,Total leverage ratio exposures - using a transitional definition of Tier 1 capital,{}
+debt_securities,2220602,NPE,Gross carrying amount on Debt securities (including at amortised cost  and fair value),{}
+loans_customers_gross,2220605,NPE,Gross carrying amount on Loans and advances (including at amortised cost  and fair value) - by exposure,"{""Exposure"": ""102""}"
+loans_customers_gross,2220605,NPE,Gross carrying amount on Loans and advances (including at amortised cost  and fair value) - by exposure,"{""Exposure"": ""202""}"
+loans_customers_gross,2220605,NPE,Gross carrying amount on Loans and advances (including at amortised cost  and fair value) - by exposure,"{""Exposure"": ""301""}"
+loans_customers_gross,2220605,NPE,Gross carrying amount on Loans and advances (including at amortised cost  and fair value) - by exposure,"{""Exposure"": ""401""}"
+loans_customers_allowance,2220615,NPE,"Accumulated impairment, accumulated changes in fair value due to credit risk and provisions on Loans and advances (including at amortised cost  and fair value) - by exposure","{""Exposure"": ""102"", ""Perf_Status"": ""1""}"
+loans_customers_allowance,2220615,NPE,"Accumulated impairment, accumulated changes in fair value due to credit risk and provisions on Loans and advances (including at amortised cost  and fair value) - by exposure","{""Exposure"": ""102"", ""Perf_Status"": ""2""}"
+loans_customers_allowance,2220615,NPE,"Accumulated impairment, accumulated changes in fair value due to credit risk and provisions on Loans and advances (including at amortised cost  and fair value) - by exposure","{""Exposure"": ""202"", ""Perf_Status"": ""1""}"
+loans_customers_allowance,2220615,NPE,"Accumulated impairment, accumulated changes in fair value due to credit risk and provisions on Loans and advances (including at amortised cost  and fair value) - by exposure","{""Exposure"": ""202"", ""Perf_Status"": ""2""}"
+loans_customers_allowance,2220615,NPE,"Accumulated impairment, accumulated changes in fair value due to credit risk and provisions on Loans and advances (including at amortised cost  and fair value) - by exposure","{""Exposure"": ""301"", ""Perf_Status"": ""1""}"
+loans_customers_allowance,2220615,NPE,"Accumulated impairment, accumulated changes in fair value due to credit risk and provisions on Loans and advances (including at amortised cost  and fair value) - by exposure","{""Exposure"": ""301"", ""Perf_Status"": ""2""}"
+loans_customers_allowance,2220615,NPE,"Accumulated impairment, accumulated changes in fair value due to credit risk and provisions on Loans and advances (including at amortised cost  and fair value) - by exposure","{""Exposure"": ""401"", ""Perf_Status"": ""1""}"
+loans_customers_allowance,2220615,NPE,"Accumulated impairment, accumulated changes in fair value due to credit risk and provisions on Loans and advances (including at amortised cost  and fair value) - by exposure","{""Exposure"": ""401"", ""Perf_Status"": ""2""}"
+deposits_customers,2221215,Liabilities,Financial liabilities -  by instrument and by counterparty sector,"{""Exposure"": ""102"", ""Financial_instruments"": ""30""}"
+deposits_customers,2221215,Liabilities,Financial liabilities -  by instrument and by counterparty sector,"{""Exposure"": ""202"", ""Financial_instruments"": ""30""}"
+deposits_customers,2221215,Liabilities,Financial liabilities -  by instrument and by counterparty sector,"{""Exposure"": ""301"", ""Financial_instruments"": ""30""}"
+deposits_customers,2221215,Liabilities,Financial liabilities -  by instrument and by counterparty sector,"{""Exposure"": ""401"", ""Financial_instruments"": ""30""}"

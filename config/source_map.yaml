@@ -8,6 +8,11 @@
 # OPEN-04 decided (b): EU bridge cet1, tier1, rwa, leverage_exposure are p3; at1_instruments,
 # intangibles_deduction, lcr and nsfr are report; every UK field is report.
 # OPEN-05 decided (a): lcr and nsfr have no family for EU banks to 2025-06-30 (blank, missing_input).
+# OPEN-24 decided (a): minority_interests is report family at every date (instruction 01b).
+# bank_groups: uk lists the UK banks; every other universe bank is eu.
+
+bank_groups:
+  uk: [LLOY, NWG, BARC, HSBA, SANUK]
 
 rules:
   standard: &standard          # P&L and balance sheet fields
@@ -51,7 +56,7 @@ fields:
   total_assets: *standard
   total_liabilities: *standard
   total_equity: *standard
-  minority_interests: *standard
+  minority_interests: *report_all   # OPEN-24 (a): report family at every EU date, entered in Section 3
   cash_cb: *standard
   debt_securities: *standard
   loans_all: *standard

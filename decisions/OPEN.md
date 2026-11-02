@@ -164,6 +164,8 @@ Raised in session 0 (step 0.0). Section 3.1 gives the column order without `lei`
 
 ## OPEN-17: Deutsche Bank has no unique name match in the 2025 release
 
+**DECIDED (see decisions/section_1_review.md):** option (a).
+
 Raised in session 1 (step 1.2). "Deutsche Bank" normalises to `deutsche` ("bank" is a listed suffix). No 2025 EU name normalises to exactly `deutsche`, and `deutsche` is contained, as whole words, in 5:
 
 | EBA name (2025 TR_Metadata) | LEI |
@@ -181,6 +183,8 @@ DBK's `lei` is left blank, so DBK has no EBA rows until this is decided.
 
 ## OPEN-18: `cet1` has 2 candidate lines in the EBA Capital template
 
+**DECIDED (see decisions/section_1_review.md):** option (a).
+
 Raised in session 1 (step 1.2). Both exist in every release (2025 item codes; earlier releases use the same last 5 digits):
 
 - 2520102 `COMMON EQUITY TIER 1 CAPITAL (net of deductions and after applying transitional adjustments)`
@@ -192,6 +196,8 @@ Raised in session 1 (step 1.2). Both exist in every release (2025 item codes; ea
 - (b) Fully loaded, 2520143.
 
 ## OPEN-19: `cet1_ratio_reported` has 2 candidate lines (3 in 2025)
+
+**DECIDED (see decisions/section_1_review.md):** option (a).
 
 Raised in session 1 (step 1.2), for check 4. Capital template:
 
@@ -206,6 +212,8 @@ Check 4 compares it with cet1 / rwa, so the choice should follow OPEN-18.
 
 ## OPEN-20: `leverage_exposure` has 2 candidate lines in the EBA Leverage template
 
+**DECIDED (see decisions/section_1_review.md):** option (a).
+
 Raised in session 1 (step 1.2). Both exist in every release:
 
 - 2520903 `Total leverage ratio exposures - using a transitional definition of Tier 1 capital`
@@ -217,6 +225,8 @@ The leverage_ratio KPI (tier1 / leverage_exposure) is blank until this is decide
 - (b) Fully phased-in, 2520904.
 
 ## OPEN-21: `debt_securities` has no single carrying-amount line for all accounting portfolios
+
+**DECIDED (see decisions/section_1_review.md):** option (a).
 
 Raised in session 1 (step 1.2). Section 5.1 defines debt_securities as "all accounting portfolios, carrying amount". No EBA line carries that. The nearest lines are:
 
@@ -230,6 +240,8 @@ iea = cash_cb + debt_securities + loans_all, so nim is blank until this is decid
 
 ## OPEN-22: `loans_customers_gross` and `loans_customers_allowance` need a sum over dimension rows
 
+**DECIDED (see decisions/section_1_review.md):** option (a).
+
 Raised in session 1 (step 1.2). No Exposure code means "other than central banks and credit institutions". In the NPE template:
 
 - gross: 2520605 `... - by exposure` has 1 row per Exposure (101 central banks, 102 general governments, 201 credit institutions, 202 other financial corporations, 301 non-financial corporations, 401 households), with no Exposure 0 total;
@@ -242,6 +254,8 @@ The map format (field, item, template, label, dim_filter) holds one row per fiel
 
 ## OPEN-23: `deposits_customers` needs a sum over 4 counterparty sectors
 
+**DECIDED (see decisions/section_1_review.md):** option (a).
+
 Raised in session 1 (step 1.2). Liabilities 2521215 `Financial liabilities -  by instrument and by counterparty sector`, Financial_instruments 30 (Deposits), has 1 row per Exposure: 101, 102, 201, 202, 301 and 401. Section 5.1 wants 102 + 202 + 301 + 401. loan_deposit is blank until this is decided.
 
 - (a) As OPEN-22 (a): several map rows summed, 2521215 at Financial_instruments 30 × Exposure 102, 202, 301 and 401.
@@ -249,12 +263,16 @@ Raised in session 1 (step 1.2). Liabilities 2521215 `Financial liabilities -  by
 
 ## OPEN-24: `minority_interests` has no EBA line
 
+**DECIDED (see decisions/section_1_review.md):** option (a).
+
 Raised in session 1 (step 1.2). No Liabilities, Assets or Capital line in any release is non-controlling interests in equity. `Minority interest given recognition in CET1 capital` (Capital 2520108) is a regulatory amount, not the accounting one. tangible_equity, and so rote (Section 3), need it.
 
 - (a) minority_interests comes from the `report` family at every EU date (annual and half year reports, entered in Section 3 alongside at1_coupons and shares_out). The source map changes accordingly.
 - (b) Use Capital 2520108 `Minority interest given recognition in CET1 capital` as a stand-in, stated as a caveat.
 
 ## OPEN-25: the EBA unit is not in SDD.xlsx, and EBA amounts are in EUR for every bank
+
+**DECIDED (see decisions/section_1_review.md):** option (a), without downloading the mapped templates.
 
 Raised in session 1 (step 1.3). This is the stop reason for session 1. Instruction 01 step 1.3 says to "read the unit from `SDD.xlsx`" for `test_load_eba_synthetic`. No `SDD.xlsx` (2021 to 2025) and no `TR_Metadata.xlsx` states a unit. Every cell, cell comment and sheet was searched, and the 2024 CSV guide PDF does not state one either.
 

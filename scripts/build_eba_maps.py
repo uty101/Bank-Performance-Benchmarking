@@ -33,11 +33,13 @@ EU_COUNTRIES = {"FI", "NO", "DK", "SE", "NL", "BE", "FR", "DE", "ES", "IT"}
 
 SUFFIXES = ["ag", "sa", "s a", "spa", "s p a", "plc", "ab", "publ", "nv", "n v", "asa", "oyj", "a s", "u a",
             "se", "group", "groep", "gruppo", "banca", "banco", "bank"]
-ALIASES = {"BBVA": "Banco Bilbao Vizcaya Argentaria"}
+ALIASES = {"BBVA": "Banco Bilbao Vizcaya Argentaria",
+           "DBK": "Deutsche Bank Aktiengesellschaft"}  # OPEN-17 (a), instruction 01b
 
-# field -> (template, label as printed in the 2025 SDD, {dimension: dimension value label})
-# Every dimension column not named is 0, "Total / No breakdown" (TR_Metadata.xlsx, every dimension sheet).
-SPEC: dict[str, tuple[str, str, dict[str, str]]] = {
+# field -> (template, label as printed in the 2025 SDD, {dimension: dimension value label}), or a list of such
+# rows when the field is a sum (instruction 01b B.1 item 2). Every dimension column of the source CSV that a
+# row does not name is 0, "Total / No breakdown" (instruction 01b B.1 item 1).
+SPEC: dict[str, tuple[str, str, dict[str, str]] | list[tuple[str, str, dict[str, str]]]] = {
     "interest_income": ("P&L", "Interest income", {}),
     "interest_expense": ("P&L", "Interest expenses", {}),
     "dividend_income": ("P&L", "Dividend income", {}),
@@ -87,40 +89,33 @@ SPEC: dict[str, tuple[str, str, dict[str, str]]] = {
 INCOME_COMPONENTS_OTHER = ["gains_derecognition_not_fvtpl", "gains_held_for_trading", "gains_designated_fvtpl",
                            "gains_hedge_accounting", "exchange_differences", "other_operating_net"]
 
-# Fields of [5.1] with more than 1 fit, or none, in their named template: listed in decisions/OPEN.md.
-OPEN_CANDIDATES: dict[str, list[tuple[str, str, dict[str, str]]]] = {
-    "cet1": [("Capital", ("COMMON EQUITY TIER 1 CAPITAL (net of deductions and after applying transitional "
+# Decided in instruction 01b Section B (OPEN-18 to OPEN-23).
+# Exposure sub-codes 311 (NFC - SME), 312 (NFC - collateralised by commercial immovable property),
+# 431 (households - residential immovable property) and 432 (households - credit for consumption) sit inside
+# 301 and 401 and are never summed (instruction 01b B item 6).
+CUSTOMER_SECTORS = ("General governments", "Financial corporations other than credit institutions",
+                    "Non-financial corporations", "Households")
+SPEC |= {
+    "cet1": ("Capital", ("COMMON EQUITY TIER 1 CAPITAL (net of deductions and after applying transitional "
                          "adjustments)"), {}),
-             ("Capital", "COMMON EQUITY TIER 1 CAPITAL (fully loaded)", {})],
-    "cet1_ratio_reported": [("Capital", "COMMON EQUITY TIER 1 CAPITAL RATIO (transitional period)", {}),
-                            ("Capital", "COMMON EQUITY TIER 1 CAPITAL RATIO (fully loaded)", {}),
-                            ("Capital", "COMMON EQUITY TIER 1 CAPITAL RATIO (transitional period - pre floor)", {})],
-    "leverage_exposure": [("Leverage", ("Total leverage ratio exposures - using a transitional definition of Tier 1 "
+    "cet1_ratio_reported": ("Capital", "COMMON EQUITY TIER 1 CAPITAL RATIO (transitional period)", {}),
+    "leverage_exposure": ("Leverage", ("Total leverage ratio exposures - using a transitional definition of Tier 1 "
                                        "capital"), {}),
-                          ("Leverage", ("Total leverage ratio exposures - using a fully phased-in definition of Tier 1 "
-                                       "capital"), {})],
-    "debt_securities": [("NPE", ("Gross carrying amount on Debt securities (including at amortised cost  and fair "
-                                "value)"), {}),
-                        ("Assets", ("Gross carrying amount: Financial assets at fair value through other comprehensive "
-                                   "income, Debt securities"), {}),
-                        ("Assets", "Gross carrying amount: Financial assets at amortised cost, Debt securities", {})],
+    "debt_securities": ("NPE", "Gross carrying amount on Debt securities (including at amortised cost  and fair value)",
+                        {}),
     "loans_customers_gross": [("NPE", ("Gross carrying amount on Loans and advances (including at amortised cost  and "
-                                      "fair value) - by exposure"), {"Exposure": e})
-                              for e in ("General governments", "Financial corporations other than credit institutions",
-                                        "Non-financial corporations", "Households")],
+                                       "fair value) - by exposure"), {"Exposure": e})
+                              for e in CUSTOMER_SECTORS],
     "loans_customers_allowance": [("NPE", ("Accumulated impairment, accumulated changes in fair value due to credit "
-                                          "risk and provisions on Loans and advances (including at amortised cost  "
-                                          "and fair value) - by exposure"), {"Exposure": e, "Perf_Status": p})
-                                  for e in ("General governments", ("Financial corporations other than credit "
-                                            "institutions"), "Non-financial corporations", "Households")
-                                  for p in ("Performing", "Non Performing")],
+                                           "risk and provisions on Loans and advances (including at amortised cost  "
+                                           "and fair value) - by exposure"), {"Exposure": e, "Perf_Status": p})
+                                  for e in CUSTOMER_SECTORS for p in ("Performing", "Non Performing")],
     "deposits_customers": [("Liabilities", "Financial liabilities -  by instrument and by counterparty sector",
                             {"Financial_instruments": "Deposits", "Exposure": e})
-                           for e in ("General governments", "Financial corporations other than credit institutions",
-                                     "Non-financial corporations", "Households")],
-    "minority_interests": [],
+                           for e in CUSTOMER_SECTORS],
 }
-NOT_EBA = {"lcr": "OPEN-05 (a): no family for EU banks to 2025-06-30",
+NOT_EBA = {"minority_interests": "OPEN-24 (a): report family at every EU date (Section 3)",
+           "lcr": "OPEN-05 (a): no family for EU banks to 2025-06-30",
            "nsfr": "OPEN-05 (a): no family for EU banks to 2025-06-30",
            "fte": "report family only", "customers": "report family only",
            "at1_coupons": "report family only", "shares_out": "report family only"}
@@ -243,29 +238,27 @@ def resolve(year: int, sdd: pd.DataFrame, dims: dict, field: str, spec, sdd25: p
              "dim_filter": json.dumps(dim_codes, sort_keys=True)}], note
 
 
-def build_maps() -> tuple[dict[int, pd.DataFrame], pd.DataFrame, pd.DataFrame]:
+def build_maps() -> tuple[dict[int, pd.DataFrame], pd.DataFrame]:
     sdd25 = read_sdd(2025)
-    maps, notes, cand_rows = {}, [], []
+    maps, notes = {}, []
     for y in RELEASES:
         sdd, dims = read_sdd(y), read_dims(y)
         rows = []
-        for field, spec in SPEC.items():
-            r, note = resolve(y, sdd, dims, field, spec, sdd25)
-            if not r:
-                notes.append({"release": y, "field": field, "issue": note})
-            elif note == "crosswalk":
-                notes.append({"release": y, "field": field,
-                              "issue": f"label differs: 2025 {spec[1]!r} | {y} {r[0]['label']!r}"})
-            rows += r
+        for field, specs in SPEC.items():
+            field_rows = []
+            for spec in specs if isinstance(specs, list) else [specs]:
+                r, note = resolve(y, sdd, dims, field, spec, sdd25)
+                if not r:
+                    notes.append({"release": y, "field": field, "issue": note})
+                    field_rows = []
+                    break
+                if note == "crosswalk":
+                    notes.append({"release": y, "field": field,
+                                  "issue": f"label differs: 2025 {spec[1]!r} | {y} {r[0]['label']!r}"})
+                field_rows += r
+            rows += field_rows
         maps[y] = pd.DataFrame(rows, columns=["field", "item", "template", "label", "dim_filter"])
-        for field, cands in OPEN_CANDIDATES.items():
-            for c in cands:
-                r, note = resolve(y, sdd, dims, field, c, sdd25)
-                cand_rows.append({"release": y, "field": field, "item": r[0]["item"] if r else "",
-                                  "template": c[0], "label": r[0]["label"] if r else c[1],
-                                  "dim_filter": r[0]["dim_filter"] if r else json.dumps(c[2]),
-                                  "found": "yes" if r else note})
-    return maps, pd.DataFrame(notes), pd.DataFrame(cand_rows)
+    return maps, pd.DataFrame(notes)
 
 
 def write_csv(df: pd.DataFrame, path: Path) -> None:
@@ -286,15 +279,13 @@ def main() -> int:
     universe["lei"] = [lei.get(b, v) for b, v in zip(universe["bank_id"], universe["lei"], strict=True)]
     write_csv(universe, upath)
 
-    maps, notes, cands = build_maps()
+    maps, notes = build_maps()
     for y, df in maps.items():
         write_csv(df, ROOT / "config" / f"eba_map_{y}.csv")
         print(f"\n## config/eba_map_{y}.csv ({len(df)} rows)\n")
         print(df.to_string(index=False))
     print("\n## Map notes (label differences and unmapped fields)\n")
     print(notes.to_string(index=False) if len(notes) else "(none)")
-    print("\n## OPEN fields: every candidate item per release\n")
-    print(cands.to_string(index=False))
     print("\n## Fields of [5.1] not taken from EBA\n")
     print(pd.Series(NOT_EBA).to_string())
     return 0
