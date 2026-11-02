@@ -1,0 +1,291 @@
+"""Derived quantities, rolling 12 months, averages and KPIs (kickoff Sections 5.1, 5.2; Conventions 4.3, 4.4, 4.8).
+
+Code holds decimals (Convention 4.7): a KPI value is numerator / denominator, and `unit` says how it is shown.
+A blank value always carries a status: `missing_input:<field>`, `mixed_family`, `zero_denominator` or
+`pending_section_3`.
+"""
+
+from __future__ import annotations
+
+import re
+from functools import cache
+
+import numpy as np
+import pandas as pd
+import yaml
+
+from bpb import fx
+from bpb.ingest import ROOT, field_meta
+
+KPI_COLUMNS = ["bank_id", "date", "kpi", "basis", "value", "numerator", "denominator", "unit", "family",
+               "inputs_lineage", "status"]
+FIRST_KPI_DATE = "2021-12-31"  # kickoff Section 3.3 and Correction 3: the first KPI year is FY2021
+PENDING_SECTION_3 = {"rote", "income_fte", "cost_fte", "cost_customer"}  # instruction 01 step 1.5
+FAMILY_ORDER = ["eba", "p3", "report"]  # a KPI at 2025-06-30 stays eba (OPEN-03); one family per value
+OK = "ok"
+
+
+@cache
+def derived_formulas() -> dict[str, list[tuple[float, str]]]:
+    """fields.yaml `derived` as {name: [(sign, input), ...]}, in file order."""
+    with open(ROOT / "config" / "fields.yaml", encoding="utf-8") as f:
+        raw = yaml.safe_load(f)["derived"]
+    out = {}
+    for name, expr in raw.items():
+        terms = re.findall(r"([+-]?)\s*(\w+)", expr)
+        out[name] = [(-1.0 if s == "-" else 1.0, fld) for s, fld in terms]
+    return out
+
+
+@cache
+def quantity_period() -> dict[str, str]:
+    """pl or bs for every base field and derived quantity (a derived quantity is pl if any input is pl)."""
+    period = {f: m["period"] for f, m in field_meta().items()}
+    for name, terms in derived_formulas().items():
+        period[name] = "pl" if any(period[f] == "pl" for _, f in terms) else "bs"
+    return period
+
+
+def _missing(field: str) -> str:
+    return f"missing_input:{field}"
+
+
+def _join(ids) -> str:
+    out = set()
+    for s in ids:
+        if isinstance(s, str) and s:
+            out.update(s.split(";"))
+    return ";".join(sorted(out))
+
+
+def derived(facts: pd.DataFrame, rates: pd.DataFrame) -> pd.DataFrame:
+    """The derived quantities of Section 5.1 at every bank, date and family where any input exists.
+
+    Returns FACTS-like rows (bank_id, ref_date, field, value, ccy, period_months, family, lineage_id, status), where
+    lineage_id lists the inputs' lineage IDs. Inputs come from one family where one family holds them all.
+    Otherwise inputs are taken across families in the order eba, p3, report, any non-EUR value is converted to EUR
+    at the Convention 4.6 rate (instruction 01b B.2) and the status gains `fx_combined`. A missing input gives a
+    blank value with `missing_input:<field>`, naming the base field that is missing.
+    """
+    base = facts[["bank_id", "ref_date", "field", "value", "ccy", "period_months", "family", "lineage_id",
+                  "status"]].copy()
+    table = base.copy()
+    rows_out = []
+    for name, terms in derived_formulas().items():
+        inputs = [f for _, f in terms]
+        sub = table[table["field"].isin(inputs)]
+        new = []
+        for (bank, ref_date), g in sub.groupby(["bank_id", "ref_date"], sort=True):
+            by_fam = {fam: gg.set_index("field") for fam, gg in g.groupby("family")}
+            done = False
+            for fam in sorted(by_fam, key=lambda x: FAMILY_ORDER.index(x) if x in FAMILY_ORDER else 99):
+                gg = by_fam[fam]
+                if all(f in gg.index for f in inputs):
+                    new.append(_combine(name, bank, ref_date, terms, [gg.loc[f] for f in inputs], fam, rates))
+                    done = True
+            if done:
+                continue
+            picks = []
+            for f in inputs:
+                cands = [by_fam[fam].loc[f] for fam in FAMILY_ORDER if fam in by_fam and f in by_fam[fam].index]
+                picks.append(cands[0] if cands else None)
+            if any(p is None for p in picks):
+                miss = inputs[[p is None for p in picks].index(True)]
+                new.append({"bank_id": bank, "ref_date": ref_date, "field": name, "value": np.nan, "ccy": "",
+                            "period_months": pd.NA, "family": "+".join(sorted(by_fam)),
+                            "lineage_id": _join(p["lineage_id"] for p in picks if p is not None),
+                            "status": _missing(miss)})
+            else:
+                fam = "+".join(sorted({p["family"] for p in picks}))
+                new.append(_combine(name, bank, ref_date, terms, picks, fam, rates))
+        new_df = pd.DataFrame(new, columns=base.columns)
+        rows_out.append(new_df)
+        table = pd.concat([table, new_df], ignore_index=True)
+    out = pd.concat(rows_out, ignore_index=True)
+    return out.sort_values(["bank_id", "ref_date", "field", "family"]).reset_index(drop=True)
+
+
+def _combine(name, bank, ref_date, terms, rows, family, rates) -> dict:
+    lineage = _join(r["lineage_id"] for r in rows)
+    bad = [r for r in rows if r["status"] != OK and not str(r["status"]).startswith("fx_combined")]
+    pm = next((r["period_months"] for r in rows if pd.notna(r["period_months"])), pd.NA)
+    if bad:
+        return {"bank_id": bank, "ref_date": ref_date, "field": name, "value": np.nan, "ccy": "",
+                "period_months": pm, "family": family, "lineage_id": lineage, "status": bad[0]["status"]}
+    ccys = {r["ccy"] for r in rows}
+    status, ccy = OK, next(iter(ccys))
+    values = [float(r["value"]) for r in rows]
+    if len(ccys) > 1:  # instruction 01b B.2: convert the non-EUR values to EUR first
+        status, ccy = "fx_combined", "EUR"
+        for i, r in enumerate(rows):
+            if r["ccy"] != "EUR":
+                if quantity_period()[r.name] == "pl":
+                    start = fx.period_start(ref_date, rolling=False)
+                    values[i] = fx.to_eur(values[i], r["ccy"], ref_date, "pl", rates, start)
+                else:
+                    values[i] = fx.to_eur(values[i], r["ccy"], ref_date, "bs", rates, None)
+    value = sum(s * v for (s, _), v in zip(terms, values, strict=True))
+    return {"bank_id": bank, "ref_date": ref_date, "field": name, "value": value, "ccy": ccy, "period_months": pm,
+            "family": family, "lineage_id": lineage, "status": status}
+
+
+def _pieces(df: pd.DataFrame) -> dict:
+    """{(bank, field, ref_date): {family: row}} from a FACTS-like frame."""
+    out: dict = {}
+    for r in df.itertuples(index=False):
+        out.setdefault((r.bank_id, r.field, r.ref_date), {})[r.family] = r
+    return out
+
+
+def _piece_status(r) -> str:
+    st = getattr(r, "status", OK)
+    return OK if st in (OK, "fx_combined") or pd.isna(st) else st
+
+
+def _span(index, bank: str, field: str, dates: list[str]):
+    """Rows for the given dates from one family: (family, rows) or the status explaining the blank."""
+    got = [index.get((bank, field, d), {}) for d in dates]
+    for i, g in enumerate(got):
+        if not g:
+            return None, _missing(field)
+        bad = [_piece_status(r) for r in g.values() if _piece_status(r) != OK]
+        if len(bad) == len(g):
+            return None, bad[0]
+    common = set.intersection(*(set(g) for g in got))
+    common = [f for f in FAMILY_ORDER if f in common] + sorted(f for f in common if f not in FAMILY_ORDER)
+    for fam in common:
+        rows = [g[fam] for g in got]
+        if all(_piece_status(r) == OK for r in rows):
+            return fam, rows
+    return None, "mixed_family"
+
+
+def _flat(fam_rows, op) -> dict:
+    fam, rows = fam_rows
+    if fam is None:
+        return {"value": np.nan, "family": "", "lineage": "", "status": rows}
+    return {"value": op([float(r.value) for r in rows]), "family": fam,
+            "lineage": _join(r.lineage_id for r in rows), "status": OK}
+
+
+def rolling_12m(pl: pd.DataFrame) -> pd.DataFrame:
+    """R(y) = H1(y) + FY(y - 1) - H1(y - 1) at 30 Jun of every year y with any of its 3 pieces, all 3 from one
+    family (Convention 4.3). Columns: bank_id, date, field, value, family, inputs_lineage, status."""
+    index = _pieces(pl)
+    keys = {(b, f, int(d[:4]) + (0 if d[5:] == "06-30" else 1)) for b, f, d in index if d[5:] in ("06-30", "12-31")}
+    rows = []
+    for bank, field, y in sorted(keys):
+        dates = [f"{y}-06-30", f"{y - 1}-12-31", f"{y - 1}-06-30"]
+        r = _flat(_span(index, bank, field, dates), lambda v: v[0] + v[1] - v[2])
+        rows.append({"bank_id": bank, "date": dates[0], "field": field, "value": r["value"], "family": r["family"],
+                     "inputs_lineage": r["lineage"], "status": r["status"]})
+    return pd.DataFrame(rows, columns=["bank_id", "date", "field", "value", "family", "inputs_lineage", "status"])
+
+
+def averages(bs: pd.DataFrame) -> pd.DataFrame:
+    """(balance at d one year earlier + balance at d) / 2 at every 31 Dec and 30 Jun d with any end present, both
+    ends from one family (Convention 4.4). Columns as rolling_12m."""
+    index = _pieces(bs)
+    keys = set()
+    for b, f, d in index:
+        if d[5:] in ("06-30", "12-31"):
+            keys.add((b, f, d))
+            keys.add((b, f, f"{int(d[:4]) + 1}{d[4:]}"))
+    rows = []
+    for bank, field, d in sorted(keys):
+        dates = [f"{int(d[:4]) - 1}{d[4:]}", d]
+        r = _flat(_span(index, bank, field, dates), lambda v: (v[0] + v[1]) / 2)
+        rows.append({"bank_id": bank, "date": d, "field": field, "value": r["value"], "family": r["family"],
+                     "inputs_lineage": r["lineage"], "status": r["status"]})
+    return pd.DataFrame(rows, columns=["bank_id", "date", "field", "value", "family", "inputs_lineage", "status"])
+
+
+def kpi_dates(facts: pd.DataFrame) -> list[str]:
+    last = facts["ref_date"].max()
+    return [d.strftime("%Y-%m-%d") for d in pd.date_range(FIRST_KPI_DATE, last, freq="QE")
+            if d.month in (6, 12)]
+
+
+def compute_kpis(facts: pd.DataFrame, kpis: dict, one_offs: pd.DataFrame, rates: pd.DataFrame) -> pd.DataFrame:
+    """Every KPI of config/kpis.yaml for every bank in `facts` at every KPI date, on both bases (Section 5.2).
+
+    P&L quantities are the FY value at 31 Dec and the rolling 12 months at 30 Jun (Convention 4.3); averaged
+    denominators follow Convention 4.4. Numerator and denominator come from one family, eba first. The underlying
+    basis equals the reported basis while `one_offs` is empty (Convention 4.8; one offs arrive in Section 3).
+    """
+    if len(one_offs):
+        raise NotImplementedError("underlying KPIs from one offs are built in step 3.3")
+    period = quantity_period()
+    q = pd.concat([facts[["bank_id", "ref_date", "field", "value", "family", "lineage_id", "status"]],
+                   derived(facts, rates)[["bank_id", "ref_date", "field", "value", "family", "lineage_id",
+                                          "status"]]], ignore_index=True)
+    pl = q[q["field"].map(period) == "pl"]
+    bs = q[q["field"].map(period) == "bs"]
+    roll = rolling_12m(pl).rename(columns={"inputs_lineage": "lineage_id"})
+    avg = averages(bs).rename(columns={"inputs_lineage": "lineage_id"})
+    point = _pieces(q)
+    roll_i = _pieces(roll.rename(columns={"date": "ref_date"}))
+    avg_i = _pieces(avg.rename(columns={"date": "ref_date"}))
+
+    def quantity(bank, field, d, average):
+        if field == "1":
+            return {fam: None for fam in FAMILY_ORDER}, None
+        if period.get(field) == "pl":
+            src = point if d[5:] == "12-31" else roll_i
+        else:
+            src = avg_i if average else point
+        return src.get((bank, field, d), {}), field
+
+    rows = []
+    banks = sorted(facts["bank_id"].unique())
+    for bank in banks:
+        for d in kpi_dates(facts):
+            for k in kpis["kpis"]:
+                rows.append(_one_kpi(bank, d, k, quantity))
+    rep = pd.DataFrame(rows, columns=KPI_COLUMNS)
+    und = rep.assign(basis="underlying")
+    out = pd.concat([rep, und], ignore_index=True)
+    order = {k["kpi"]: i for i, k in enumerate(kpis["kpis"])}
+    out["_k"] = out["kpi"].map(order)
+    out = out.sort_values(["bank_id", "date", "_k", "basis"], kind="stable").drop(columns="_k")
+    return out.reset_index(drop=True)
+
+
+def _one_kpi(bank, d, k, quantity) -> dict:
+    row = {"bank_id": bank, "date": d, "kpi": k["kpi"], "basis": "reported", "value": np.nan, "numerator": np.nan,
+           "denominator": np.nan, "unit": k["unit"], "family": "", "inputs_lineage": "", "status": ""}
+    if k["kpi"] in PENDING_SECTION_3:
+        row["status"] = "pending_section_3"
+        return row
+    num, nf = quantity(bank, k["numerator"], d, False)
+    den, df_ = quantity(bank, str(k["denominator"]), d, bool(k["average"]))
+    if not num:
+        row["status"] = _missing(nf)
+        return row
+    if df_ is not None and not den:
+        row["status"] = _missing(df_)
+        return row
+    for part in (num, den if df_ is not None else {}):  # only blank pieces: their status explains the blank
+        if part and all(_piece_status(p) != OK for p in part.values()):
+            row["status"] = _piece_status(next(iter(part.values())))
+            return row
+    fams =[f for f in FAMILY_ORDER if f in num and (df_ is None or f in den)]
+    if not fams:
+        row["status"] = "mixed_family"
+        return row
+    fam = fams[0]
+    n = num[fam]
+    dn = den[fam] if df_ is not None else None
+    for part in (n, dn):
+        if part is not None and _piece_status(part) != OK:
+            row["status"] = _piece_status(part)
+            return row
+    nv = float(n.value)
+    dv = 1.0 if dn is None else float(dn.value)
+    row.update(numerator=nv, denominator=dv, family=fam,
+               inputs_lineage=_join([n.lineage_id] + ([dn.lineage_id] if dn is not None else [])))
+    if dv == 0:
+        row["status"] = "zero_denominator"
+        return row
+    row.update(value=nv / dv, status=OK)
+    return row
