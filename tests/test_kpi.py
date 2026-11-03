@@ -77,3 +77,28 @@ def test_rote_hand():
     kpi = compute_kpis(facts, _kpis(), pd.DataFrame(), pd.DataFrame(columns=["date", "ccy", "per_eur"]))
     rote = kpi[(kpi["kpi"] == "rote") & (kpi["date"] == "2025-12-31") & (kpi["basis"] == "reported")].iloc[0]
     assert abs(rote["value"] - 0.10) < 1e-12 and rote["denominator"] == 1000.0 and rote["status"] == "ok"
+
+
+def test_at1_liability():
+    """Instruction 03b step 3.5: AT1 classified as a liability is neither deducted from tangible equity nor its coupon
+    from profit."""
+    base = {"lei": "L", "ccy": "GBP", "unit_scale": 1.0, "family": "report", "locator": "x@1", "status": "ok"}
+    rates = pd.DataFrame(columns=["date", "ccy", "per_eur"])
+
+    def run(flag):
+        rows = [("2025-12-31", "profit_owners", 100.0, 12), ("2025-12-31", "at1_coupons", 10.0, 12)]
+        for d in ("2024-12-31", "2025-12-31"):
+            rows += [(d, "at1_in_equity", flag, None), (d, "at1_instruments", 50.0, None),
+                     (d, "total_equity", 1050.0, None), (d, "intangibles_deduction", 0.0, None),
+                     (d, "minority_interests", 0.0, None)]
+        facts = pd.DataFrame([{**base, "bank_id": "LLOY", "ref_date": d, "field": f, "value": v, "period_months": pm,
+                               "lineage_id": f"{f}{d}", "ccy": "" if f == "at1_in_equity" else "GBP"}
+                              for d, f, v, pm in rows])[FACTS_COLUMNS]
+        kpi = compute_kpis(facts, _kpis(), pd.DataFrame(), rates)
+        return kpi[(kpi["kpi"] == "rote") & (kpi["date"] == "2025-12-31") & (kpi["basis"] == "reported")].iloc[0]
+
+    liab = run(0.0)
+    assert liab["denominator"] == 1050.0 and abs(liab["value"] - 100.0 / 1050.0) < 1e-12
+    assert "at1_liability" in liab["status"]
+    eq = run(1.0)
+    assert eq["denominator"] == 1000.0 and abs(eq["value"] - (100.0 - 10.0) / 1000.0) < 1e-12
