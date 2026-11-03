@@ -343,3 +343,23 @@ Raised in session 3b (step 3.5). SEB, Danske (all dates), Bankinter, Nordea (fro
 
 - (a) minority_interests is 0 where the balance sheet prints no non-controlling interests line or a dash, status `no_nci_line`, cited to the equity section of the balance sheet.
 - (b) Leave it missing, as now.
+
+## OPEN-34: no AT1 coupon charged to equity, and no figure printed
+
+Raised in session 3c (step 3.7). Instruction 03c B.1 defines at1_coupons as the coupons charged directly to equity or reserves in the period, and sets it to 0 only where at1_coupon_in_pl is 1. Two cases have no coupon to charge anywhere, so neither a printed amount nor a flag exists, and at1_coupons, profit_to_ordinary and rote are blank:
+- **BMPS, every date.** It holds no AT1 at all. Each annual report says "the Group held no equity instruments", Tier 1 equals CET1 in 2020 to 2024, and the subordinated liabilities note lists only Tier 2 bonds. The EUR 95m of AT1 capital from 2025 is qualifying Tier 1 of Mediobanca's minorities (CC1 row 34; row 30 is a dash), with no coupon printed. In 03b, BMPS rote was filled under the at1_liability rule (16.42% at 2025-12-31).
+- **NDA at 2026-06-30.** Its last equity AT1 was redeemed in 2025. The flag copied from the 2025 annual report is 0, because the 2025 coupon of EUR 26m went to equity. The H1 2026 report shows no coupon to equity: the cash flow line "Paid interest on Additional Tier 1 capital" is a dash for H1 2026.
+
+- (a) at1_coupons is 0 with a status `no_at1_coupon` where the bank's notes show no AT1 coupon charged to equity in the period, cited to the line that shows it (BMPS: "held no equity instruments"; NDA: the dash in the H1 2026 cash flow statement).
+- (b) Leave at1_coupons missing, as now.
+
+## OPEN-35: comparative amounts and dashed lines in the no_nci_line rule
+
+Raised in session 3c (step 3.7). Instruction 03c B.2 enters minority_interests 0 when (i) the balance sheet prints no NCI line and (ii) the SCE shows no NCI column or one of only zeros or dashes, and leaves it missing "if either document shows any amount". The strict reading was applied, so these stay missing:
+- **SANUK** at 2023-06-30, 2023-12-31 and 2024-12-31: the SCE's own-period NCI column is all dashes, and only the 2022 comparative block shows amounts (235 opening, (235) disposal, (17) dividends).
+- **DANSKE** at 2023-06-30: there is no NCI or AT1 line on the balance sheet, and the H1 2023 column is a dash. The H1 2022 comparative block shows AT1 holders' amounts; Danske presents equity AT1 as its NCI.
+- **ABN** at 2020-12-31: there is no NCI line on the balance sheet, and the 2020 block and closing balance are blank. The 2019 comparative block shows 2 and -2.
+- **BKT** at every date: the balance sheet prints a "Minority interests [Non-controlling interests]" line holding only dashes, and the SCE NCI columns are all dashes.
+
+- (a) Read both conditions on the reference period only: comparative-period amounts do not count, and a printed line or column holding only dashes or zeros counts as no NCI. Enter these 0 with status `no_nci_line` (the BKT and ABN entries are already built, not merged).
+- (b) Keep the strict reading, as now.
