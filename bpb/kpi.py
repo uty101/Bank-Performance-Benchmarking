@@ -35,10 +35,14 @@ OK = "ok"
 # statuses that describe how a value was built but leave it usable (instruction 01b B.2; instruction 02 B.2)
 # instruction 02b: dep_in_admin (B.5), toi_summed (B.8), from_comparative (B.9); instruction 03 A.1 item 2:
 # p3_from_report. A status of several of these is joined with ";".
-# instruction 03b: at1_liability (B.2), at1_net_of_tax (B.3), headcount (B.4), no_nci_line (B.5)
+# instruction 03b: at1_liability (B.2), at1_net_of_tax (B.3), headcount (B.4), no_nci_line (B.5); instruction 03c:
+# coupon_in_pl (B.1), class_from_annual (B.4)
 USABLE = (OK, "fx_combined", "levies_in_admin", "dep_in_admin", "toi_summed", "from_comparative", "p3_from_report",
-          "at1_liability", "at1_net_of_tax", "headcount", "no_nci_line")
-AT1_LIABILITY = "at1_liability"
+          "at1_liability", "at1_net_of_tax", "headcount", "no_nci_line", "coupon_in_pl", "class_from_annual")
+# instruction 03c B.1: (flag field, flag value, field set to 0, status); where the bond sits and where its coupon is
+# charged are separate questions
+AT1_RULES = [("at1_in_equity", 0.0, "at1_instruments", "at1_liability"),
+             ("at1_coupon_in_pl", 1.0, "at1_coupons", "coupon_in_pl")]
 # fields a report income statement may fold into administrative expenses: opex takes them as 0 with a status
 IN_ADMIN = {"resolution_dgs_contrib": "levies_in_admin", "depreciation": "dep_in_admin"}
 
@@ -80,25 +84,23 @@ def _join(ids) -> str:
     return ";".join(sorted(out))
 
 
-def at1_liability_rule(facts: pd.DataFrame) -> pd.DataFrame:
-    """Instruction 03b B.2: where at1_in_equity is 0 at a bank and date, the AT1 coupons are already inside interest
-    expense and AT1 is not in total_equity, so at1_coupons and the at1_instruments term of tangible_equity are 0 there,
-    with status at1_liability. Every family's row of these 2 fields at that bank and date is set to 0; a field with no
-    row gets a report row. Where at1_in_equity is 1, or not entered, nothing changes."""
-    flag = facts[(facts["field"] == "at1_in_equity") & (facts["value"] == 0)]
-    if flag.empty:
-        return facts
+def at1_rules(facts: pd.DataFrame) -> pd.DataFrame:
+    """Instruction 03c B.1: where at1_in_equity is 0 at a bank and date, AT1 is not in total_equity, so the
+    at1_instruments term of tangible_equity is 0 there, status at1_liability; where at1_coupon_in_pl is 1, the coupons
+    are inside interest expense, so profit_owners is already net of them and at1_coupons is 0, status coupon_in_pl.
+    Every family's row of the field at that bank and date is set to 0; a field with no row gets a report row. Where a
+    flag has the other value, or is not entered, nothing changes."""
     out = facts.copy()
     new = []
     ccy_of = dict(zip(*(read_universe(ROOT)[c] for c in ("bank_id", "report_ccy")), strict=True))
-    for r in flag.itertuples(index=False):
-        for field in ("at1_coupons", "at1_instruments"):
+    for flag_field, flag_value, field, status in AT1_RULES:
+        for r in facts[(facts["field"] == flag_field) & (facts["value"] == flag_value)].itertuples(index=False):
             hit = (out["bank_id"] == r.bank_id) & (out["ref_date"] == r.ref_date) & (out["field"] == field)
             if hit.any():
-                out.loc[hit, ["value", "status"]] = [0.0, AT1_LIABILITY]
+                out.loc[hit, ["value", "status"]] = [0.0, status]
                 out.loc[hit, "lineage_id"] = [_join([x, r.lineage_id]) for x in out.loc[hit, "lineage_id"]]
             else:
-                new.append({**r._asdict(), "field": field, "value": 0.0, "status": AT1_LIABILITY,
+                new.append({**r._asdict(), "field": field, "value": 0.0, "status": status,
                             "ccy": ccy_of.get(r.bank_id, ""), "family": "report",
                             "period_months": 12 if field == "at1_coupons" and r.ref_date[5:] == "12-31" else
                             (6 if field == "at1_coupons" else pd.NA)})
@@ -341,7 +343,7 @@ def compute_kpis(facts: pd.DataFrame, kpis: dict, one_offs: pd.DataFrame, rates:
 
 
 def _kpis_one_basis(facts: pd.DataFrame, kpis: dict, rates: pd.DataFrame) -> pd.DataFrame:
-    facts = at1_liability_rule(facts)
+    facts = at1_rules(facts)
     period = quantity_period()
     dq = derived(facts, rates)
     q = pd.concat([facts[["bank_id", "ref_date", "field", "value", "family", "lineage_id", "status"]],

@@ -45,13 +45,15 @@ fields:
   - {field: nsfr, kind: ratio, period: bs, meaning: "as reported in KM1 (p3 and report families only)"}
   # instruction 03 B.1: report family, entered from annual and half year reports (Section 3)
   - {field: minority_interests, kind: amount, period: bs, meaning: "non controlling interests in equity, as printed on the balance sheet"}
-  - {field: at1_coupons, kind: amount, period: pl, meaning: "distributions on AT1 instruments in the period, year to date, entered positive; statement of changes in equity, or the note on equity instruments"}
+  - {field: at1_coupons, kind: amount, period: pl, meaning: "the AT1 coupons charged directly to equity or reserves in the period, year to date, entered positive; statement of changes in equity or the EPS note (instruction 03c B.1); 0 where at1_coupon_in_pl is 1"}
   - {field: shares_out, kind: count, period: bs, meaning: "ordinary shares in issue net of treasury shares at the reference date; the share capital note or the EPS note (the period end number, not the weighted average)"}
   - {field: fte, kind: count, period: bs, meaning: "full time equivalent employees at the reference date; key figures or the notes"}
   - {field: customers, kind: count, period: bs, meaning: "customers at the reference date; key figures, entered only where printed"}
   - {field: rote_reported, kind: ratio, period: pl, meaning: "the bank's own published RoTE (or RoTE equivalent named as such); key figures; FY2025 and H1 2026 only; used only for the comparison in step 3.4"}
   # instruction 03b B.2: 1 when AT1 instruments are classified as equity at the reference date, 0 when as a liability
   - {field: at1_in_equity, kind: flag, period: bs, meaning: "1 if AT1 instruments are classified as equity at the reference date, 0 if as liabilities (or no AT1 in equity); equity note or AT1 note"}
+  # instruction 03c B.1: where the AT1 coupon is charged, entered at the same dates as at1_in_equity
+  - {field: at1_coupon_in_pl, kind: flag, period: bs, meaning: "1 if the AT1 coupons are charged through interest expense in the income statement, 0 if charged directly to equity or reserves; accounting policy or the note on AT1"}
   # instruction 02b B.1: EU LR1 at 2025-06-30, report family, used by the scope adjusted gate only
   - {field: lr1_total_assets, kind: amount, period: bs, meaning: "EU LR1 row 1: total assets as per published financial statements"}
   - {field: lr1_scope_adjustment, kind: amount, period: bs, meaning: "EU LR1 row 2: adjustment for entities consolidated for accounting purposes but outside the scope of prudential consolidation, sign as printed"}

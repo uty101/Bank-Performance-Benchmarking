@@ -144,9 +144,10 @@ ENTRY_COLUMNS = ["bank_id", "ref_date", "field", "value_as_printed", "unit_scale
                  "doc_type", "report_sha256", "page", "snippet", "entered_utc"]
 COMPONENT = re.compile(r"component (\d+)/(\d+)")  # the `component` note of a summed field's snippet (B.2)
 # instruction 03b B.2 to B.5: a status the reviewer fixed for an entry (at1_net_of_tax, headcount, no_nci_line),
-# held in an optional trailing column of report_entries.csv; blank for every other entry
+# held in an optional trailing column of report_entries.csv; blank for every other entry. Instruction 03c B.2:
+# no_nci_line also marks minority_interests 0; B.4: class_from_annual marks a half year flag read from the annual report
 DECISION_COLUMN = "decision_status"
-DECISION_STATUSES = ("at1_net_of_tax", "headcount", "no_nci_line")
+DECISION_STATUSES = ("at1_net_of_tax", "headcount", "no_nci_line", "class_from_annual")
 VALUE_REL_TOL = 1e-9  # |value| against |value_as_printed| x unit_scale: equal up to float rounding
 # instruction 02b B.4: a dash or empty cell in a printed template row is a component of value 0
 ZERO_PRINTED = {"-", "–", "—", "blank"}  # hyphen, en dash, em dash, or an empty cell

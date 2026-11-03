@@ -90,6 +90,7 @@ fields:
   at1_coupons: *report_all
   shares_out: *report_all
   at1_in_equity: *report_all        # instruction 03b B.2
+  at1_coupon_in_pl: *report_all     # instruction 03c B.1
   gains_derecognition_not_fvtpl: *standard
   gains_held_for_trading: *standard
   gains_designated_fvtpl: *standard

@@ -357,10 +357,12 @@ ECB_IRS_URL = "https://data-api.ecb.europa.eu/service/data/IRS/M.{cc}.L.L40.CI.0
 ECB_IRS_CCY = {"SE": "SEK", "DK": "DKK"}  # instruction 03b B.1: EUR for euro area members
 BOE_URL = ("https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp?csv.x=yes&Datefrom=01/Jan/2020"
            "&Dateto=31/Jul/2026&SeriesCodes=IUMAMNPY&CSVF=TN&UsingCodes=Y&VPD=Y&VFD=N")
-NORGES_URL = ("https://data.norges-bank.no/api/data/GOVT_GENERIC_RATES/M.10Y.GBON.?format=csv&startPeriod=2020-01"
-              "&endPeriod=2026-07&locale=en")
+# instruction 03c B.3: NO from the business day series, every month the arithmetic mean of its business day yields
+NORGES_URL = ("https://data.norges-bank.no/api/data/GOVT_GENERIC_RATES/B.10Y.GBON.?format=csv&startPeriod=2020-01-01"
+              "&endPeriod=2026-07-31&locale=en")
 YIELDS_START, YIELDS_END = "2020-01", "2026-07"
-YIELD_COLUMNS = ["period", "yield_pct", "series"]
+# status: ok, or monthly_from_daily (instruction 03c B.3); n_days: the business days averaged, blank for a monthly series
+YIELD_COLUMNS = ["period", "yield_pct", "series", "status", "n_days"]
 
 
 def _get_text(url: str) -> str:
@@ -378,8 +380,8 @@ def _get_text(url: str) -> str:
 def _yields_ecb(cc: str) -> tuple[str, list[dict]]:
     url = ECB_IRS_URL.format(cc=cc, ccy=ECB_IRS_CCY.get(cc, "EUR")) + f"&startPeriod={YIELDS_START}&endPeriod={YIELDS_END}"
     recs = list(csv.DictReader(io.StringIO(_get_text(url))))
-    return url, [{"period": r["TIME_PERIOD"], "yield_pct": r["OBS_VALUE"], "series": r["KEY"]} for r in recs
-                 if r["OBS_VALUE"] not in ("", "NaN")]
+    return url, [{"period": r["TIME_PERIOD"], "yield_pct": r["OBS_VALUE"], "series": r["KEY"], "status": "ok",
+                  "n_days": ""} for r in recs if r["OBS_VALUE"] not in ("", "NaN")]
 
 
 def _yields_boe() -> tuple[str, list[dict]]:
@@ -388,22 +390,29 @@ def _yields_boe() -> tuple[str, list[dict]]:
     out = []
     for d, v in rows[1:]:
         period = datetime.strptime(d.strip(), "%d %b %Y").strftime("%Y-%m")
-        out.append({"period": period, "yield_pct": v.strip(), "series": f"BoE IADB {code}"})
+        out.append({"period": period, "yield_pct": v.strip(), "series": f"BoE IADB {code}", "status": "ok",
+                    "n_days": ""})
     return BOE_URL, out
 
 
 def _yields_norges() -> tuple[str, list[dict]]:
     recs = list(csv.DictReader(io.StringIO(_get_text(NORGES_URL)), delimiter=";"))
-    return NORGES_URL, [{"period": r["TIME_PERIOD"], "yield_pct": r["OBS_VALUE"],
-                         "series": f"Norges Bank GOVT_GENERIC_RATES M.{r['TENOR']}.{r['INSTRUMENT_TYPE']}"}
-                        for r in recs if r["OBS_VALUE"]]
+    days: dict[str, list[float]] = {}
+    series = {}
+    for r in recs:
+        if r["OBS_VALUE"]:
+            days.setdefault(r["TIME_PERIOD"][:7], []).append(float(r["OBS_VALUE"]))
+            series[r["TIME_PERIOD"][:7]] = f"Norges Bank GOVT_GENERIC_RATES B.{r['TENOR']}.{r['INSTRUMENT_TYPE']}"
+    return NORGES_URL, [{"period": m, "yield_pct": format(sum(v) / len(v), ".10g"), "series": series[m],
+                         "status": "monthly_from_daily", "n_days": str(len(v))} for m, v in days.items()]
 
 
 def stage_yields(cfg: dict) -> None:
     """Monthly 10 year sovereign yields for every [sovereign] countries entry to data/raw/yields/{CC}.csv (period,
-    yield_pct, series): GB from the Bank of England (IUMAMNPY, monthly average 10 year nominal par yield), NO from
-    Norges Bank (GOVT_GENERIC_RATES, 10 year government bonds, monthly), every other country from the ECB IRS
-    dataset (Maastricht convergence criterion long-term yields), instruction 03b B.1."""
+    yield_pct, series, status, n_days): GB from the Bank of England (IUMAMNPY, monthly average 10 year nominal par
+    yield), NO from Norges Bank (GOVT_GENERIC_RATES B.10Y.GBON, 10 year government bonds, business days, averaged
+    per month: instruction 03c B.3), every other country from the ECB IRS dataset (Maastricht convergence criterion
+    long-term yields), instruction 03b B.1."""
     entries = []
     for cc in cfg["sovereign"]["countries"]:
         print(f"yields {cc}")
