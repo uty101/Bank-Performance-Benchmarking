@@ -1,6 +1,6 @@
 # Section 3
 
-Outcome: **stopped under rule 4 at step 3.6** (instruction 03b). Norges Bank's monthly 10 year yield series has no December 2025 value, so `tests/test_yields.py::test_coverage` fails for NO at 2025-12; filling the month would be a design choice (OPEN-31). Steps 3.0 to 3.5 are complete for all 31 banks; step 3.6 is complete for the other 10 countries. The first stop of this section (step 3.4, FRED refused the connection) was resolved by instruction 03b B.1.
+Outcome: **stopped under rule 4 at step 3.7** (instruction 03c). Under the coupon rule of 03c B.1, at1_coupons is the amount charged to equity or reserves, and is 0 only where at1_coupon_in_pl is 1. BMPS holds no AT1 at all, and NDA at 2026-06-30 charges no coupon to equity, so neither has a printed coupon nor a flag of 1. Their at1_coupons, and rote, are blank; a 0 there would be a design choice (OPEN-34). Every other part of step 3.7 is done: decisions 1 to 4 applied to all 31 banks, rote recomputed, the yields test passing unchanged. The earlier stops (step 3.4 FRED, step 3.6 NO 2025-12) were resolved by instructions 03b B.1 and 03c B.3.
 
 ## Steps completed
 
@@ -12,7 +12,9 @@ Outcome: **stopped under rule 4 at step 3.6** (instruction 03b). Norges Bank's m
 - open questions OPEN-27 to OPEN-30 (b1827f3); review and status of session 3 (be68a18, f933596)
 - 3.5 at1_in_equity UK (deb80cb), at1_in_equity EU (e89d51c), decisions 3 to 6 applied and rote recomputed (e7bef6e)
 - 3.6 yields from ECB, BoE and Norges Bank; NO 2025-12 missing, rule 4 stop (10aa994)
-- open questions OPEN-32 and OPEN-33 (9e19da4)
+- open questions OPEN-32 and OPEN-33 (9e19da4); review and status of session 3b (42145f7, 1c2358c)
+- 3.7 coupon location, nci and NO yields (5dabeef)
+- open questions OPEN-34 and OPEN-35 (56292fe)
 
 ## Evidence
 
@@ -1094,12 +1096,13 @@ bank_id   ref_date                  field       amount  amount_in_toi_ccy       
 
 Superseded by E3b.1 and E3b.5 (rote after instruction 03b).
 
-### E3.4c Hand checks (recomputed after instruction 03b B.2)
+### E3.4c Hand checks (recomputed after instruction 03c B.1)
 
 ```
 #### LLOY: rote at 2025-12-31
 at1_in_equity: 2024-12-31 = 1, 2025-12-31 = 1 (report entries)
-profit_to_ordinary = profit_owners 4,659,000,000 (report) - at1_coupons 463,000,000 = 4,196,000,000
+at1_coupon_in_pl: 2024-12-31 = 0, 2025-12-31 = 0 (report entries)
+profit_to_ordinary = profit_owners 4,659,000,000 (report) - at1_coupons 463,000,000 (report) = 4,196,000,000
 tangible_equity 2024-12-31 = total_equity 45,888,000,000 (report) - minority_interests 172,000,000 - at1_instruments 6,170,000,000 - intangibles_deduction 5,679,000,000 = 33,867,000,000
 tangible_equity 2025-12-31 = total_equity 47,867,000,000 (report) - minority_interests 199,000,000 - at1_instruments 5,947,000,000 - intangibles_deduction 5,996,000,000 = 35,725,000,000
 average tangible_equity = 34,796,000,000.0; rote (hand) = 4,196,000,000 / 34,796,000,000.0 = 0.120589
@@ -1107,11 +1110,21 @@ kpi.csv: value 0.120589, numerator 4,196,000,000, denominator 34,796,000,000.0, 
 
 #### BBVA: rote at 2024-12-31
 at1_in_equity: 2023-12-31 = 0, 2024-12-31 = 0 (report entries)
-profit_to_ordinary = profit_owners 10,040,349,000 (eba) - at1_coupons 0 (at1_in_equity 0: 0, status at1_liability) = 10,040,349,000
+at1_coupon_in_pl: 2023-12-31 = 0, 2024-12-31 = 0 (report entries)
+profit_to_ordinary = profit_owners 10,040,349,000 (eba) - at1_coupons 388,000,000 (report) = 9,652,349,000
 tangible_equity 2023-12-31 = total_equity 55,128,346,000 (eba) - minority_interests 3,564,000,000 - at1_instruments 0 (at1_in_equity 0) - intangibles_deduction 1,421,125,000 = 50,143,221,000
 tangible_equity 2024-12-31 = total_equity 59,828,484,000 (eba) - minority_interests 4,359,000,000 - at1_instruments 0 (at1_in_equity 0) - intangibles_deduction 1,553,379,000 = 53,916,105,000
-average tangible_equity = 52,029,663,000.0; rote (hand) = 10,040,349,000 / 52,029,663,000.0 = 0.192974
-kpi.csv: value 0.192974, numerator 10,040,349,000, denominator 52,029,663,000.0, family eba+report, status at1_liability; difference 3.57e-11
+average tangible_equity = 52,029,663,000.0; rote (hand) = 9,652,349,000 / 52,029,663,000.0 = 0.185516
+kpi.csv: value 0.185516, numerator 9,652,349,000, denominator 52,029,663,000.0, family eba+report, status at1_liability; difference 2.48e-11
+
+#### SEB: rote at 2025-12-31
+at1_in_equity: 2024-12-31 = 0, 2025-12-31 = 0 (report entries)
+at1_coupon_in_pl: 2024-12-31 = 1, 2025-12-31 = 1 (report entries)
+profit_to_ordinary = profit_owners 31,063,000,000 (report) - at1_coupons 0 (at1_coupon_in_pl 1: status coupon_in_pl) = 31,063,000,000
+tangible_equity 2024-12-31 = total_equity 231,148,000,000 (report) - minority_interests 0 - at1_instruments 0 (at1_in_equity 0) - intangibles_deduction 6,654,000,000 = 224,494,000,000
+tangible_equity 2025-12-31 = total_equity 230,263,000,000 (report) - minority_interests 0 - at1_instruments 0 (at1_in_equity 0) - intangibles_deduction 6,052,000,000 = 224,211,000,000
+average tangible_equity = 224,352,500,000.0; rote (hand) = 31,063,000,000 / 224,352,500,000.0 = 0.138456
+kpi.csv: value 0.138456, numerator 31,063,000,000, denominator 224,352,500,000.0, family report, status at1_liability;no_nci_line;coupon_in_pl; difference 2.25e-11
 ```
 
 ### E3.4d Market coverage per ticker
@@ -1152,7 +1165,7 @@ SWED-A.ST 2020-12-01 2026-07-31  1422      SEK
 
 None: the FRED stage failed (Deviation 1) and was replaced by the yields stage (E3b.4).
 
-### E3b.1 rote for every bank at every date (pct; a blank shows its status, mi: = missing_input:)
+### E3b.1 (superseded by E3c.6) rote for every bank at every date (pct; a blank shows its status, mi: = missing_input:)
 
 **reported**
 
@@ -1243,7 +1256,7 @@ missing_input:tangible_equity          42
 mixed_family                            1
 ```
 
-### E3b.2 at1_in_equity, bank x date (blank = not entered)
+### E3b.2 (superseded by E3c.1d) at1_in_equity, bank x date (blank = not entered)
 
 ```
 ref_date  2020-12-31  2021-06-30  2021-12-31  2022-06-30  2022-12-31  2023-06-30  2023-12-31  2024-06-30  2024-12-31  2025-06-30  2025-12-31  2026-06-30
@@ -1327,7 +1340,7 @@ bank_id   ref_date                         field     amount page verdict        
     BPE 2026-06-30               impairments_fin  -25800000   52  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
 ```
 
-### E3b.4 Yield coverage per country, with the 2025-12 value
+### E3b.4 (NO superseded by E3c.4) Yield coverage per country, with the 2025-12 value
 
 ```
 country   first    last  rows 2025-12  2026-06                                    series
@@ -1352,7 +1365,7 @@ NO: https://data.norges-bank.no/api/data/GOVT_GENERIC_RATES/M.10Y.GBON.?format=c
 DE: https://data-api.ecb.europa.eu/service/data/IRS/M.DE.L.L40.CI.0000.EUR.N.Z?format=csvdata&startPeriod=2020-01&endPeriod=2026-07
 ```
 
-### E3b.5 rote against rote_reported at 2025-12-31, every bank that prints one (pct; no threshold)
+### E3b.5 (superseded by E3c.5a) rote against rote_reported at 2025-12-31, every bank that prints one (pct; no threshold)
 
 ```
 bank_id  rote  rote_reported  difference_pts                           status
@@ -1380,64 +1393,597 @@ bank_id  rote  rote_reported  difference_pts                           status
 ```
 
 
+### E3c.1a at1_coupon_in_pl, bank x date (blank = not entered; half year dates are class_from_annual copies)
+
+```
+ref_date 2020-12-31 2021-06-30 2021-12-31 2022-06-30 2022-12-31 2023-06-30 2023-12-31 2024-06-30 2024-12-31 2025-06-30 2025-12-31 2026-06-30
+bank_id                                                                                                                                     
+LLOY              0          0          0          0          0          0          0          0          0          0          0          0
+NWG               0          0          0          0          0          0          0          0          0          0          0          0
+BARC              0          0          0          0          0          0          0          0          0          0          0          0
+HSBA              0          0          0          0          0          0          0          0          0          0          0          0
+SANUK             0          0          0          0          0          0          0          0          0          0          0          0
+NDA               0          0          0          0          0          0          0          0          0          0          0          0
+DNB               0          0          0          0          0          0          0          0          0          0          0          0
+DANSKE            0          0          0          0          0          1          1          1          1          1          1          1
+SEB               1          1          1          1          1          1          1          1          1          1          1          1
+SHB               1          1          1          1          1          1          1          1          1          1          1          1
+SWED              1          1          1          1          1          1          1          1          1          1          1          1
+INGA              1          1          1          1          1          1          1          1          1          1          1          1
+ABN               0          0          0          0          0          0          0          0          0          0          0          0
+KBC               0          0          0          0          0          0          0          0          0          0          0          0
+RABO              0          0          0          0          0          0          0          0          0          0          0          0
+BNP               0          0          0          0          0          0          0          0          0          0          0          0
+GLE                                                                                 0                     0          0          0          0
+CAG                                                                                                       0          0          0          0
+DBK               0          0          0          0          0          0          0          0          0          0          0          0
+CBK               0          0          0          0          0          0          0          0          0          0          0          0
+SAN               0          0          0          0          0          0          0          0          0          0          0          0
+BBVA              0          0          0          0          0          0          0          0          0          0          0          0
+CABK              0          0          0          0          0          0          0          0          0          0          0          0
+SAB               0          0          0          0          0          0          0          0          0          0          0          0
+BKT               0          0          0          0          0          0          0          0          0          0          0          0
+UNI               0          0          0          0          0          0          0          0          0          0          0          0
+UCG               0          0          0          0          0          0          0          0          0          0          0          0
+ISP               0          0          0          0          0          0          0          0          0          0          0          0
+BAMI              0          0          0          0          0          0          0          0          0          0          0          0
+BPE               0          0          0          0          0          0          0          0          0          0          0          0
+BMPS
+```
+
+### E3c.1b at1_coupon_in_pl annual entries: page and cited line
+
+```
+bank_id   ref_date value                  doc page                                  value_as_printed                                                                                                                                                                                             snippet
+   LLOY 2020-12-31     0    annual:2020-12-31  221         Distributions on other equity instruments                                                                                                                                     Distributions on other equity instruments — — — — (453) — (453)
+   LLOY 2021-12-31     0    annual:2021-12-31  212         Distributions on other equity instruments                                                                                                                                     Distributions on other equity instruments — — — — (429) — (429)
+   LLOY 2022-12-31     0    annual:2022-12-31  216         Distributions on other equity instruments                                                                                                                                     Distributions on other equity instruments – – – – (438) – (438)
+   LLOY 2023-12-31     0    annual:2023-12-31  218         Distributions on other equity instruments                                                                                                                                     Distributions on other equity instruments – – – – (527) – (527)
+   LLOY 2024-12-31     0    annual:2024-12-31  219         Distributions on other equity instruments                                                                                                                                     Distributions on other equity instruments – – – – (498) – (498)
+   LLOY 2025-12-31     0    annual:2025-12-31  216                     Distributions on other equity                                                                                                                                                                       Distributions on other equity
+    NWG 2020-12-31     0    annual:2020-12-31  261                     Paid-in equity dividends paid                                                                                                                                                     Paid-in equity dividends paid (355) (367) (355)
+    NWG 2021-12-31     0    annual:2021-12-31  153                     Paid-in equity dividends paid                                                                                                                                                     Paid-in equity dividends paid (299) (355) (367)
+    NWG 2022-12-31     0    annual:2022-12-31  153                     Paid-in equity dividends paid                                                                                                                                                     Paid-in equity dividends paid (249) (299) (355)
+    NWG 2023-12-31     0    annual:2023-12-31  303                     Paid-in equity dividends paid                                                                                                                                                     Paid-in equity dividends paid (242) (242) (242)
+    NWG 2024-12-31     0    annual:2024-12-31  298                     Paid-in equity dividends paid                                                                                                                                                     Paid-in equity dividends paid (283) (283) (283)
+    NWG 2025-12-31     0    annual:2025-12-31  296                     Paid-in equity dividends paid                                                                                                                                                     Paid-in equity dividends paid (352) (352) (352)
+   BARC 2020-12-31     0    annual:2020-12-31  284             Other equity instruments coupons paid                                                                                                                                     Other equity instruments coupons paid – (857) – – (857) – (857)
+   BARC 2021-12-31     0    annual:2021-12-31  336                                      coupons paid                                                                                                                                                              coupons paid — (804) — — (804) — (804)
+   BARC 2022-12-31     0    annual:2022-12-31  421             Other equity instruments coupons paid                                                                                                                                     Other equity instruments coupons paid — (905) — — (905) — (905)
+   BARC 2023-12-31     0    annual:2023-12-31  417             Other equity instruments coupons paid                                                                                                                                     Other equity instruments coupons paid — (905) — — (905) — (905)
+   BARC 2024-12-31     0    annual:2024-12-31  448             Other equity instruments coupons paid                                                                                                                                             Other equity instruments coupons paid — (990) — — (990)
+   BARC 2025-12-31     0    annual:2025-12-31  404             Other equity instruments coupons paid                                                                                                                                             Other equity instruments coupons paid — (997) — — (997)
+   HSBA 2020-12-31     0    annual:2020-12-31  284                         Dividends to shareholders                                                                                                                                 Dividends to shareholders — — (1,331) — — — — (1,331) (692) (2,023)
+   HSBA 2021-12-31     0    annual:2021-12-31  314                         Dividends to shareholders                                                                                                                                 Dividends to shareholders — — (5,790) — — — — (5,790) (593) (6,383)
+   HSBA 2022-12-31     0    annual:2022-12-31  330                         Dividends to shareholders                                                                                                                                 Dividends to shareholders — — (6,544) — — — — (6,544) (426) (6,970)
+   HSBA 2023-12-31     0    annual:2023-12-31  334                         Dividends to shareholders                                                                                                                            Dividends to shareholders — — — — — — — (11,593) (11,593) (603) (12,196)
+   HSBA 2024-12-31     0    annual:2024-12-31  346                         Dividends to shareholders                                                                                                                            Dividends to shareholders — — — — — — — (16,410) (16,410) (690) (17,100)
+   HSBA 2025-12-31     0    annual:2025-12-31  267                         Dividends to shareholders                                                                                                                            Dividends to shareholders — — — — — — — (12,764) (12,764) (718) (13,482)
+  SANUK 2020-12-31     0    annual:2020-12-31  211             Dividends on other equity instruments                                                                                                                                 Dividends on other equity instruments — — — — — (147) (147) — (147)
+  SANUK 2021-12-31     0    annual:2021-12-31  219             Dividends on other equity instruments                                                                                                                                 Dividends on other equity instruments — — — — — (143) (143) — (143)
+  SANUK 2022-12-31     0    annual:2022-12-31  200             Dividends on other equity instruments                                                                                                                                 Dividends on other equity instruments — — — — — (143) (143) — (143)
+  SANUK 2023-12-31     0    annual:2023-12-31  186             Dividends on other equity instruments                                                                                                                                 Dividends on other equity instruments — — — — — (133) (133) — (133)
+  SANUK 2024-12-31     0    annual:2024-12-31  171             Dividends on other equity instruments                                                                                                                                 Dividends on other equity instruments — — — — — (139) (139) — (139)
+  SANUK 2025-12-31     0    annual:2025-12-31  163             Dividends on other equity instruments                                                                                                                                       Dividends on other equity instruments — — — — — — (142) (142)
+    NDA 2020-12-31     0    annual:2020-12-31   75                                     Paid interest                                                                                                                                                                         Paid interest on Additional
+    NDA 2021-12-31     0    annual:2021-12-31  103                                     Paid interest                                                                                                                                                                         Paid interest on Additional
+    NDA 2022-12-31     0    annual:2022-12-31  189                  accounted for directly in equity                                                                      ty are accounted for directly in equity and presented as divi- For information about non-controlling interests, see Note G9.1.
+    NDA 2023-12-31     0    annual:2023-12-31  206                  accounted for directly in equity                                                                   are accounted for directly in equity and presented as dividends. requirement for Nordea to pay interest if the instruments are no
+    NDA 2024-12-31     0    annual:2024-12-31  275                  accounted for directly in equity                                            fied as equity are accounted for directly in equity Other reserves comprise income and expenses, shares in Nordea have no nominal value. Each share car-
+    NDA 2025-12-31     0    annual:2025-12-31  272                  accounted for directly in equity                                                                                                                                                 fied as equity are accounted for directly in equity
+    DNB 2020-12-31     0    annual:2020-12-31  145                       reduction in “Other equity” nised at fair value minus any directly attributable transaction costs. expenses from financial instruments belonging to the trading presented as a reduction in “Other equity”, while the advantage
+    DNB 2021-12-31     0    annual:2021-12-31  159                     Interest payments AT1 capital                                                                                                                                                           Interest payments AT1 capital (926) (926)
+    DNB 2022-12-31     0    annual:2022-12-31  190                     Interest payments AT1 capital                                                                                                                                                         Interest payments AT1 capital (1056) (1056)
+    DNB 2023-12-31     0    annual:2023-12-31  139                       reduction in “Other equity”                                                                                                                                                                   as a reduction in “Other equity”.
+    DNB 2024-12-31     0    annual:2024-12-31  292                       reduction in “Other equity”                                                       line “Additional Tier 1 Capital” within the Group’s equity. Transaction expenses and interest are presented as a reduction in “Other equity”.
+    DNB 2025-12-31     0    annual:2025-12-31  288                       reduction in “Other equity”                                                       line “Additional Tier 1 Capital” within the Group’s equity. Transaction expenses and interest are presented as a reduction in “Other equity”.
+ DANSKE 2020-12-31     0    annual:2020-12-31   77        Paid interest on additional tier 1 capital                                                                                                                                    Paid interest on additional tier 1 capital - - - - - - -625 -625
+ DANSKE 2021-12-31     0    annual:2021-12-31   61        Paid interest on additional tier 1 capital                                                                                                                                    Paid interest on additional tier 1 capital - - - - - - -466 -466
+ DANSKE 2022-12-31     0    annual:2022-12-31   71        Paid interest on additional tier 1 capital                                                                                                                                    Paid interest on additional tier 1 capital - - - - - - -164 -164
+ DANSKE 2023-12-31     1    annual:2023-12-31   97                                 Subordinated debt                                                                                                                                                        Subordinated debt - 1,313 -1,313 -846 -2,159
+ DANSKE 2024-12-31     1    annual:2024-12-31  144                                 Subordinated debt                                                                                                           Subordinated debt - 1,351 -1,351 -614 -1,965 Subordinated debt - 1,313 -1,313 -846 -2,159
+ DANSKE 2025-12-31     1    annual:2025-12-31  154                                 Subordinated debt                                                                                                           Subordinated debt - 1,329 -1,329 -363 -1,692 Subordinated debt - 1,351 -1,351 -614 -1,965
+    SEB 2020-12-31     1    annual:2020-12-31  122                          Subordinated liabilities                                                                                                                                  Subordinated liabilities 38,925 –1,348 –3.46% 38,475 –1,348 –3.50%
+    SEB 2021-12-31     1    annual:2021-12-31  134                          Subordinated liabilities                                                                                                                                      Subordinated liabilities 27,667 –932 –3.37% 26,904 –932 –3.46%
+    SEB 2022-12-31     1    annual:2022-12-31  134                          Subordinated liabilities                                                                                                                                      Subordinated liabilities 28,662 –952 –3.32% 27,760 –952 –3.43%
+    SEB 2023-12-31     1    annual:2023-12-31  101                          Subordinated liabilities                                                                   Subordinated liabilities 30,583 –1,188 –3.89% 29,679 –1,188 –4.00% Subordinated liabilities 28,662 –952 –3.32% 27,760 –952 –3.43%
+    SEB 2024-12-31     1    annual:2024-12-31  213                          Subordinated liabilities                                                               Subordinated liabilities 38,338 –1,791 –4.67% 37,433 –1,791 –4.78% Subordinated liabilities 30,583 –1,188 –3.89% 29,679 –1,188 –4.00%
+    SEB 2025-12-31     1    annual:2025-12-31  224                          Subordinated liabilities                                                                                                                                  Subordinated liabilities 42,866 –1,960 –4.57% 38,338 –1,791 –4.67%
+    SHB 2020-12-31     1    annual:2020-12-31  145                          Subordinated liabilities                                                                                                                                                              Subordinated liabilities -1,186 -1,282
+    SHB 2021-12-31     1    annual:2021-12-31  152                          Subordinated liabilities                                                                                                                                                              Subordinated liabilities -1,097 -1,186
+    SHB 2022-12-31     1    annual:2022-12-31  152                          Subordinated liabilities                                                                                                                                                              Subordinated liabilities -1,368 -1,097
+    SHB 2023-12-31     1    annual:2023-12-31  141                          Subordinated liabilities                                                                                                                                                              Subordinated liabilities -1,615 -1,368
+    SHB 2024-12-31     1    annual:2024-12-31  125                          Subordinated liabilities                                                                                                                                                              Subordinated liabilities -1,611 -1,615
+    SHB 2025-12-31     1    annual:2025-12-31  209                          Subordinated liabilities                                                                                                                                                              Subordinated liabilities −1,581 −1,611
+   SWED 2020-12-31     1    annual:2020-12-31  117                          Subordinated liabilities                                                                                                                                            Subordinated liabilities 821 26 800 3,06 993 30 627 3,24
+   SWED 2021-12-31     1    annual:2021-12-31  123                          Subordinated liabilities                                                                                                                                                            Subordinated liabilities 764 764 821 821
+   SWED 2022-12-31     1    annual:2022-12-31  124                          Subordinated liabilities                                                                                                                                                            Subordinated liabilities 911 911 764 764
+   SWED 2023-12-31     1    annual:2023-12-31  129                          Subordinated liabilities                                                                                                                                                        Subordinated liabilities 1 807 1 807 911 911
+   SWED 2024-12-31     1    annual:2024-12-31  287                          Subordinated liabilities                                                                                                                                                    Subordinated liabilities 2 278 2 278 1 807 1 807
+   SWED 2025-12-31     1    annual:2025-12-31  239                          Subordinated liabilities                                                                                                                                                    Subordinated liabilities 2 061 2 061 2 278 2 278
+   INGA 2020-12-31     1    annual:2020-12-31  305                                  Interest expense                                                                  Interest income on non-trading derivatives (hedge accounting) 3,392 4,319 4,497 Interest expense on subordinated loans 612 660 711
+   INGA 2021-12-31     1    annual:2021-12-31  319                                  Interest expense                                                                  Interest income on non-trading derivatives (hedge accounting) 2,361 3,392 4,319 Interest expense on subordinated loans 571 612 660
+   INGA 2022-12-31     1    annual:2022-12-31  234                                  Interest expense                                                                  Interest income on non-trading derivatives (hedge accounting) 4,011 2,361 3,392 Interest expense on subordinated loans 648 571 612
+   INGA 2023-12-31     1    annual:2023-12-31  250                                  Interest expense                                                                 Interest income on non-trading derivatives (hedge accounting) 10,682 4,011 2,361 Interest expense on subordinated loans 708 648 571
+   INGA 2024-12-31     1    annual:2024-12-31  267                                  Interest expense                                                                    Interest income on financial assets at fair value through OCI 1,481 1,078 511 Interest expense on subordinated loans 753 708 648
+   INGA 2025-12-31     1    annual:2025-12-31  261                                  Interest expense                                                                  Interest income on financial assets at fair value through OCI 1,790 1,481 1,078 Interest expense on subordinated loans 813 753 708
+    ABN 2020-12-31     0    annual:2020-12-31  209                              Paid interest on AT1                                                                                                                               Paid interest on AT1 capital securities -117 -117 -117 Company Annual
+    ABN 2021-12-31     0    annual:2021-12-31  267                              Paid interest on AT1                                                                                                                                                 Paid interest on AT1 capital securities -91 -91 -91
+    ABN 2022-12-31     0    annual:2022-12-31  335                                  impact on equity                                                                         considered part of equity. The payment of interest on the AT1 capital securities had an impact on equity of EUR 91 million.
+    ABN 2023-12-31     0    annual:2023-12-31  412                                  impact on equity                                                                             considered part of equity. The payment of interest on the AT1 Capital securities had a EUR 91 million impact on equity.
+    ABN 2024-12-31     0    annual:2024-12-31  366                                   Interest on AT1                                                                                                                                                   Interest on AT1 capital securities -120 -120 -120
+    ABN 2025-12-31     0    annual:2025-12-31  298                              Paid interest on AT1                                                                                                                                              Paid interest on AT1 capital securities -217 -217 -217
+    KBC 2020-12-31     0    annual:2020-12-31  172           Coupon on additional tier-1 instruments                                                                                                                                     Coupon on additional tier-1 instruments 0 0 0 -50 0 -50 0 0 -50
+    KBC 2021-12-31     0    annual:2021-12-31  271                              coupon is treated as                                                              • Additional tier-1 (AT1) instruments (these securities are classified as equity instruments under IAS 32 and the coupon is treated as
+    KBC 2022-12-31     0    annual:2022-12-31  265                                 coupon is treated                                                                 • Additional tier-1 (AT1) instruments (these securities are classified as equity instruments under IAS 32 and the coupon is treated
+    KBC 2023-12-31     0    annual:2023-12-31  268                                 coupon is treated                                                                 • Additional tier-1 (AT1) instruments (these securities are classified as equity instruments under IAS 32 and the coupon is treated
+    KBC 2024-12-31     0    annual:2024-12-31  249           Coupon on additional tier-1 instruments                                                                                                                                     Coupon on additional tier-1 instruments 0 0 0 -84 0 -84 0 0 -84
+    KBC 2025-12-31     0    annual:2025-12-31  254           Coupon on additional tier-1 instruments                                                                                                                     Coupon on additional tier-1 instruments (net of tax) 0 0 0 -114 0 -114 0 0 -114
+   RABO 2020-12-31     0    annual:2020-12-31  136                               recognized directly                                                              and dividends paid on these instruments are recognized directly committed itself to a plan to sell the asset, and the sale is expected
+   RABO 2021-12-31     0    annual:2021-12-31  157                               recognized directly                                                                                                                                         dividends paid on these instruments are recognized directly
+   RABO 2022-12-31     0    annual:2022-12-31  156                     recognized directly in equity          dividends paid on these instruments are recognized directly in equity. The Consolidated Statement of Cash Flows presents the cash flows from operating, investing and financing activities
+   RABO 2023-12-31     0    annual:2023-12-31  198                     recognized directly in equity                                                                                                                              dividends paid on these instruments are recognized directly in equity.
+   RABO 2024-12-31     0    annual:2024-12-31  258                     recognized directly in equity                                                                                                                              dividends paid on these instruments are recognized directly in equity.
+   RABO 2025-12-31     0    annual:2025-12-31  296                     recognized directly in equity       dividends paid on these instruments are recognized directly in equity. acquisitions and disposals of subsidiaries, investments in associates and property and equipment. Financing activities
+    BNP 2020-12-31     0    annual:2020-12-31  170                  Remuneration on preferred shares                                                                                                                                                  Remuneration on preferred shares and undated super
+    BNP 2021-12-31     0    annual:2021-12-31  186                  undated super subordinated notes                                                                                                                                    and undated super subordinated notes (412) (412) - - (412) (412)
+    BNP 2022-12-31     0    annual:2022-12-31  182                  Remuneration on preferred shares                                                                                                                                                  Remuneration on preferred shares and undated super
+    BNP 2023-12-31     0    annual:2023-12-31  180  Remuneration on undated super subordinated notes                                                                                                                    Remuneration on undated super subordinated notes (654) (654) - - (654) (3) (657)
+    BNP 2024-12-31     0    annual:2024-12-31  196  Remuneration on undated super subordinated notes                                                                                                                                        Remuneration on undated super subordinated notes (743) (743)
+    BNP 2025-12-31     0    annual:2025-12-31  206  Remuneration on undated super subordinated notes                                                                                                                                        Remuneration on undated super subordinated notes (822) (822)
+    GLE 2023-12-31     0    annual:2025-12-31  551                     directly reduces the retained                                                                                                 other equity instruments, it does not affect the income statement but directly reduces the retained
+    GLE 2024-12-31     0    annual:2025-12-31  551                     directly reduces the retained                                                                                                 other equity instruments, it does not affect the income statement but directly reduces the retained
+    GLE 2025-12-31     0    annual:2025-12-31  551                     directly reduces the retained                                                                                                 other equity instruments, it does not affect the income statement but directly reduces the retained
+    CAG 2024-12-31     0 half_year:2025-06-30   12                 undated deeply subordinated notes                                                                             R se e m m e u s n te e r r a 2 t 0 io 24 n of undated deeply subordinated notes at 2nd ‐ (247) ‐ ‐ (247) ‐ ‐ ‐ ‐ (247)
+    CAG 2025-12-31     0    annual:2025-12-31  849 Remuneration of undated deeply subordinated notes                                                                                                                   Remuneration of undated deeply subordinated notes - (554) - - (554) - - - - (554)
+    DBK 2020-12-31     0    annual:2020-12-31  261            Coupon on additional equity components                                                                                                    Coupon on additional equity components, before tax 0 0 (349)5 0 0 0 0 0 0 0 0 0 (349)5 0 0 (349)
+    DBK 2021-12-31     0    annual:2021-12-31  220            Coupon on additional equity components                                                                                                        Coupon on additional equity components, before tax 0 0 (363) 0 0 0 0 0 0 0 0 (363) 0 0 (363)
+    DBK 2022-12-31     0    annual:2022-12-31  239            Coupon on additional equity components                                                                                                        Coupon on additional equity components, before tax 0 0 (479) 0 0 0 0 0 0 0 0 (479) 0 0 (479)
+    DBK 2023-12-31     0    annual:2023-12-31  246            Coupon on additional equity components                                                                                                        Coupon on additional equity components, before tax 0 0 (498) 0 0 0 0 0 0 0 0 (498) 0 0 (498)
+    DBK 2024-12-31     0    annual:2024-12-31  421            Coupon on additional equity components                                                                                                        Coupon on additional equity components, before tax 0 0 (574) 0 0 0 0 0 0 0 0 (574) 0 0 (574)
+    DBK 2025-12-31     0    annual:2025-12-31  460            Coupon on additional equity components                                                                                                        Coupon on additional equity components, before tax — — (761) — — — — — — — — (761) — — (761)
+    CBK 2020-12-31     0    annual:2020-12-31  174                                    Dividends paid                                                                                                                                                                        Dividends paid on additional
+    CBK 2021-12-31     0    annual:2021-12-31  156                                    Dividends paid                                                                                                                                                                        Dividends paid on additional
+    CBK 2022-12-31     0    annual:2022-12-31  161                                    Dividends paid                                                                                                                                                                        Dividends paid on additional
+    CBK 2023-12-31     0    annual:2023-12-31  274                                    Dividends paid                                                                                                                                                                        Dividends paid on additional
+    CBK 2024-12-31     0    annual:2024-12-31  393                       Distributions to Additional                                                                                                                                                                         Distributions to Additional
+    CBK 2025-12-31     0    annual:2025-12-31  292                            Payments to Additional                                                                                                                                                                              Payments to Additional
+    SAN 2020-12-31     0    annual:2020-12-31  579                                     deducted from                                                                                                                                         associated with CCPP, is directly added to or deducted from
+    SAN 2021-12-31     0    annual:2021-12-31  585                                     deducted from                                                                 more likely than not the obligation will have to be settled. In associated with CCPP, is directly added to or deducted from equity.
+    SAN 2022-12-31     0    annual:2022-12-31  576                                     deducted from                                                                                                                                         associated with CCPP, is directly added to or deducted from
+    SAN 2023-12-31     0    annual:2023-12-31  576                                     deducted from                                                                         Grupo Santander’s consolidated financial statements include all associated with CCPP, is directly added to or deducted from
+    SAN 2024-12-31     0    annual:2024-12-31  617                                     deducted from                                                                                                                                 associated with CCPP, is directly added to or deducted from equity.
+    SAN 2025-12-31     0    annual:2025-12-31  664                                     deducted from                                                                                                                                 associated with CCPP, is directly added to or deducted from equity.
+   BBVA 2020-12-31     0    annual:2020-12-31   55                              recognized in equity                                                                                    (1) Remuneration in the year related to contingent convertible securities, recognized in equity (see Note 22.4).
+   BBVA 2021-12-31     0    annual:2021-12-31   56                              recognized in equity                                                                                    (*) Remuneration in the year related to contingent convertible securities, recognized in equity (see Note 22.4).
+   BBVA 2022-12-31     0    annual:2022-12-31   61                              recognized in equity                                                                                    (1) Remuneration in the year related to contingent convertible securities, recognized in equity (see Note 22.4).
+   BBVA 2023-12-31     0    annual:2023-12-31   62                              recognized in equity                                                                          (2) Remuneration in the year related to perpetual contingent convertible securities, recognized in equity (see Note 22.4).
+   BBVA 2024-12-31     0    annual:2024-12-31   64                              recognized in equity                                                                          (1) Remuneration in the year related to perpetual contingent convertible securities, recognized in equity (see Note 22.4).
+   BBVA 2025-12-31     0    annual:2025-12-31   76                              recognized in equity                                                                          (1) Remuneration in the year related to perpetual contingent convertible securities, recognized in equity (see Note 22.4).
+   CABK 2020-12-31     0    annual:2020-12-31  142                              charged to voluntary                               (5) Remuneration of AT1 capital instruments corresponding to 2020, totalling EUR 143 million, will be deemed to have been paid, with this amount charged to voluntary
+   CABK 2021-12-31     0    annual:2021-12-31  150                              charged to voluntary                               (4) Remuneration of AT1 capital instruments corresponding to 2021, totalling EUR 244 million, will be deemed to have been paid, with this amount charged to voluntary
+   CABK 2022-12-31     0    annual:2022-12-31  151                     charged to voluntary reserves                                                                                                                                                                      charged to voluntary reserves.
+   CABK 2023-12-31     0    annual:2023-12-31  155                     charged to voluntary reserves                                                                                                                                                                      charged to voluntary reserves.
+   CABK 2024-12-31     0    annual:2024-12-31 1219                            recognised in reserves                                                                                                                           issuances, in which the discretionary coupons are recognised in reserves.
+   CABK 2025-12-31     0    annual:2025-12-31  984                            recognised in reserves                                                                                                          amortised Tier 1 issuances, in which the discretionary coupons are recognised in reserves.
+    SAB 2020-12-31     0    annual:2020-12-31  189                                    Other reserves                                                                                               euros in 2020 (73,250 thousand euros in 2019) and is recognised under the heading “Other reserves” of
+    SAB 2021-12-31     0    annual:2021-12-31  172                                    Other reserves                                                                                                                                                            “Other reserves” of consolidated equity.
+    SAB 2022-12-31     0    annual:2022-12-31  174                                    Other reserves                                                                                                                                                            “Other reserves” of consolidated equity.
+    SAB 2023-12-31     0    annual:2023-12-31  174                                    Other reserves                                                                                                thousand euros in 2023 (110,374 thousand euros in 2022) and is recognised under the “Other reserves”
+    SAB 2024-12-31     0    annual:2024-12-31  172                                    Other reserves                                                                                                thousand euros in 2024 (115,391 thousand euros in 2023) and is recognised under the “Other reserves”
+    SAB 2025-12-31     0    annual:2025-12-31  175                  consolidated statement of equity                                                                                                                         reserves” heading in the consolidated statement of equity (see Note 1.3.3).
+    BKT 2020-12-31     0    annual:2020-12-31   92                               decreases in equity                                                                                                        considered an equity item, recognised in “Other increases or (-) decreases in equity” in the
+    BKT 2021-12-31     0    annual:2021-12-31   82                               decreases in equity                                                                                                   recognised in “Other increases or (-) decreases in equity” in the consolidated statement of total
+    BKT 2022-12-31     0    annual:2022-12-31   75                               decreases in equity                                                                                                   recognised in “Other increases or (-) decreases in equity” in the consolidated statement of total
+    BKT 2023-12-31     0    annual:2023-12-31   77                               decreases in equity                                                                  recognised in 'Other increases or (-) decreases in equity' in the consolidated statement of total Gross dividend per share for the
+    BKT 2024-12-31     0    annual:2024-12-31   75                               decreases in equity                                                                                            recognised in “Other increases or (-) decreases in equity” in the consolidated statement of total euros)
+    BKT 2025-12-31     0    annual:2025-12-31   75                               decreases in equity                                                                                                   recognised in 'Other increases or (-) decreases in equity' in the consolidated statement of total
+    UNI 2020-12-31     0    annual:2020-12-31   21                          shareholder remuneration                                                                                                            Dividends (or shareholder remuneration) (Note 3) - - - - (6,850) - - - - - - - - (6,850)
+    UNI 2021-12-31     0    annual:2021-12-31  178                         recorded directly against                                                                                                                                                       recorded directly against the Group’s equity.
+    UNI 2022-12-31     0    annual:2022-12-31  176                         recorded directly against                                                                                                                                                       recorded directly against the Group’s equity.
+    UNI 2023-12-31     0    annual:2023-12-31  195                         recorded directly against                                                                                    consolidated balance sheet. The discretionary remuneration of the CoCos is recorded directly against the Group’s
+    UNI 2024-12-31     0    annual:2024-12-31  184                         recorded directly against                                                                                                                                          the CoCos is recorded directly against the Group’s equity.
+    UNI 2025-12-31     0    annual:2025-12-31  188                         recorded directly against                                                                                                                                           recorded directly against the Group’s shareholder equity.
+    UCG 2020-12-31     0    annual:2020-12-31  166                                     150. Reserves                                                                     Any coupon paid, net of related taxes, reduces item “150. Reserves” (item “140. Reserves” in the Company financial statements).
+    UCG 2021-12-31     0    annual:2021-12-31  204                                     150. Reserves                                                                     Any coupon paid, net of related taxes, reduces item “150. Reserves” (item “140. Reserves” in the Company financial statements).
+    UCG 2022-12-31     0    annual:2022-12-31  260                                     150. Reserves                                                                     Any coupon paid, net of related taxes, reduces item “150. Reserves” (item “140. Reserves” in the Company financial statements).
+    UCG 2023-12-31     0    annual:2023-12-31  290                                     150. Reserves                                                                     Any coupon paid, net of related taxes, reduces item “150. Reserves” (item “140. Reserves” in the Company financial statements).
+    UCG 2024-12-31     0    annual:2024-12-31  419                                     150. Reserves                                                                     Any coupon paid, net of related taxes, reduces item “150. Reserves” (item “140. Reserves” in the Company financial statements).
+    UCG 2025-12-31     0    annual:2025-12-31  416                                     150. Reserves                                                                     Any coupon paid, net of related taxes, reduces item “150. Reserves” (item “140. Reserves” in the Company financial statements).
+    ISP 2020-12-31     0    annual:2020-12-31  769                      allocation to Other reserves                                                                             − allocation to Other reserves of the total net negative amount of 237,601,478 euro for the coupons paid to subscribers
+    ISP 2021-12-31     0    annual:2021-12-31  810                      allocation to other reserves                                                                          − allocation to other reserves of the total net negative amount of 304,780,687 euro for the coupons paid to subscribers of
+    ISP 2022-12-31     0    annual:2022-12-31  815                      allocation to other reserves                                                                          − allocation to other reserves of the total net negative amount of 300,085,408 euro for the coupons paid to subscribers of
+    ISP 2023-12-31     0    annual:2023-12-31  812                      allocation to other reserves                                                                          − allocation to other reserves of the total net negative amount of 318,709,932 euro for the coupons paid to subscribers of
+    ISP 2024-12-31     0    annual:2024-12-31 1016                      allocation to other reserves                                                                          − allocation to other reserves of the total net negative amount of 400,819,796 euro for the coupons paid to subscribers of
+    ISP 2025-12-31     0    annual:2025-12-31  979                      allocation to other reserves                                                                      ‒ allocation to other reserves of the total net negative amount of 417,245,254 euro for the coupons paid to subscribers of the
+   BAMI 2020-12-31     0    annual:2020-12-31  216                             posted as a reduction                                                                                    Any coupons paid, after taxes, are posted as a reduction of item “150. Reserves”, if and for the amount at which
+   BAMI 2021-12-31     0    annual:2021-12-31  218                             posted as a reduction                                                                                    Any coupons paid, after taxes, are posted as a reduction of item “150. Reserves”, if and for the amount at which
+   BAMI 2022-12-31     0    annual:2022-12-31  233                             posted as a reduction                                                                                    Any coupons paid, after taxes, are posted as a reduction of item “150. Reserves”, if and for the amount at which
+   BAMI 2023-12-31     0    annual:2023-12-31  254                             posted as a reduction                                                                                    Any coupons paid, after taxes, are posted as a reduction of item “150. Reserves”, if and for the amount at which
+   BAMI 2024-12-31     0    annual:2024-12-31  446                             posted as a reduction                                                                               Any coupons paid, after taxes, are posted as a reduction of item "150. Reserves", if and for the amount at which they
+   BAMI 2025-12-31     0    annual:2025-12-31  410                             posted as a reduction                                                                               Any coupons paid, after taxes, are posted as a reduction of item "150. Reserves", if and for the amount at which they
+    BPE 2020-12-31     0    annual:2020-12-31  668                interest on AT1 equity instruments                                                                                                                                                 - interest on AT1 equity instruments (13,125) - - -
+    BPE 2021-12-31     0    annual:2021-12-31  669                interest on AT1 equity instruments                                                                                                                                                 - interest on AT1 equity instruments (25,159) - - -
+    BPE 2022-12-31     0    annual:2022-12-31  583                interest on AT1 equity instruments                                                                                                                                                 - interest on AT1 equity instruments (38,284) - - -
+    BPE 2023-12-31     0    annual:2023-12-31  751                interest on AT1 equity instruments                                                                                                                                                 - interest on AT1 equity instruments (51,409) - - -
+    BPE 2024-12-31     0    annual:2024-12-31  840                interest on AT1 equity instruments                                                                                                                                                 - interest on AT1 equity instruments (85,318) - - -
+    BPE 2025-12-31     0    annual:2025-12-31  774                interest on AT1 equity instruments                                                                                                                                                - interest on AT1 equity instruments (165,220) - - -
+```
+
+### E3c.1d at1_in_equity after step 3.7, bank x date (half year dates class_from_annual; supersedes E3b.2)
+
+```
+ref_date 2020-12-31 2021-06-30 2021-12-31 2022-06-30 2022-12-31 2023-06-30 2023-12-31 2024-06-30 2024-12-31 2025-06-30 2025-12-31 2026-06-30
+bank_id                                                                                                                                     
+LLOY              1          1          1          1          1          1          1          1          1          1          1          1
+NWG               1          1          1          1          1          1          1          1          1          1          1          1
+BARC              1          1          1          1          1          1          1          1          1          1          1          1
+HSBA              1          1          1          1          1          1          1          1          1          1          1          1
+SANUK             1          1          1          1          1          1          1          1          1          1          1          1
+NDA               1          1          1          1          1          1          1          1          1          0          0          0
+DNB               1          1          1          1          1          1          1          1          1          1          1          1
+DANSKE            1          1          1          0          0          0          0          0          0          0          0          0
+SEB               0          0          0          0          0          0          0          0          0          0          0          0
+SHB               0          0          0          0          0          0          0          0          0          0          0          0
+SWED              0          0          0          0          0          0          0          0          0          0          0          0
+INGA              0          0          0          0          0          0          0          0          0          0          0          0
+ABN               1          1          1          1          1          1          1          1          1          1          1          1
+KBC               1          1          1          1          1          1          1          1          1          1          1          1
+RABO              1          1          1          1          1          1          1          1          1          1          1          1
+BNP               1          1          1          1          1          1          1          1          1          1          1          1
+GLE                                                                                 1          1          1          1          1          1
+CAG                                                                                                       1          1          1          1
+DBK               1          1          1          1          1          1          1          1          1          1          1          1
+CBK               1          1          1          1          1          1          1          1          1          1          1          1
+SAN               0          0          0          0          0          0          0          0          0          0          0          0
+BBVA              0          0          0          0          0          0          0          0          0          0          0          0
+CABK              0          0          0          0          0          0          0          0          0          0          0          0
+SAB               0          0          0          0          0          0          0          0          0          0          0          0
+BKT               0          0          0          0          0          0          0          0          0          0          0          0
+UNI               1          1          1          1          1          1          1          1          1          1          1          1
+UCG               1          1          1          1          1          1          1          1          1          1          1          1
+ISP               1          1          1          1          1          1          1          1          1          1          1          1
+BAMI              1          1          1          1          1          1          1          1          1          1          1          1
+BPE               1          1          1          1          1          1          1          1          1          1          1          1
+BMPS              0          0          0          0          0          0          0          0          0          0          0          0
+```
+
+### E3c.1c class_from_annual rows per flag (instruction 03c B.4)
+
+```
+field       at1_coupon_in_pl  at1_in_equity
+ref_date                                   
+2021-06-30                28             29
+2022-06-30                28             29
+2023-06-30                28             29
+2024-06-30                28             29
+2025-06-30                30             31
+2026-06-30                30             31
+```
+
+### E3c.2 rote before and after step 3.7, reported basis (pct)
+
+```
+                    before  after  change_pts                      status_after
+bank_id date                                                                   
+BBVA    2021-12-31   11.06  10.20       -0.86                     at1_liability
+        2022-06-30   13.14  12.40       -0.74                     at1_liability
+        2022-12-31   14.60  13.89       -0.71                     at1_liability
+        2023-06-30   15.99  15.33       -0.66                     at1_liability
+        2023-12-31   16.71  15.99       -0.72                     at1_liability
+        2024-06-30   18.38  17.60       -0.78                     at1_liability
+        2024-12-31   19.30  18.55       -0.75                     at1_liability
+        2025-06-30   19.65  18.90       -0.75                     at1_liability
+        2025-12-31   19.15  18.43       -0.72                     at1_liability
+        2026-06-30   19.81  19.08       -0.73                     at1_liability
+CABK    2021-12-31   19.76  18.83       -0.93                     at1_liability
+        2022-06-30    8.39   7.50       -0.89                     at1_liability
+        2022-12-31   10.10   9.26       -0.84                     at1_liability
+        2023-06-30   11.99  11.16       -0.83                     at1_liability
+        2023-12-31   15.15  14.28       -0.87                     at1_liability
+        2024-06-30   17.14  16.24       -0.90                     at1_liability
+        2024-12-31   17.51  16.70       -0.81                     at1_liability
+        2025-06-30   18.42  17.62       -0.80                     at1_liability
+        2025-12-31   17.28  16.46       -0.82                     at1_liability
+        2026-06-30   17.84  17.01       -0.83                     at1_liability
+SAB     2021-12-31    5.06   4.10       -0.96                     at1_liability
+        2022-06-30    6.61   5.49       -1.12                     at1_liability
+        2022-12-31    7.88   6.87       -1.01                     at1_liability
+        2023-06-30    9.27   8.32       -0.95                     at1_liability
+        2023-12-31   11.74  10.72       -1.02                     at1_liability
+        2024-06-30   13.26  12.30       -0.96                     at1_liability
+        2024-12-31   14.96  14.15       -0.81                     at1_liability
+        2025-06-30   16.47  15.66       -0.81                     at1_liability
+        2025-12-31   14.44  13.26       -1.18                     at1_liability
+        2026-06-30   15.85  14.32       -1.53                     at1_liability
+SAN     2021-12-31   11.90  11.07       -0.83                     at1_liability
+        2022-06-30   13.17    NaN         NaN  missing_input:profit_to_ordinary
+        2022-12-31   13.46  12.72       -0.74                     at1_liability
+        2023-06-30   13.45    NaN         NaN  missing_input:profit_to_ordinary
+        2023-12-31   14.76  14.11       -0.65                     at1_liability
+        2024-06-30   15.38  14.64       -0.74                     at1_liability
+        2024-12-31   15.64  14.87       -0.77                     at1_liability
+        2025-06-30   16.25  15.50       -0.75                     at1_liability
+        2025-12-31   16.51  15.79       -0.72                     at1_liability
+        2026-06-30   18.12  17.41       -0.71                     at1_liability
+```
+
+### E3c.2 rote before and after step 3.7, underlying basis (pct)
+
+```
+                    before  after  change_pts                      status_after
+bank_id date                                                                   
+BBVA    2021-12-31   12.87  12.01       -0.86                     at1_liability
+        2022-06-30   13.14  12.40       -0.74                     at1_liability
+        2022-12-31   14.60  13.89       -0.71                     at1_liability
+        2023-06-30   15.99  15.33       -0.66                     at1_liability
+        2023-12-31   16.71  15.99       -0.72                     at1_liability
+        2024-06-30   18.38  17.60       -0.78                     at1_liability
+        2024-12-31   19.30  18.55       -0.75                     at1_liability
+        2025-06-30   19.65  18.90       -0.75                     at1_liability
+        2025-12-31   19.15  18.43       -0.72                     at1_liability
+        2026-06-30   19.81  19.08       -0.73                     at1_liability
+CABK    2021-12-31   28.51  27.59       -0.92                     at1_liability
+        2022-06-30    9.57   8.69       -0.88                     at1_liability
+        2022-12-31   10.26   9.42       -0.84                     at1_liability
+        2023-06-30   12.09  11.27       -0.82                     at1_liability
+        2023-12-31   15.18  14.31       -0.87                     at1_liability
+        2024-06-30   17.15  16.25       -0.90                     at1_liability
+        2024-12-31   17.51  16.70       -0.81                     at1_liability
+        2025-06-30   18.42  17.62       -0.80                     at1_liability
+        2025-12-31   17.28  16.46       -0.82                     at1_liability
+        2026-06-30   17.84  17.01       -0.83                     at1_liability
+SAB     2021-12-31    5.06   4.10       -0.96                     at1_liability
+        2022-06-30    6.61   5.49       -1.12                     at1_liability
+        2022-12-31    7.88   6.87       -1.01                     at1_liability
+        2023-06-30    9.27   8.32       -0.95                     at1_liability
+        2023-12-31   11.74  10.72       -1.02                     at1_liability
+        2024-06-30   13.26  12.30       -0.96                     at1_liability
+        2024-12-31   14.96  14.15       -0.81                     at1_liability
+        2025-06-30   16.47  15.66       -0.81                     at1_liability
+        2025-12-31   14.44  13.26       -1.18                     at1_liability
+        2026-06-30   15.85  14.32       -1.53                     at1_liability
+SAN     2021-12-31   12.94  12.11       -0.83                     at1_liability
+        2022-06-30   13.17    NaN         NaN  missing_input:profit_to_ordinary
+        2022-12-31   13.46  12.72       -0.74                     at1_liability
+        2023-06-30   13.45    NaN         NaN  missing_input:profit_to_ordinary
+        2023-12-31   14.76  14.11       -0.65                     at1_liability
+        2024-06-30   15.38  14.64       -0.74                     at1_liability
+        2024-12-31   15.64  14.87       -0.77                     at1_liability
+        2025-06-30   16.82  16.06       -0.76                     at1_liability
+        2025-12-31   17.06  16.33       -0.73                     at1_liability
+        2026-06-30   18.12  17.41       -0.71                     at1_liability
+```
+
+### E3c.3 Every minority_interests row with status no_nci_line (value 0; SCE page cited, balance sheet page read)
+
+```
+bank_id   ref_date value                  doc sce_page  bs_page_no_nci_line value_as_printed                                                                                                                                                                                                                  snippet
+  SANUK 2024-06-30     0 half_year:2024-06-30       55                   53            blank                                                                                                                                                                   capital instruments hedging translation earnings Total
+  SANUK 2025-06-30     0 half_year:2025-06-30       53                   51            blank                                                                                                                                                                   capital instruments hedging translation earnings Total
+  SANUK 2025-12-31     0    annual:2025-12-31      163                  161            blank                                                                                                                                                capital instruments Fair value hedging hedging translation earnings Total
+  SANUK 2026-06-30     0 half_year:2026-06-30       55                   53            blank                                                                                                                                                                             capital hedging hedging translation earnings
+    NDA 2024-06-30     0 half_year:2024-06-30       36                   35            blank                                                                                                                                      EURm capital1 equity tions hedges income plans option earnings Total holders equity
+    NDA 2024-12-31     0    annual:2024-12-31      201                  200            blank 2024, EURm Note capital1 equity ope ra tions2,3,4 hedges2,4 in come2 plans option earn ings Total tal holders equity Cash flow from operating activities before changes in operating assets and liabilities 7,436 10,757
+    NDA 2025-06-30     0 half_year:2025-06-30       35                   34            blank                                                                                                                                      EURm capital1 equity tions hedges income plans option earnings Total holders equity
+    NDA 2025-12-31     0    annual:2025-12-31      198                  197            blank  2025, EURm Note capital1 equity ope rat ions2,3,4 hedges2,4 in come2 plans option earn ings Total tal holders equity Cash flow from operating activities before changes in operating assets and liabilities 7,880 7,436
+    NDA 2026-06-30     0 half_year:2026-06-30       36                   35            blank                                                                                                                                      EURm capital1 equity tions hedges income plans option earnings Total holders equity
+ DANSKE 2024-06-30     0 half_year:2024-06-30       32                   31            blank                                                                                              (DKK millions) capital reserve (OCI) earnings dividends Total (DKK millions) capital reserve (OCI) earnings dividends Total
+ DANSKE 2024-12-31     0    annual:2024-12-31      126                  125            blank                                                                      (DKK millions) Share capital reserve value (OCI) earnings dividends Total (DKK millions) Share capital reserve value (OCI) earnings dividends Total
+ DANSKE 2025-06-30     0 half_year:2025-06-30       32                   31            blank                                                                                  (DKK millions) capital reserve value (OCI) earnings dividends Total (DKK millions) capital reserve value (OCI) earnings dividends Total
+ DANSKE 2025-12-31     0    annual:2025-12-31      138                  137            blank                                                                                              (DKK millions) capital reserve (OCI) earnings dividends Total (DKK millions) capital reserve (OCI) earnings dividends Total
+ DANSKE 2026-06-30     0 half_year:2026-06-30       32                   31            blank                                                                                  (DKK millions) capital reserve value (OCI) earnings dividends Total (DKK millions) capital reserve value (OCI) earnings dividends Total
+    SEB 2020-12-31     0    annual:2020-12-31      104                  103            blank                                                                                                                                               2020 Share capital3) OCA6) hedges operations plans earnings Total equity4)
+    SEB 2021-12-31     0    annual:2021-12-31      116                  115            blank                                                                                                                                               2021 Share capital3) OCA5) hedges operations plans earnings Total equity4)
+    SEB 2022-12-31     0    annual:2022-12-31      116                  115            blank                                                                                                                                               2022 Share capital3) OCA5) hedges operations plans earnings Total equity4)
+    SEB 2023-12-31     0    annual:2023-12-31       83                   83            blank                                                                                                                               Loans to central banks 18 97,691 73,962 4,454 Share flow of foreign benefit Retained Total
+    SEB 2024-12-31     0    annual:2024-12-31      195                  195            blank                                                                                                          Loans to central banks 17 4,825 97,691 Share flow of foreign benefit Retained Total 07. Report of the directors
+    SEB 2025-12-31     0    annual:2025-12-31      209                  209            blank                                                                                               Loans to central banks 17 51,513 4,825 SEK m Share flow f oreign benefit Retained Total 05. Financial statements and notes
+    SEB 2021-06-30     0 half_year:2021-06-30       24                   23            blank                                                                                                                                                              SEK m capital OCA2) hedges operations plans earnings Equity
+    SEB 2022-06-30     0 half_year:2022-06-30       23                   22            blank                                                                                                                                                              SEK m capital OCA2) hedges operations plans earnings Equity
+    SEB 2023-06-30     0 half_year:2023-06-30       23                   22            blank                                                                                                                                                              SEK m capital OCA2) hedges operations plans earnings Equity
+    SEB 2024-06-30     0 half_year:2024-06-30       24                   23            blank                                                                                                                                                              SEK m capital OCA²⁾ hedges operations plans earnings Equity
+    SEB 2025-06-30     0 half_year:2025-06-30       20                   19            blank                                                                                                                                                              SEK m capital OCA²⁾ hedges operations plans earnings Equity
+    SEB 2026-06-30     0 half_year:2026-06-30       25                   24            blank                                                                                                                                                              SEK m capital OCA²⁾ hedges operations plans earnings Equity
+```
+
+### E3c.4 NO yields, every month of 2025 and 2026 (data/raw/yields/NO.csv)
+
+```
+ period  yield_pct                                    series             status  n_days
+2025-01   3.908955 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      22
+2025-02   3.892950 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      20
+2025-03   4.052524 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      21
+2025-04   3.916158 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      19
+2025-05   4.026850 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      20
+2025-06   3.991650 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      20
+2025-07   3.912957 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      23
+2025-08   3.911905 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      21
+2025-09   3.985364 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      22
+2025-10   4.009043 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      23
+2025-11   4.073750 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      20
+2025-12   4.153158 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      19
+2026-01   4.174381 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      21
+2026-02   4.218500 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      20
+2026-03   4.334864 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      22
+2026-04   4.386368 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      19
+2026-05   4.446389 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      18
+2026-06   4.302045 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      22
+2026-07   4.372391 Norges Bank GOVT_GENERIC_RATES B.10Y.GBON monthly_from_daily      23
+```
+
+### E3c.5a rote against rote_reported at 2025-12-31, after step 3.7 (pct; no threshold)
+
+```
+bank_id  rote  rote_reported  difference_pts                           status
+   BAMI 16.96          22.38           -5.42                               ok
+   BARC 11.41          11.30            0.11                               ok
+   BBVA 18.43          19.30           -0.87                    at1_liability
+    BKT   NaN          20.03             NaN missing_input:minority_interests
+   BMPS   NaN          22.40             NaN        missing_input:at1_coupons
+    BNP 11.19          11.60           -0.41                 from_comparative
+    BPE   NaN          20.05             NaN        missing_input:at1_coupons
+   CABK 16.46          17.50           -1.04                    at1_liability
+    CBK   NaN           8.70             NaN    missing_input:at1_instruments
+    DBK 10.03          10.30           -0.27                               ok
+    GLE  9.85          10.20           -0.35                               ok
+   HSBA 13.32          13.30            0.02                               ok
+   INGA 12.94          13.60           -0.66       at1_liability;coupon_in_pl
+    KBC 15.68          16.00           -0.32                   at1_net_of_tax
+   LLOY 12.06          12.90           -0.84                               ok
+    NWG 19.16          19.20           -0.04                               ok
+    SAB 13.26          14.30           -1.04                    at1_liability
+    SAN 15.79          17.10           -1.31                    at1_liability
+  SANUK   NaN          10.00             NaN missing_input:minority_interests
+    UCG 18.46          19.20           -0.74                               ok
+    UNI  9.58           9.80           -0.22                               ok
+```
+
+### E3c.5b BAMI and BMPS against their own RoTE at 2025-12-31 (decision 5; no entry error found)
+
+Read from each bank's annual:2025-12-31 document. Amounts are EUR m; "ours" are the facts behind kpi.csv.
+
+**BAMI (reported 22.38%, p21).** Definition, p45: "Group net profit (loss) for the year to shareholders' equity, determined by excluding the profit (loss) for the year, AT1 equity instruments, advances on dividends and intangible assets, net of the related tax effects". This is closing equity, not an average; the numerator is profit before AT1 coupons.
+
+| item | bank (page) | ours | note |
+|---|---|---|---|
+| numerator | 2,081.987, profit for the year (p335) | 1,958.187 = 2,081.987 - coupons 123.8 (p557) | the bank does not deduct AT1 coupons |
+| total equity 2025-12-31 | 15,585.163 (p335) | 15,585.16 | agrees |
+| NCI 2025-12-31 / 2024-12-31 | 80.487 / 0.069 (p335) | 80.487 / 0.069 | agrees |
+| AT1 | 1,787.145 / 1,608.773, "140. Equity instruments" (p335; p557 "outstanding 1,787.1") | 1,390.0 / 1,389.745, CC1 row 30 | accounting against regulatory amount |
+| intangibles 2025-12-31 | 3,214.115 gross (p335); implied net of tax about 3,024 | 3,030.0, CC1 row 8 | agrees within 6 |
+| denominator | not printed; implied 2,081.987 / 0.2238 = 9,303 | 11,547.51, average of 2024 and 2025 closing | |
+
+Bridge from 16.96% to 22.38%: gross profit numerator +1.07 pts (18.03); closing rather than average equity, the average carrying the pre-Anima 2024 intangibles, +0.75 (18.78); accounting AT1 1,787 for regulatory 1,390, +0.70 (19.48); the year's profit excluded from equity and the interim dividend added back, +2.91 (22.39).
+
+**BMPS (reported 22.4%, p14).** Definition, p15 and footnote 1: "Net profit (loss) for the year and the average between the tangible shareholders' equity at the end of year and that at the end of the previous year"; tangible equity is book Group shareholders' equity including profit, net of goodwill and other intangibles, and "the figure as at 31 December 2025 does not include the balances of the Mediobanca Group". The p14 footnote excludes Mediobanca from both numerator and denominator.
+
+| item | bank (page) | ours | note |
+|---|---|---|---|
+| numerator | 2,749.9, parent company's net profit excluding Mediobanca (p13: "2,715.7 (34.2) 2,749.9") | 2,715.707 (p337) | the bank excludes Mediobanca's -34.2 |
+| Group equity 2025-12-31 / 2024-12-31 | 27,961.2 / 11,649.0 (p14) | 30,209.68 - 2,248.475 = 27,961.2 / 11,649.282 - 0.336 | agrees |
+| Mediobanca equity | 14,737.4 (p14) | included | consolidated only at 2025-12-31 |
+| intangibles 2025-12-31 / 2024-12-31 | 3,336.130 / 156.066, "100. Intangible assets" (p336) | 6,415.81 / 125.258, CC1 row 8 | the regulatory deduction includes Mediobanca's |
+| denominator | not printed; implied 2,749.9 / 0.224 = about 12,276, the average of 11,493 and about 13,060 (MPS excluding Mediobanca) | 16,534.54 | |
+
+Bridge from 16.42% to 22.40%: profit excluding Mediobanca +0.21 pts; the rest is the denominator. Our 2025-12-31 tangible equity of 21,545 includes Mediobanca's 14,737 of equity, consolidated at year end only, less 6.4bn of regulatory intangibles; the bank's ex-Mediobanca figure is about 13,060. Since step 3.7, BMPS rote is blank (OPEN-34).
+
+### E3c.6 rote for every bank at every date, reported (pct; a blank shows its status, mi: = missing_input:)
+
+```
+date                2021-12-31             2022-06-30             2022-12-31             2023-06-30             2023-12-31             2024-06-30             2024-12-31             2025-06-30             2025-12-31                2026-06-30
+bank_id                                                                                                                                                                                                                                         
+LLOY                     12.72                  10.48                  12.39                  14.03                  13.79                  13.88                  11.47                  11.91                  12.06                     13.50
+NWG                       9.23                  10.08                  11.70                  14.61                  17.18                  17.23                  17.31                  18.26                  19.16                     21.00
+BARC                     13.03                  10.27                  10.36                  11.99                   8.82                   8.26                  10.47                  11.55                  11.41                     12.25
+HSBA                      7.62                   8.48                   9.20                  15.32                  14.48                  14.53                  14.92                  11.51                  13.32                     15.24
+SANUK                     9.85  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests                   6.97  mi:minority_interests                      6.43
+NDA                      13.60     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity                  18.60                  17.45            mi:at1_coupons
+DNB      mi:profit_to_ordinary  mi:profit_to_ordinary     mi:tangible_equity                  15.86                  15.96                  17.65                  16.82                  17.87                  16.83        mi:at1_instruments
+DANSKE      mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity                  13.75                  13.42                     14.51
+SEB                      14.27                  13.55                  13.41                  16.74                  18.37                  19.34                  16.01                  15.48                  13.85                     14.47
+SHB                      10.85                  11.14                  11.11                  12.92                  14.34                  15.22                  12.68                  13.18                  12.06  mi:intangibles_deduction
+SWED                     14.68                  13.60                  13.93                  18.36                  20.18     mi:tangible_equity                  18.01     mi:tangible_equity                  16.14     mi:minority_interests
+INGA                      8.96                   7.38                   7.19                  11.54                  14.66                  13.93                  12.84                  12.68                  12.94                     13.80
+ABN         mi:tangible_equity                   7.90                   8.75                  11.60                  12.17                  11.74                  10.27                   9.49                   8.88                      9.79
+KBC                      12.68     mi:tangible_equity                  16.44                  18.80                  17.67                  15.21                  16.37                  16.49                  15.68                     16.03
+RABO                      9.29                   7.39                   6.39                   8.40                   9.72  mi:profit_to_ordinary                  10.77  mi:profit_to_ordinary                   9.63                      9.32
+BNP                       9.41                   9.99                   9.91                  11.73                  10.35                   9.51                  10.70                  10.61                  11.19                     12.46
+GLE         mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity     mi:tangible_equity                   9.85                     10.70
+CAG         mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:at1_instruments        mi:at1_instruments
+DBK                       3.86                   4.59                   8.72                   8.28                   7.23                   5.72                   4.62                   8.24                  10.03                     10.60
+CBK                       1.17                   5.58                   4.84                   6.10                   7.44                   7.81                   8.57                   8.34     mi:at1_instruments        mi:at1_instruments
+SAN                      11.07  mi:profit_to_ordinary                  12.72  mi:profit_to_ordinary                  14.11                  14.64                  14.87                  15.50                  15.79                     17.41
+BBVA                     10.20                  12.40                  13.89                  15.33                  15.99                  17.60                  18.55                  18.90                  18.43                     19.08
+CABK                     18.83                   7.50                   9.26                  11.16                  14.28                  16.24                  16.70                  17.62                  16.46                     17.01
+SAB                       4.10                   5.49                   6.87                   8.32                  10.72                  12.30                  14.15                  15.66                  13.26                     14.32
+BKT         mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary  mi:minority_interests     mi:minority_interests
+UNI                      22.89  mi:profit_to_ordinary                   3.95  mi:profit_to_ordinary                   3.97                   6.43                   8.94                   9.47                   9.58              mixed_family
+UCG                       2.22                   2.83                  11.10                  14.73                  16.09                  17.92                  16.62                  17.67                  18.46        mi:at1_instruments
+ISP             mi:at1_coupons  mi:profit_to_ordinary                   8.43  mi:profit_to_ordinary                  15.53                  16.39                  16.70                  17.43                  18.09                     17.99
+BAMI                      4.71                   4.67                   5.62                   7.93                  10.73                  11.60                  15.39                  20.90                  16.96                     16.60
+BPE         mi:tangible_equity  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons            mi:at1_coupons
+BMPS            mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons            mi:at1_coupons
+```
+
+### E3c.6 rote for every bank at every date, underlying (pct; a blank shows its status, mi: = missing_input:)
+
+```
+date                2021-12-31             2022-06-30             2022-12-31             2023-06-30             2023-12-31             2024-06-30             2024-12-31             2025-06-30             2025-12-31                2026-06-30
+bank_id                                                                                                                                                                                                                                         
+LLOY                     15.42                  13.06                  13.68                  15.72                  14.65                  14.83                  12.56                  12.66                  12.39                     13.45
+NWG                      12.37                  11.92                  12.71                  15.41                  16.95                  17.84                  18.23                  19.62                  18.90                     19.91
+BARC                     14.71                  13.99                  13.06                  12.50                  10.81                  10.84                  10.72                  11.38                  12.14                     12.99
+HSBA                      9.26                  10.47                  13.07                  16.25                  16.32                  16.26                  16.10                  16.94                  17.55                     18.04
+SANUK                    12.55  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests                   6.97  mi:minority_interests                      6.43
+NDA                      13.60     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity                  18.60                  17.45            mi:at1_coupons
+DNB      mi:profit_to_ordinary  mi:profit_to_ordinary     mi:tangible_equity                  15.86                  15.96                  17.65                  16.82                  17.87                  16.83        mi:at1_instruments
+DANSKE      mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity                  13.75                  13.42                     14.51
+SEB                      14.27                  13.55                  14.14                  17.49                  18.37                  19.34                  16.01                  15.48                  14.03                     14.66
+SHB                      10.65                  10.24                  10.74                  13.10                  14.41                  15.52                  13.04                  13.44                  12.18  mi:intangibles_deduction
+SWED                     14.68                  13.60                  13.93                  18.93                  20.69     mi:tangible_equity                  18.01     mi:tangible_equity                  16.14     mi:minority_interests
+INGA                      8.96                   7.38                   7.19                  11.54                  14.66                  13.93                  12.84                  12.68                  12.94                     13.80
+ABN         mi:tangible_equity                   7.19                  10.35                  13.18                  12.71                  12.25                  10.69                  10.07                   9.13                      9.80
+KBC                      13.77     mi:tangible_equity                  17.43                  19.82                  18.32                  15.88                  16.84                  16.96                  16.52                     16.85
+RABO                     10.29                   8.76                   7.84                   9.20                   9.05  mi:profit_to_ordinary                  10.88  mi:profit_to_ordinary                   9.34                      8.98
+BNP                       9.79                  10.15                  10.38                  12.90                  13.01                  11.77                  11.18                  11.11                  11.78                     12.87
+GLE         mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity     mi:tangible_equity                  10.53                     11.30
+CAG         mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:at1_instruments        mi:at1_instruments
+DBK                       7.47                   7.29                   8.97                   9.58                   9.20                   9.74                   8.93                   9.43                  10.62                     11.12
+CBK                       1.17                   5.58                   4.84                   6.10                   7.44                   7.81                   8.57                   8.34     mi:at1_instruments        mi:at1_instruments
+SAN                      12.11  mi:profit_to_ordinary                  12.72  mi:profit_to_ordinary                  14.11                  14.64                  14.87                  16.06                  16.33                     17.41
+BBVA                     12.01                  12.40                  13.89                  15.33                  15.99                  17.60                  18.55                  18.90                  18.43                     19.08
+CABK                     27.59                   8.69                   9.42                  11.27                  14.31                  16.25                  16.70                  17.62                  16.46                     17.01
+SAB                       4.10                   5.49                   6.87                   8.32                  10.72                  12.30                  14.15                  15.66                  13.26                     14.32
+BKT         mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary  mi:minority_interests     mi:minority_interests
+UNI                      31.50  mi:profit_to_ordinary                   3.95  mi:profit_to_ordinary                   3.97                   6.43                   8.94                   9.47                   9.58              mixed_family
+UCG                       2.22                   2.60                  11.10                  14.73                  16.09                  17.92                  16.62                  17.67                  18.46        mi:at1_instruments
+ISP             mi:at1_coupons  mi:profit_to_ordinary                   8.43  mi:profit_to_ordinary                  15.53                  16.39                  16.70                  17.43                  18.09                     17.99
+BAMI                      6.66                   6.80                   7.00                   8.21                  11.49                  12.43                  17.56                  23.12                  17.25                     16.98
+BPE         mi:tangible_equity  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons            mi:at1_coupons
+BMPS            mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons            mi:at1_coupons
+```
+
+### E3c.6b rote coverage (filled of bank-dates)
+
+```
+            count  size
+basis                  
+reported      218   310
+underlying    218   310
+```
+
 ## Tests run
 
 ```
 $ .venv/Scripts/python.exe -m pytest -p socket --disable-socket -q
-FAILED tests/test_yields.py::test_coverage - AssertionError: ('NO', ['2025-12'])
-1 failed, 25 passed, 1 warning in 38.92s
+26 passed, 1 warning in 29.50s
 $ .venv/Scripts/python.exe -m ruff check .
 All checks passed!
 ```
 
-New tests in this section: `test_one_offs.py::test_underlying`, `test_kpi.py::test_rote_hand`, `test_kpi.py::test_at1_liability`, `test_market.py::test_gbp_pence`, `test_yields.py::test_coverage`. The only failure is the NO 2025-12 gap (Deviation 1, OPEN-31); the test was not changed, skipped or marked (rule 5).
+New tests in this section: `test_one_offs.py::test_underlying`, `test_kpi.py::test_rote_hand`, `test_kpi.py::test_at1_liability` (3 cases since step 3.7, a reviewer change allowed by 03c C), `test_market.py::test_gbp_pence`, `test_yields.py::test_coverage` (unchanged; passes since step 3.7). Check 1: 10,936 of 10,936 report entries pass provenance.
 
 ## Fresh-clone check
 
-Clone path `C:/bpbs3b`, at 9e19da4.
+Clone path `C:/bpbs3c`, at 56292fe.
 
 ```
-$ git clone https://github.com/uty101/Bank-Performance-Benchmarking.git C:/bpbs3b
+$ git clone https://github.com/uty101/Bank-Performance-Benchmarking.git C:/bpbs3c
 $ git log --oneline -1
-9e19da4 section 3: open questions OPEN-32 and OPEN-33
+56292fe section 3: open questions OPEN-34 and OPEN-35
 $ uv venv --python 3.12
-Using CPython 3.12.13
-Creating virtual environment at: .venv
-Activate with: .venv\Scripts\activate
 $ uv pip install -r requirements-lock.txt
- + xlrd==2.0.2
- + yfinance==1.7.0
 $ uv pip install -e . --no-deps
- + bpb==0.1.0 (from file:///C:/bpbs3b)
-$ .venv/Scripts/python -m pytest -p socket --disable-socket -q
-.........................F                                               [100%]
-================================== FAILURES ===================================
-________________________________ test_coverage ________________________________
-
-    def test_coverage():
-        """Every [sovereign] country has a yield for every December from 2020 to 2025 and for 2026-06."""
-        cfg = load_config(ROOT / "config.toml")
-        need = [f"{y}-12" for y in range(2020, 2026)] + ["2026-06"]
-        for cc in cfg.sovereign.countries:
-            y = pd.read_csv(ROOT / "data" / "raw" / "yields" / f"{cc}.csv", dtype={"period": str})
-            have = set(y.loc[y["yield_pct"].notna(), "period"])
->           assert set(need) <= have, (cc, sorted(set(need) - have))
-E           AssertionError: ('NO', ['2025-12'])
-E           assert {'2020-12', '...2025-12', ...} <= {'2020-01', '...2020-06', ...}
-E             
-E             Extra items in the left set:
-E             '2025-12'
-
-tests\test_yields.py:19: AssertionError
+$ .venv/Scripts/python.exe -m pytest -p socket --disable-socket -q
+..........................                                               [100%]
 ============================== warnings summary ===============================
 .venv\Lib\site-packages\_pytest\config\__init__.py:894
-  C:\bpbs3b\.venv\Lib\site-packages\_pytest\config\__init__.py:894: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; socket
+  C:\bpbs3c\.venv\Lib\site-packages\_pytest\config\__init__.py:894: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; socket
     self.import_plugin(arg, consider_entry_points=True)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-=========================== short test summary info ===========================
-FAILED tests/test_yields.py::test_coverage - AssertionError: ('NO', ['2025-12'])
-1 failed, 25 passed, 1 warning in 56.38s
+26 passed, 1 warning in 33.54s
 ```
 
 ## Runtime per step
@@ -1449,11 +1995,12 @@ FAILED tests/test_yields.py::test_coverage - AssertionError: ('NO', ['2025-12'])
 - 3.4: market pull about 3 minutes; rote fixes and evidence about 30 minutes; fred pull failed after 3 attempts of 120 s.
 - 3.5: at1_in_equity and fte entries 5 to 17 minutes per group (6 in parallel); one off verification 5 minutes; merges and recompute about 15 minutes.
 - 3.6: yields pull under 1 minute.
+- 3.7: coupon location and nci entries 3 to 11 minutes per group of banks (4 in parallel, after a usage limit pause); yields pull under 1 minute; merge with provenance about 3 minutes; recompute about 1.5 minutes.
 - `scripts/run_all.py`: about 4 minutes.
 
 ## Deviations from PLAN.md
 
-1. **Rule 4 stops.** (a) Session 3, step 3.4: `--stage fred` failed (read timeout, then the connection closed by fred.stlouisfed.org, 3 attempts); a diagnostic with a browser user agent was refused by this session's safety classifier and nothing more was tried. Instruction 03b B.1 replaced FRED. (b) Session 3b, step 3.6: Norges Bank's `GOVT_GENERIC_RATES/M.10Y.GBON` returns 2025-11 and 2026-01 but no 2025-12, so `test_coverage` fails for NO; the business-day series `B.10Y.GBON` has December 2025, but averaging it would be a design choice (OPEN-31). Every other step is done.
+1. **Rule 4 stops.** (a) Session 3, step 3.4: `--stage fred` failed (read timeout, then the connection closed by fred.stlouisfed.org, 3 attempts); a diagnostic with a browser user agent was refused by this session's safety classifier and nothing more was tried. Instruction 03b B.1 replaced FRED. (b) Session 3b, step 3.6: Norges Bank's monthly series had no 2025-12; instruction 03c B.3 replaced it with the business-day mean, and `test_coverage` passes. (c) Session 3c, step 3.7: BMPS (every date) and NDA (2026-06-30) have no AT1 coupon charged to equity and no flag of 1, so at1_coupons and rote are blank there (OPEN-34). Every other step is done.
 2. **GLEIF match rule.** GLEIF's `filter[entity.legalName]` is a text search ("Barclays" returns 396 records). The stage also filters entity status ACTIVE and legal address country GB, and keeps records whose legal name equals the universe name followed by `PLC`, case and spacing normalised. Each of the 5 UK banks then has exactly 1 record (Evidence E3.1c). Appending `PLC` is my reading of "exactly 1 active record per bank".
 3. **Scope gate.** `8b_scope_gate` rows keep value_a, value_b and diff_rel, with threshold NaN and passed blank; `build_facts` no longer applies `scope_gate_failed`.
 4. **lcr and nsfr from interim reports are `report` family** with status `p3_from_report`. A.1 item 2 says "family p3", but the source map has no p3 rule for lcr or nsfr, and the family comes from the source map (amendment 11).
@@ -1470,10 +2017,17 @@ FAILED tests/test_yields.py::test_coverage - AssertionError: ('NO', ['2025-12'])
 15. **mergers.csv.** Tesco Bank and Sainsbury's Bank are sized by gross lending (`size_basis` loans): no total assets are published (02b B.10 order). UK acquirer total assets are the report family's at the last 31 Dec or 30 Jun before completion.
 
 16. **Flag fields (instruction 03b B.2).** `at1_in_equity` has kind `flag` in fields.yaml: value_as_printed is a phrase of the cited line, value is the entered 1 or 0, and provenance checks that the cited line is on the page (as the zero-cell rule of 02b B.4). The status decisions of 03b B.3 to B.5 (`at1_net_of_tax`, `headcount`, `no_nci_line`) are held in a new trailing column `decision_status` of report_entries.csv, blank for every other entry; `at1_liability` is set by the KPI code where at1_in_equity is 0.
-17. **at1_liability rule.** Where at1_in_equity is 0 at a bank and date, every family's at1_coupons and at1_instruments row there is set to 0 (a report row is added where none exists). Danske's 2022 and Nordea's H1 2025 coupons, paid on equity AT1 before its redemption, are therefore 0 at dates flagged 0. For SAN, BBVA, CABK, SAB and BKT the coupons are charged to reserves, not interest expense (OPEN-32); the rule was applied as written.
+17. **at1_liability rule (instruction 03b; replaced in step 3.7, Deviation 21).** Where at1_in_equity is 0 at a bank and date, every family's at1_coupons and at1_instruments row there is set to 0 (a report row is added where none exists). Danske's 2022 and Nordea's H1 2025 coupons, paid on equity AT1 before its redemption, are therefore 0 at dates flagged 0. For SAN, BBVA, CABK, SAB and BKT the coupons are charged to reserves, not interest expense (OPEN-32); the rule was applied as written.
 18. **CAG at1_in_equity** at 2023-12-31 and 2024-06-30 left out: the comparative came from the H1 2025 report although that date's own document (CASA-only) was obtained, as for CAG's at1_coupons (Deviation 10).
 19. **BMPS fte** at 2020-12-31, 2021-06-30, 2021-12-31 and 2022-06-30 failed provenance when re-entered under decision 4 (text layer) and were left out.
 20. **Yields file format.** `data/raw/yields/{CC}.csv` holds the parsed rows (period, yield_pct, series), not the raw response; the exact URL and series of each file are in MANIFEST.json.
+
+21. **Two AT1 rules (instruction 03c B.1).** `at1_rules` in bpb/kpi.py replaces `at1_liability_rule`: at1_in_equity 0 sets every family's at1_instruments row to 0 (status at1_liability); at1_coupon_in_pl 1 sets every family's at1_coupons row to 0 (status coupon_in_pl), adding a report row where none exists. at1_coupon_in_pl is 0 when any coupon of the year is charged to equity or reserves (Danske 2022 and Nordea 2025 had both kinds), so that the equity-charged amount, the field's definition, is still deducted.
+22. **2026-06-30 flags from the 2025 annual report.** Decision 4 reads a half year date from "the annual report of the same year"; 2026 has none. Both flags at 2026-06-30 are copied from the 2025 annual report with status class_from_annual, since no H1 2026 report states a different classification (the agents read every half year report for that). Every flag value is the same as before the copy; only the citations changed. GLE (2021-06-30 to 2024-06-30) and CAG (2021-06-30 to 2024-06-30) keep their 03b citations, or stay absent, because their own annual reports for those years were not obtained or are not group scope. BKT's 2021-06-30 to 2024-06-30 at1_in_equity, absent before, are now filled from its annual reports.
+23. **Weak citations for the value 1.** SEB, SHB, SWED, INGA and DANSKE (2023 to 2025) print no policy line naming the AT1 coupon; at1_coupon_in_pl 1 cites the interest expense note line for subordinated liabilities, which also holds Tier 2 interest. None of their statements of changes in equity has an AT1 coupon line.
+24. **Citations from the parent company's notes or SCE.** ISP and BPE (separate notes of the AT1 issuer), BARC 2024 and 2025 (parent SCE; the consolidated row's label is not unique), ABN 2022 and 2023 (equity note of the company statements).
+25. **SAN rote at 2022-06-30 and 2023-06-30 now blank.** The rolling 12 months need the H1 2022 coupon; the H1 2021 and H1 2022 documents are quarterly-style reports with no EPS note and no coupon figure (E3c.2). SAB's 2020 coupon was re-entered as 73,227 thousand from the EPS note (p79): the subordinated liabilities note's 73,250 repeats the 2019 amount.
+26. **NO yields file.** `data/raw/yields/{CC}.csv` gains the columns `status` (ok, or monthly_from_daily for NO) and `n_days` (business days averaged); the other 10 countries' values are unchanged.
 
 ## Not verified
 
@@ -1484,21 +2038,20 @@ FAILED tests/test_yields.py::test_coverage - AssertionError: ('NO', ['2025-12'])
 
 ## Open questions
 
-1. **OPEN-31:** NO 2025-12 yield: the mean of Norges Bank's business-day series, or another monthly source.
-2. **OPEN-32:** SAN, BBVA, CABK, SAB and BKT charge AT1 coupons to reserves although the AT1 is a liability; the B.2 rule as applied drops their coupons from profit_to_ordinary.
-3. **OPEN-33:** banks printing no non-controlling interests line (SEB, DANSKE, BKT, NDA from 2022-06-30, SWED 30 June from 2024, SANUK from 2022-06-30) have no tangible_equity; most of the remaining rote blanks (E3b.1).
-4. **rote far from rote_reported** at 2025-12-31 for BAMI (-5.4 pts) and BMPS (-6.0 pts); both publish RoTE on a different profit or scope (BMPS excludes Mediobanca), E3b.5.
-5. **Weak at1_in_equity citations** (E3b.2): half year reports that never name the AT1 classification (SHB H1 2021, 2023, 2025; SWED every 30 June; NDA 2026-06-30; CABK H1 2022, 2024, 2026; BMPS 2026-06-30, where Tier 1 exceeds CET1 by EUR 95m of AT1 from Mediobanca's minorities) cite the subordinated liabilities line or the absence of an equity line. SAN's "Other equity instruments issued" (Popular fidelity bonds, to 2024) were not counted as AT1.
-6. **As in session 3:** the UK leverage exposure break at 2022-06-30, SANUK's leverage exposure unit from 2022-06-30 to 2024-06-30, BARC deposits_customers to 2022-06-30 and BARC's gross shares_out.
+1. **OPEN-34:** BMPS (no AT1 at all) and NDA at 2026-06-30 (no coupon charged to equity after the 2025 redemption) have no at1_coupons: 0 with a status, or missing as now. BMPS rote is blank at every date.
+2. **OPEN-35:** the strict reading of "any amount" in 03c B.2 left these missing: SANUK at 2023-06-30, 2023-12-31 and 2024-12-31, DANSKE at 2023-06-30 and ABN at 2020-12-31 (comparative-period amounts only), and BKT at every date (a balance sheet NCI line of dashes). Should comparative blocks and dash-only lines count?
+3. **INGA, SEB, SHB, SWED, DANSKE value 1** rests on the subordinated liabilities interest line (Deviation 23).
+4. **rote against rote_reported** (E3c.5a): with the coupons now deducted, SAN, BBVA, CABK and SAB are 0.9 to 1.3 pts below their published figure; BAMI and BMPS are explained by definition differences (E3c.5b).
+5. **As in session 3:** the UK leverage exposure break at 2022-06-30, SANUK's leverage exposure unit from 2022-06-30 to 2024-06-30, BARC deposits_customers to 2022-06-30 and BARC's gross shares_out.
 
 ## Files changed
 
-`CLAUDE.md` (amendments 26, 27; rule 14 lifted for step 3.0), `decisions/section_2_review.md`, `decisions/OPEN.md`, `config/fields.yaml`, `config/source_map.yaml`, `bpb/checks.py`, `bpb/ingest.py`, `bpb/kpi.py`, `bpb/market.py` (new), `scripts/pull_data.py` (stages gleif, market, fred), `scripts/fetch_reports.py`, `scripts/run_all.py`, `scripts/merger_materiality.py`, `tests/test_kpi.py`, `tests/test_one_offs.py` (new), `tests/test_market.py` (new), `tests/test_yields.py` (new), `data/raw/yields/`, `decisions/data_sources.md`, `data/manual/universe.csv`, `data/manual/report_urls.csv`, `data/manual/report_entries.csv`, `data/manual/one_offs.csv`, `data/manual/mergers.csv`, `data/raw/report_manifest.csv`, `data/raw/report_text/`, `data/raw/gleif/`, `data/raw/market/`, `data/raw/MANIFEST.json`, `outputs/tables/kpi.csv`, `outputs/tables/checks.csv`.
+`CLAUDE.md` (amendments 26, 27; rule 14 lifted for step 3.0), `decisions/section_2_review.md`, `decisions/OPEN.md`, `config/fields.yaml`, `config/source_map.yaml`, `bpb/checks.py`, `bpb/ingest.py`, `bpb/kpi.py`, `bpb/market.py` (new), `scripts/pull_data.py` (stages gleif, market, fred), `scripts/fetch_reports.py`, `scripts/run_all.py`, `scripts/merger_materiality.py`, `tests/test_kpi.py`, `tests/test_one_offs.py` (new), `tests/test_market.py` (new), `tests/test_yields.py` (new), `data/raw/yields/` (status and n_days columns, NO from daily), `decisions/data_sources.md`, `data/manual/universe.csv`, `data/manual/report_urls.csv`, `data/manual/report_entries.csv`, `data/manual/one_offs.csv`, `data/manual/mergers.csv`, `data/raw/report_manifest.csv`, `data/raw/report_text/`, `data/raw/gleif/`, `data/raw/market/`, `data/raw/MANIFEST.json`, `outputs/tables/kpi.csv`, `outputs/tables/checks.csv`.
 
 ## Reviewer reads
 
-1. This file: Outcome, Deviations 1, 16, 17 and Open questions.
-2. `decisions/OPEN.md`: OPEN-31 to OPEN-33.
-3. Evidence E3b.1 (rote with blank statuses), E3b.2 (at1_in_equity), E3b.5 (rote against rote_reported).
-4. `bpb/kpi.py`: `at1_liability_rule`, `underlying_facts`, `EBA_MIXED`.
-5. E3b.3 (one offs removed) and E3b.4 (yields).
+1. This file: Outcome, Deviations 1, 21, 22 and Open questions.
+2. `decisions/OPEN.md`: OPEN-34 and OPEN-35.
+3. Evidence E3c.1 (at1_coupon_in_pl), E3c.2 (Spanish rote before and after), E3c.3 (no_nci_line rows), E3c.6 (rote with blank statuses).
+4. `bpb/kpi.py`: `at1_rules`, `AT1_RULES`.
+5. E3c.4 (NO yields), E3c.5 (BAMI, BMPS and rote_reported).
