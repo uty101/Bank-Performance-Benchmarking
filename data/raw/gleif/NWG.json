@@ -1,0 +1,694 @@
+{
+  "data": [
+    {
+      "attributes": {
+        "bic": [
+          "ROSGGB21XXX"
+        ],
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "1968-03-25T00:00:00Z",
+          "eventGroups": [
+            {
+              "events": [
+                {
+                  "effectiveDate": "2020-07-22T00:00:00Z",
+                  "recordedDate": "2025-01-17T11:05:15Z",
+                  "status": "COMPLETED",
+                  "type": "CHANGE_LEGAL_NAME",
+                  "validationDocuments": "ACCOUNTS_FILING"
+                }
+              ],
+              "groupType": "STANDALONE"
+            }
+          ],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "36 ST ANDREW SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "EDINBURGH",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EH2 2YB",
+            "region": "GB-EDH"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "36 ST ANDREW SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "EDINBURGH",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EH2 2YB",
+            "region": "GB-EDH"
+          },
+          "legalForm": {
+            "id": "B6ES",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "NATWEST GROUP PLC"
+          },
+          "otherAddresses": [],
+          "otherNames": [
+            {
+              "language": "en",
+              "name": "THE ROYAL BANK OF SCOTLAND GROUP PUBLIC LIMITED COMPANY",
+              "type": "PREVIOUS_LEGAL_NAME"
+            }
+          ],
+          "registeredAs": "SC045551",
+          "registeredAt": {
+            "id": "RA000587",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "2138005O9XJIJN4JPN90",
+        "mic": [
+          "RBSX"
+        ],
+        "ocid": "gb/SC045551",
+        "qcc": "QGB9YMTAGM",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2014-01-28T00:00:00Z",
+          "lastUpdateDate": "2026-10-26T17:28:30Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-03-12T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "SC045551",
+          "validatedAt": {
+            "id": "RA000587",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "563937"
+        ]
+      },
+      "id": "2138005O9XJIJN4JPN90",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/2138005O9XJIJN4JPN90"
+      },
+      "relationships": {
+        "direct-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138005O9XJIJN4JPN90/direct-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/2138005O9XJIJN4JPN90/direct-child-relationships"
+          }
+        },
+        "direct-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/2138005O9XJIJN4JPN90/direct-parent-reporting-exception"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138005O9XJIJN4JPN90/field-modifications"
+          }
+        },
+        "isins": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138005O9XJIJN4JPN90/isins"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138005O9XJIJN4JPN90/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138005O9XJIJN4JPN90/managing-lou"
+          }
+        },
+        "ultimate-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138005O9XJIJN4JPN90/ultimate-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/2138005O9XJIJN4JPN90/ultimate-child-relationships"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/2138005O9XJIJN4JPN90/ultimate-parent-reporting-exception"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "2018-09-28T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "C/O NATWEST PENSION TRUSTEE LIMITED",
+              "250 BISHOPSGATE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EC2M 4AA",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "C/O NATWEST PENSION TRUSTEE LIMITED",
+              "250 BISHOPSGATE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EC2M 4AA",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "8888",
+            "other": "PENSION FUND"
+          },
+          "legalName": {
+            "language": "en",
+            "name": "NATWEST GROUP PENSION FUND - NATWEST MARKETS SECTION"
+          },
+          "otherAddresses": [],
+          "otherNames": [
+            {
+              "language": "en",
+              "name": "NATWEST MARKETS SECTION OF THE ROYAL BANK OF SCOTLAND GROUP PENSION FUND",
+              "type": "PREVIOUS_LEGAL_NAME"
+            }
+          ],
+          "registeredAs": "19015003",
+          "registeredAt": {
+            "id": "RA000591",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "213800IV4PMOY9NFY908",
+        "mic": null,
+        "ocid": null,
+        "qcc": null,
+        "registration": {
+          "corroborationLevel": "PARTIALLY_CORROBORATED",
+          "initialRegistrationDate": "2018-11-01T00:00:00Z",
+          "lastUpdateDate": "2025-09-17T11:19:53Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2026-11-09T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "19015003",
+          "validatedAt": {
+            "id": "RA000591",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "590178484"
+        ]
+      },
+      "id": "213800IV4PMOY9NFY908",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/213800IV4PMOY9NFY908"
+      },
+      "relationships": {
+        "direct-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/213800IV4PMOY9NFY908/direct-parent-reporting-exception"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800IV4PMOY9NFY908/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800IV4PMOY9NFY908/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800IV4PMOY9NFY908/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/213800IV4PMOY9NFY908/ultimate-parent-reporting-exception"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "1992-06-25T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "C/O NATWEST PENSION TRUSTEE LIMITED",
+              "250 BISHOPSGATE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EC2M 4AA",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "C/O NATWEST PENSION TRUSTEE LIMITED",
+              "250 BISHOPSGATE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EC2M 4AA",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "8888",
+            "other": "PENSION FUND"
+          },
+          "legalName": {
+            "language": "en",
+            "name": "AA SECTION OF NATWEST GROUP PENSION FUND"
+          },
+          "otherAddresses": [],
+          "otherNames": [
+            {
+              "language": "en",
+              "name": "AA SECTION OF THE ROYAL BANK OF SCOTLAND GROUP PENSION FUND",
+              "type": "PREVIOUS_LEGAL_NAME"
+            }
+          ],
+          "registeredAs": null,
+          "registeredAt": {
+            "id": "RA999999",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "21380061942RIP3RHC16",
+        "mic": null,
+        "ocid": null,
+        "qcc": null,
+        "registration": {
+          "corroborationLevel": "ENTITY_SUPPLIED_ONLY",
+          "initialRegistrationDate": "2014-04-09T00:00:00Z",
+          "lastUpdateDate": "2026-02-09T14:42:09Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-04-09T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": null,
+          "validatedAt": {
+            "id": "RA999999",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "272671062"
+        ]
+      },
+      "id": "21380061942RIP3RHC16",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/21380061942RIP3RHC16"
+      },
+      "relationships": {
+        "direct-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/21380061942RIP3RHC16/direct-parent-reporting-exception"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/21380061942RIP3RHC16/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/21380061942RIP3RHC16/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/21380061942RIP3RHC16/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/21380061942RIP3RHC16/ultimate-parent-reporting-exception"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "2012-11-04T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "250 BISHOPSGATE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EC2M 4AA",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "250 BISHOPSGATE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EC2M 4AA",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "8888",
+            "other": "PENSION FUND"
+          },
+          "legalName": {
+            "language": "en",
+            "name": "NATWEST GROUP PENSION FUND - MAIN FUND SECTION"
+          },
+          "otherAddresses": [],
+          "otherNames": [
+            {
+              "language": "en",
+              "name": "THE ROYAL BANK OF SCOTLAND GROUP PENSION FUND",
+              "type": "PREVIOUS_LEGAL_NAME"
+            }
+          ],
+          "registeredAs": "19015002",
+          "registeredAt": {
+            "id": "RA000591",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "9Y5B2OGU5CHSMO4ND120",
+        "mic": null,
+        "ocid": null,
+        "qcc": null,
+        "registration": {
+          "corroborationLevel": "PARTIALLY_CORROBORATED",
+          "initialRegistrationDate": "2012-11-05T11:28:00Z",
+          "lastUpdateDate": "2025-12-26T13:11:21Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-02-23T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "19015002",
+          "validatedAt": {
+            "id": "RA000591",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "54072268"
+        ]
+      },
+      "id": "9Y5B2OGU5CHSMO4ND120",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/9Y5B2OGU5CHSMO4ND120"
+      },
+      "relationships": {
+        "direct-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/9Y5B2OGU5CHSMO4ND120/direct-parent-reporting-exception"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/9Y5B2OGU5CHSMO4ND120/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/9Y5B2OGU5CHSMO4ND120/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/9Y5B2OGU5CHSMO4ND120/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/9Y5B2OGU5CHSMO4ND120/ultimate-parent-reporting-exception"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "2018-09-28T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "C/O NATWEST PENSION TRUSTEE LIMITED",
+              "250 BISHOPSGATE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EC2M 4AA",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "C/O NATWEST PENSION TRUSTEE LIMITED",
+              "250 BISHOPSGATE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EC2M 4AA",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "8888",
+            "other": "PENSION FUND"
+          },
+          "legalName": {
+            "language": "en",
+            "name": "ROYAL BANK OF SCOTLAND INTERNATIONAL SECTION OF NATWEST GROUP PENSION FUND"
+          },
+          "otherAddresses": [],
+          "otherNames": [
+            {
+              "language": "en",
+              "name": "ROYAL BANK OF SCOTLAND INTERNATIONAL SECTION OF THE ROYAL BANK OF SCOTLAND GROUP PENSION FUND",
+              "type": "PREVIOUS_LEGAL_NAME"
+            }
+          ],
+          "registeredAs": null,
+          "registeredAt": {
+            "id": "RA999999",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "213800T4L9CKKQGES877",
+        "mic": null,
+        "ocid": null,
+        "qcc": null,
+        "registration": {
+          "corroborationLevel": "ENTITY_SUPPLIED_ONLY",
+          "initialRegistrationDate": "2018-11-01T00:00:00Z",
+          "lastUpdateDate": "2025-09-17T11:19:53Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2026-11-09T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": null,
+          "validatedAt": {
+            "id": "RA999999",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "590195936"
+        ]
+      },
+      "id": "213800T4L9CKKQGES877",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/213800T4L9CKKQGES877"
+      },
+      "relationships": {
+        "direct-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/213800T4L9CKKQGES877/direct-parent-reporting-exception"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800T4L9CKKQGES877/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800T4L9CKKQGES877/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800T4L9CKKQGES877/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/213800T4L9CKKQGES877/ultimate-parent-reporting-exception"
+          }
+        }
+      },
+      "type": "lei-records"
+    }
+  ],
+  "query": {
+    "filter[entity.legalAddress.country]": "GB",
+    "filter[entity.legalName]": "NatWest Group",
+    "filter[entity.status]": "ACTIVE"
+  }
+}

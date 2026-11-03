@@ -1,6 +1,6 @@
 """Pulls raw data. The only module besides fetch_reports.py that touches the network (CLAUDE.md rule 8).
 
-usage: python scripts/pull_data.py --stage eba [--stage fx ...]
+usage: python scripts/pull_data.py --stage eba [--stage fx ...]   (stages: eba, fx, gleif, market, fred)
 
 Every pull writes an entry per file to data/raw/MANIFEST.json (kickoff Section 3.2).
 """
@@ -233,7 +233,150 @@ def stage_fx(cfg: dict) -> None:
     write_manifest(entries)
 
 
-STAGES = {"eba": stage_eba, "fx": stage_fx}
+# --- stage gleif -------------------------------------------------------------
+
+GLEIF_URL = "https://api.gleif.org/api/v1/lei-records"  # PLAN step 3.1 (OPEN-11 decided (a))
+GLEIF_PAGE = 200
+
+
+def _gleif_pick(records: list[dict], name: str, country: str) -> list[dict]:
+    """The active records for a universe bank (instruction 03 step 3.1 item 1): entity status ACTIVE, registration
+    ISSUED, legal address in the bank's country, and legal name equal to the universe name with its company form
+    `PLC`, case and spacing normalised. GLEIF's legalName filter is a text search, so the exact name is checked
+    here."""
+    def norm(s: str) -> str:
+        return " ".join(s.upper().split())
+
+    want = norm(f"{name} PLC")
+    return [r for r in records
+            if r["attributes"]["entity"]["status"] == "ACTIVE"
+            and r["attributes"]["registration"]["status"] == "ISSUED"
+            and r["attributes"]["entity"]["legalAddress"]["country"] == country
+            and norm(r["attributes"]["entity"]["legalName"]["name"]) == want]
+
+
+def stage_gleif(cfg: dict) -> None:
+    """LEIs for the UK banks from GLEIF to data/raw/gleif/{bank_id}.json (every page of the search response), and
+    `lei` filled in data/manual/universe.csv. Exactly 1 active record per bank, else the pull fails (rule 4)."""
+    path = ROOT / "data" / "manual" / "universe.csv"
+    with open(path, encoding="utf-8", newline="") as f:
+        rows = list(csv.DictReader(f))
+        fields = list(rows[0])
+    entries = []
+    for r in rows:
+        if r["country"] != "GB":
+            continue
+        params = {"filter[entity.legalName]": r["name"], "filter[entity.status]": "ACTIVE",
+                  "filter[entity.legalAddress.country]": r["country"], "page[size]": GLEIF_PAGE, "page[number]": 1}
+        pulled, records = now_utc(), []
+        while True:
+            resp = requests.get(GLEIF_URL, params=params, headers=HEADERS, timeout=120)
+            if resp.status_code != 200:
+                raise SystemExit(f"data pull failed: gleif {r['bank_id']} HTTP {resp.status_code}")
+            page = resp.json()
+            records += page["data"]
+            if params["page[number]"] >= page["meta"]["pagination"]["lastPage"]:
+                break
+            params["page[number]"] += 1
+        dest = RAW / "gleif" / f"{r['bank_id']}.json"
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        body = {"query": {k: v for k, v in params.items() if not k.startswith("page")}, "data": records}
+        dest.write_bytes((json.dumps(body, indent=2, sort_keys=True, ensure_ascii=False) + "\n").encode("utf-8"))
+        hits = _gleif_pick(records, r["name"], r["country"])
+        if len(hits) != 1:
+            raise SystemExit(f"gleif {r['bank_id']}: {len(hits)} active records named {r['name']!r} PLC (rule 4)")
+        a = hits[0]["attributes"]
+        r["lei"] = a["lei"]
+        print(f"{r['bank_id']}: {a['entity']['legalName']['name']} {a['lei']} ({len(records)} search results)")
+        entries.append({"path": rel(dest), "committed": True, "url": GLEIF_URL, "pulled_utc": pulled,
+                        "sha256": sha256_file(dest), "bytes": dest.stat().st_size, "rows": len(records),
+                        "first_date": None, "last_date": None, "encoding": "utf-8"})
+    buf = io.StringIO()
+    w = csv.DictWriter(buf, fieldnames=fields, lineterminator="\n")
+    w.writeheader()
+    w.writerows(rows)
+    path.write_bytes(buf.getvalue().encode("utf-8"))
+    write_manifest(entries)
+
+
+# --- stage market --------------------------------------------------------------
+
+MARKET_START, MARKET_END = "2020-12-01", "2026-08-01"  # instruction 03 B.5: to 2026-07-31; yfinance end is exclusive
+
+
+def stage_market(cfg: dict) -> None:
+    """yfinance daily Close (auto_adjust=False) for every listed ticker to data/raw/market/prices.parquet (date,
+    ticker, close), and each ticker's quote currency (fast_info, else info) to data/raw/market/currency.csv, so the
+    GBp rule (Convention 4.12) is applied from data (instruction 03 B.5)."""
+    import pandas as pd
+    import yfinance as yf
+
+    with open(ROOT / "data" / "manual" / "universe.csv", encoding="utf-8") as f:
+        tickers = [r["ticker"] for r in csv.DictReader(f) if r["listed"] == "1" and r["ticker"]]
+    frames, ccys = [], []
+    pulled = now_utc()
+    for t in tickers:
+        print(f"market {t}")
+        tk = yf.Ticker(t)
+        h = tk.history(start=MARKET_START, end=MARKET_END, auto_adjust=False)
+        if h.empty:
+            raise SystemExit(f"data pull failed: no prices for {t}")
+        try:
+            ccy = tk.fast_info["currency"]
+        except Exception:  # noqa: BLE001 - fall back to .info, as instruction 03 B.5 allows
+            ccy = tk.info.get("currency")
+        if not ccy:
+            raise SystemExit(f"data pull failed: no currency for {t}")
+        dates = pd.DatetimeIndex(h.index).tz_localize(None).normalize().strftime("%Y-%m-%d")
+        frames.append(pd.DataFrame({"date": dates, "ticker": t, "close": h["Close"].astype(float).to_numpy()}))
+        ccys.append({"ticker": t, "currency": ccy})
+    prices = pd.concat(frames, ignore_index=True).sort_values(["ticker", "date"]).reset_index(drop=True)
+    dest = RAW / "market" / "prices.parquet"
+    dest.parent.mkdir(parents=True, exist_ok=True)
+    prices.to_parquet(dest, index=False)
+    cdest = RAW / "market" / "currency.csv"
+    buf = io.StringIO()
+    w = csv.DictWriter(buf, fieldnames=["ticker", "currency"], lineterminator="\n")
+    w.writeheader()
+    w.writerows(ccys)
+    cdest.write_bytes(buf.getvalue().encode("utf-8"))
+    entries = [{"path": rel(dest), "committed": True, "url": "yfinance Ticker(t).history(start=" + MARKET_START
+                + ", end=" + MARKET_END + ", auto_adjust=False)", "pulled_utc": pulled, "sha256": sha256_file(dest),
+                "bytes": dest.stat().st_size, "rows": len(prices), "first_date": prices["date"].min(),
+                "last_date": prices["date"].max()},
+               {"path": rel(cdest), "committed": True, "url": "yfinance Ticker(t).fast_info['currency']",
+                "pulled_utc": pulled, "sha256": sha256_file(cdest), "bytes": cdest.stat().st_size,
+                "rows": len(ccys), "first_date": None, "last_date": None, "encoding": "utf-8"}]
+    write_manifest(entries)
+
+
+# --- stage fred ----------------------------------------------------------------
+
+FRED_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=IRLTLT01{cc}M156N"  # kickoff 3.2
+
+
+def stage_fred(cfg: dict) -> None:
+    """Long-term government bond yields IRLTLT01{CC}M156N for every [sovereign] countries entry to
+    data/raw/fred/{CC}.csv (kickoff 3.2, PLAN step 3.4)."""
+    entries = []
+    for cc in cfg["sovereign"]["countries"]:
+        url = FRED_URL.format(cc=cc)
+        print(f"fred {cc}")
+        dest = RAW / "fred" / f"{cc}.csv"
+        pulled = now_utc()
+        download(url, dest)
+        with open(dest, encoding="utf-8", newline="") as f:
+            recs = list(csv.reader(f))[1:]
+        dates = sorted(r[0] for r in recs if r and r[1] not in ("", "."))
+        if not dates:
+            raise SystemExit(f"data pull failed: no rows for {cc}")
+        entries.append({"path": rel(dest), "committed": True, "url": url, "pulled_utc": pulled,
+                        "sha256": sha256_file(dest), "bytes": dest.stat().st_size, "rows": len(recs),
+                        "first_date": dates[0], "last_date": dates[-1], "encoding": "utf-8"})
+    write_manifest(entries)
+
+
+STAGES = {"eba": stage_eba, "fx": stage_fx, "gleif": stage_gleif, "market": stage_market, "fred": stage_fred}
 
 
 def main(argv: list[str] | None = None) -> int:

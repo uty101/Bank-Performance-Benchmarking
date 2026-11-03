@@ -453,6 +453,89 @@
       "rows": 1686,
       "sha256": "e74a73fa578f678bf0176eb46f077dacb4fdcda6d91d6f1208d68f4dad1596d7",
       "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"
+    },
+    {
+      "bytes": 313888,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": null,
+      "last_date": null,
+      "path": "data/raw/gleif/BARC.json",
+      "pulled_utc": "2026-11-03T17:18:33Z",
+      "rows": 70,
+      "sha256": "f81c2879336fcf1d63e2dcd570aea0446515ed75b554342a0321b568295490c4",
+      "url": "https://api.gleif.org/api/v1/lei-records"
+    },
+    {
+      "bytes": 54254,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": null,
+      "last_date": null,
+      "path": "data/raw/gleif/HSBA.json",
+      "pulled_utc": "2026-11-03T17:18:34Z",
+      "rows": 13,
+      "sha256": "655a803644bbafffee410087a42ac2a2aef5326652cbbfca35f5098f74c2abe1",
+      "url": "https://api.gleif.org/api/v1/lei-records"
+    },
+    {
+      "bytes": 13781,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": null,
+      "last_date": null,
+      "path": "data/raw/gleif/LLOY.json",
+      "pulled_utc": "2026-11-03T17:18:32Z",
+      "rows": 3,
+      "sha256": "7e058bd8d421d28283b390447af3c71276acd9ec4a04c8a688ce00e879763684",
+      "url": "https://api.gleif.org/api/v1/lei-records"
+    },
+    {
+      "bytes": 21509,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": null,
+      "last_date": null,
+      "path": "data/raw/gleif/NWG.json",
+      "pulled_utc": "2026-11-03T17:18:33Z",
+      "rows": 5,
+      "sha256": "472f639010db96652ae66099809ebd8dc9f7df8b043989d8449b4f611be4e59d",
+      "url": "https://api.gleif.org/api/v1/lei-records"
+    },
+    {
+      "bytes": 5125,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": null,
+      "last_date": null,
+      "path": "data/raw/gleif/SANUK.json",
+      "pulled_utc": "2026-11-03T17:18:35Z",
+      "rows": 1,
+      "sha256": "d238a73438a0aa0cad69dcd4c118448929e33d382c7b60fb2909d41bc9b096c4",
+      "url": "https://api.gleif.org/api/v1/lei-records"
+    },
+    {
+      "bytes": 341,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": null,
+      "last_date": null,
+      "path": "data/raw/market/currency.csv",
+      "pulled_utc": "2026-11-03T17:19:08Z",
+      "rows": 28,
+      "sha256": "ecb9dc6cc0f3898116afb1f4bb74bf91ff378647d509c37718b17dbc2fdea31c",
+      "url": "yfinance Ticker(t).fast_info['currency']"
+    },
+    {
+      "bytes": 264392,
+      "committed": true,
+      "first_date": "2020-12-01",
+      "last_date": "2026-07-31",
+      "path": "data/raw/market/prices.parquet",
+      "pulled_utc": "2026-11-03T17:19:08Z",
+      "rows": 40266,
+      "sha256": "c6e7b60895836f3f25aa7f0323baf71844b1d5215187e0af89efe1fc26bfb308",
+      "url": "yfinance Ticker(t).history(start=2020-12-01, end=2026-08-01, auto_adjust=False)"
     }
   ]
 }

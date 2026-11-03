@@ -1,0 +1,439 @@
+{
+  "data": [
+    {
+      "attributes": {
+        "bic": [
+          "LBGTGB22XXX"
+        ],
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "1985-10-21T00:00:00Z",
+          "eventGroups": [
+            {
+              "events": [
+                {
+                  "effectiveDate": "2025-04-07T00:00:00Z",
+                  "recordedDate": "2025-04-07T14:37:51Z",
+                  "status": "COMPLETED",
+                  "type": "CHANGE_HQ_ADDRESS",
+                  "validationDocuments": "ACCOUNTS_FILING"
+                }
+              ],
+              "groupType": "STANDALONE"
+            }
+          ],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "33 OLD BROAD STREET"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EC2N 1HZ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "THE MOUND"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "EDINBURGH",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EH1 1YZ",
+            "region": "GB-EDH"
+          },
+          "legalForm": {
+            "id": "B6ES",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "LLOYDS BANKING GROUP PLC"
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": "SC095000",
+          "registeredAt": {
+            "id": "RA000587",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "549300PPXHEU2JF0AM85",
+        "mic": null,
+        "ocid": "gb/SC095000",
+        "qcc": "QGB25K52DM",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2014-01-31T12:40:45Z",
+          "lastUpdateDate": "2026-10-26T17:28:30Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-04-29T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "SC095000",
+          "validatedAt": {
+            "id": "RA000587",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "670064"
+        ]
+      },
+      "id": "549300PPXHEU2JF0AM85",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/549300PPXHEU2JF0AM85"
+      },
+      "relationships": {
+        "direct-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300PPXHEU2JF0AM85/direct-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/549300PPXHEU2JF0AM85/direct-child-relationships"
+          }
+        },
+        "direct-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/549300PPXHEU2JF0AM85/direct-parent-reporting-exception"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300PPXHEU2JF0AM85/field-modifications"
+          }
+        },
+        "isins": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300PPXHEU2JF0AM85/isins"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300PPXHEU2JF0AM85/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300PPXHEU2JF0AM85/managing-lou"
+          }
+        },
+        "ultimate-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300PPXHEU2JF0AM85/ultimate-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/549300PPXHEU2JF0AM85/ultimate-child-relationships"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/549300PPXHEU2JF0AM85/ultimate-parent-reporting-exception"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "2003-03-17T00:00:00Z",
+          "eventGroups": [
+            {
+              "events": [
+                {
+                  "effectiveDate": "2025-02-28T00:00:00Z",
+                  "recordedDate": "2025-03-04T14:22:27Z",
+                  "status": "COMPLETED",
+                  "type": "CHANGE_HQ_ADDRESS",
+                  "validationDocuments": "ACCOUNTS_FILING"
+                }
+              ],
+              "groupType": "STANDALONE"
+            },
+            {
+              "events": [
+                {
+                  "effectiveDate": "2025-02-28T00:00:00Z",
+                  "recordedDate": "2025-03-04T14:18:43Z",
+                  "status": "COMPLETED",
+                  "type": "CHANGE_LEGAL_ADDRESS",
+                  "validationDocuments": "ACCOUNTS_FILING"
+                }
+              ],
+              "groupType": "STANDALONE"
+            }
+          ],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "C/O EQUINITI SHARE PLAN TRUSTEES LIMITED",
+              "HIGHDOWN HOUSE, YEOMAN WAY"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "WORTHING",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "BN99 6DA",
+            "region": "GB-WSX"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "C/O EQUINITI SHARE PLAN TRUSTEES LIMITED",
+              "HIGHDOWN HOUSE, YEOMAN WAY"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "WORTHING",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "BN99 3HH",
+            "region": "GB-WSX"
+          },
+          "legalForm": {
+            "id": "8888",
+            "other": "TRUST"
+          },
+          "legalName": {
+            "language": "en",
+            "name": "LLOYDS BANKING GROUP SHARE INCENTIVE PLAN"
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": null,
+          "registeredAt": {
+            "id": "RA999999",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "213800WKK6IJJXDYQG63",
+        "mic": null,
+        "ocid": null,
+        "qcc": null,
+        "registration": {
+          "corroborationLevel": "ENTITY_SUPPLIED_ONLY",
+          "initialRegistrationDate": "2017-12-07T00:00:00Z",
+          "lastUpdateDate": "2026-10-26T17:28:30Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2026-12-20T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": null,
+          "validatedAt": {
+            "id": "RA999999",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "549702600"
+        ]
+      },
+      "id": "213800WKK6IJJXDYQG63",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/213800WKK6IJJXDYQG63"
+      },
+      "relationships": {
+        "direct-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/213800WKK6IJJXDYQG63/direct-parent-reporting-exception"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800WKK6IJJXDYQG63/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800WKK6IJJXDYQG63/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800WKK6IJJXDYQG63/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/213800WKK6IJJXDYQG63/ultimate-parent-reporting-exception"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "NON_CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": null,
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "25 GRESHAM STREET"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EC2V 7HN",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "25 GRESHAM STREET"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "EC2V 7HN",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "H0PO",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "LLOYDS BANKING GROUP PENSIONS TRUSTEES LIMITED"
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": "09919377",
+          "registeredAt": {
+            "id": "RA000585",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "2138001UFXVDGMVOYE70",
+        "mic": null,
+        "ocid": "gb/09919377",
+        "qcc": "QGBVHYD9EV",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2016-01-22T00:00:00Z",
+          "lastUpdateDate": "2020-05-26T00:10:55Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2020-05-25T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "LAPSED",
+          "validatedAs": "09919377",
+          "validatedAt": {
+            "id": "RA000585",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "324228716"
+        ]
+      },
+      "id": "2138001UFXVDGMVOYE70",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/2138001UFXVDGMVOYE70"
+      },
+      "relationships": {
+        "direct-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/2138001UFXVDGMVOYE70/direct-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/2138001UFXVDGMVOYE70/direct-parent-relationship"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138001UFXVDGMVOYE70/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138001UFXVDGMVOYE70/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138001UFXVDGMVOYE70/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/2138001UFXVDGMVOYE70/ultimate-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/2138001UFXVDGMVOYE70/ultimate-parent-relationship"
+          }
+        }
+      },
+      "type": "lei-records"
+    }
+  ],
+  "query": {
+    "filter[entity.legalAddress.country]": "GB",
+    "filter[entity.legalName]": "Lloyds Banking Group",
+    "filter[entity.status]": "ACTIVE"
+  }
+}

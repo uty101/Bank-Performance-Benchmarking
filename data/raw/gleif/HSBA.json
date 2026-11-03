@@ -1,0 +1,1705 @@
+{
+  "data": [
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "2002-01-01T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "NL",
+          "legalAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "54M6",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC HOLDINGS B.V."
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": "33152710",
+          "registeredAt": {
+            "id": "RA000463",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "213800CDYGTVOFYXWA97",
+        "mic": null,
+        "ocid": "nl/33152710",
+        "qcc": null,
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2014-01-28T00:00:00Z",
+          "lastUpdateDate": "2026-01-05T10:05:58Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-01-31T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "33152710",
+          "validatedAt": {
+            "id": "RA000463",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "45766378"
+        ]
+      },
+      "id": "213800CDYGTVOFYXWA97",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/213800CDYGTVOFYXWA97"
+      },
+      "relationships": {
+        "direct-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800CDYGTVOFYXWA97/direct-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/213800CDYGTVOFYXWA97/direct-child-relationships"
+          }
+        },
+        "direct-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800CDYGTVOFYXWA97/direct-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800CDYGTVOFYXWA97/direct-parent-relationship"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800CDYGTVOFYXWA97/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800CDYGTVOFYXWA97/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800CDYGTVOFYXWA97/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800CDYGTVOFYXWA97/ultimate-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800CDYGTVOFYXWA97/ultimate-parent-relationship"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "1959-01-01T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "B6ES",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC HOLDINGS PLC"
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": "00617987",
+          "registeredAt": {
+            "id": "RA000585",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "MLU0ZO3ML4LN2LL2TL39",
+        "mic": null,
+        "ocid": "gb/00617987",
+        "qcc": "QGB5NUMRH8",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2012-06-06T15:55:55Z",
+          "lastUpdateDate": "2026-04-01T13:07:47Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-04-30T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "00617987",
+          "validatedAt": {
+            "id": "RA000585",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "382645"
+        ]
+      },
+      "id": "MLU0ZO3ML4LN2LL2TL39",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39"
+      },
+      "relationships": {
+        "branches": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39/branches",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39/branch-relationships"
+          }
+        },
+        "direct-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39/direct-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39/direct-child-relationships"
+          }
+        },
+        "direct-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39/direct-parent-reporting-exception"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39/field-modifications"
+          }
+        },
+        "isins": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39/isins"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39/managing-lou"
+          }
+        },
+        "ultimate-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39/ultimate-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39/ultimate-child-relationships"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/MLU0ZO3ML4LN2LL2TL39/ultimate-parent-reporting-exception"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "2014-01-28T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "NL",
+          "legalAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "54M6",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC ASIA HOLDINGS B.V."
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": "33296181",
+          "registeredAt": {
+            "id": "RA000463",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "213800AOW7YS4UDSJ663",
+        "mic": null,
+        "ocid": "nl/33296181",
+        "qcc": null,
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2014-01-28T00:00:00Z",
+          "lastUpdateDate": "2026-01-05T09:36:21Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-01-31T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "33296181",
+          "validatedAt": {
+            "id": "RA000463",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "22322577"
+        ]
+      },
+      "id": "213800AOW7YS4UDSJ663",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/213800AOW7YS4UDSJ663"
+      },
+      "relationships": {
+        "direct-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800AOW7YS4UDSJ663/direct-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/213800AOW7YS4UDSJ663/direct-child-relationships"
+          }
+        },
+        "direct-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800AOW7YS4UDSJ663/direct-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800AOW7YS4UDSJ663/direct-parent-relationship"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800AOW7YS4UDSJ663/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800AOW7YS4UDSJ663/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800AOW7YS4UDSJ663/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800AOW7YS4UDSJ663/ultimate-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800AOW7YS4UDSJ663/ultimate-parent-relationship"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "1995-12-22T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "H0PO",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC INVESTMENT BANK HOLDINGS LIMITED"
+          },
+          "otherAddresses": [],
+          "otherNames": [
+            {
+              "language": "en",
+              "name": "HSBC INVESTMENT BANK HOLDINGS PLC",
+              "type": "PREVIOUS_LEGAL_NAME"
+            }
+          ],
+          "registeredAs": "03141245",
+          "registeredAt": {
+            "id": "RA000585",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "2138005ERRUZXOMUSK28",
+        "mic": null,
+        "ocid": "gb/03141245",
+        "qcc": "QGBSDFH8AH",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2014-02-07T00:00:00Z",
+          "lastUpdateDate": "2026-02-02T11:57:42Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-02-28T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "03141245",
+          "validatedAt": {
+            "id": "RA000585",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "12703853"
+        ]
+      },
+      "id": "2138005ERRUZXOMUSK28",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/2138005ERRUZXOMUSK28"
+      },
+      "relationships": {
+        "direct-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138005ERRUZXOMUSK28/direct-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/2138005ERRUZXOMUSK28/direct-child-relationships"
+          }
+        },
+        "direct-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/2138005ERRUZXOMUSK28/direct-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/2138005ERRUZXOMUSK28/direct-parent-relationship"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138005ERRUZXOMUSK28/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138005ERRUZXOMUSK28/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138005ERRUZXOMUSK28/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/2138005ERRUZXOMUSK28/ultimate-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/2138005ERRUZXOMUSK28/ultimate-parent-relationship"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "1987-07-20T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "NL",
+          "legalAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "54M6",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC INVESTMENT BANK HOLDINGS B.V."
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": "33194707",
+          "registeredAt": {
+            "id": "RA000463",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "213800IVH62P27ZW1F49",
+        "mic": null,
+        "ocid": "nl/33194707",
+        "qcc": null,
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2014-01-28T00:00:00Z",
+          "lastUpdateDate": "2026-01-05T08:45:49Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-01-31T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "33194707",
+          "validatedAt": {
+            "id": "RA000463",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "46734178"
+        ]
+      },
+      "id": "213800IVH62P27ZW1F49",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/213800IVH62P27ZW1F49"
+      },
+      "relationships": {
+        "direct-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800IVH62P27ZW1F49/direct-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/213800IVH62P27ZW1F49/direct-child-relationships"
+          }
+        },
+        "direct-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800IVH62P27ZW1F49/direct-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800IVH62P27ZW1F49/direct-parent-relationship"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800IVH62P27ZW1F49/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800IVH62P27ZW1F49/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800IVH62P27ZW1F49/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800IVH62P27ZW1F49/ultimate-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800IVH62P27ZW1F49/ultimate-parent-relationship"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "1982-08-04T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "H0PO",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC OVERSEAS HOLDINGS (UK) LIMITED"
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": "01656361",
+          "registeredAt": {
+            "id": "RA000585",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "213800IEOXLXPVAMFT53",
+        "mic": null,
+        "ocid": null,
+        "qcc": "QGB5DABKHR",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2014-01-28T00:00:00Z",
+          "lastUpdateDate": "2026-01-05T10:35:41Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-01-31T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "01656361",
+          "validatedAt": {
+            "id": "RA000585",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "45714923"
+        ]
+      },
+      "id": "213800IEOXLXPVAMFT53",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/213800IEOXLXPVAMFT53"
+      },
+      "relationships": {
+        "direct-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800IEOXLXPVAMFT53/direct-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/213800IEOXLXPVAMFT53/direct-child-relationships"
+          }
+        },
+        "direct-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800IEOXLXPVAMFT53/direct-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800IEOXLXPVAMFT53/direct-parent-relationship"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800IEOXLXPVAMFT53/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800IEOXLXPVAMFT53/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800IEOXLXPVAMFT53/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800IEOXLXPVAMFT53/ultimate-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800IEOXLXPVAMFT53/ultimate-parent-relationship"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "2026-03-16T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "H0PO",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC ASSET MANAGEMENT UK HOLDINGS LIMITED"
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": "17094227",
+          "registeredAt": {
+            "id": "RA000585",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "213800L5K9TT54TF6Z28",
+        "mic": null,
+        "ocid": null,
+        "qcc": "QGB9T35ET3",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2026-09-02T00:00:00Z",
+          "lastUpdateDate": "2026-09-02T15:40:51Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-09-02T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "17094227",
+          "validatedAt": {
+            "id": "RA000585",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "2018716320"
+        ]
+      },
+      "id": "213800L5K9TT54TF6Z28",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/213800L5K9TT54TF6Z28"
+      },
+      "relationships": {
+        "direct-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/213800L5K9TT54TF6Z28/direct-parent-reporting-exception"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800L5K9TT54TF6Z28/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800L5K9TT54TF6Z28/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800L5K9TT54TF6Z28/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/213800L5K9TT54TF6Z28/ultimate-parent-reporting-exception"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "1926-11-04T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "H0PO",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC CLIENT HOLDINGS NOMINEE (UK) LIMITED"
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": "00217310",
+          "registeredAt": {
+            "id": "RA000585",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "213800YYXTIKF1T47782",
+        "mic": null,
+        "ocid": "gb/00217310",
+        "qcc": "QGBUWS5WMM",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2016-12-21T00:00:00Z",
+          "lastUpdateDate": "2026-03-03T12:35:37Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-03-26T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "00217310",
+          "validatedAt": {
+            "id": "RA000585",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "414452193"
+        ]
+      },
+      "id": "213800YYXTIKF1T47782",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/213800YYXTIKF1T47782"
+      },
+      "relationships": {
+        "direct-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800YYXTIKF1T47782/direct-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800YYXTIKF1T47782/direct-parent-relationship"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800YYXTIKF1T47782/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800YYXTIKF1T47782/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800YYXTIKF1T47782/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800YYXTIKF1T47782/ultimate-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800YYXTIKF1T47782/ultimate-parent-relationship"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "1973-05-10T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "H0PO",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC ASIA PACIFIC HOLDINGS (UK) LIMITED"
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": "01113112",
+          "registeredAt": {
+            "id": "RA000585",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "213800C2BAGI3VAGDP53",
+        "mic": null,
+        "ocid": null,
+        "qcc": "QGBN24KRXU",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2014-02-07T00:00:00Z",
+          "lastUpdateDate": "2026-02-02T11:16:29Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-02-28T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "01113112",
+          "validatedAt": {
+            "id": "RA000585",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "22516071"
+        ]
+      },
+      "id": "213800C2BAGI3VAGDP53",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/213800C2BAGI3VAGDP53"
+      },
+      "relationships": {
+        "direct-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800C2BAGI3VAGDP53/direct-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/213800C2BAGI3VAGDP53/direct-child-relationships"
+          }
+        },
+        "direct-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800C2BAGI3VAGDP53/direct-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800C2BAGI3VAGDP53/direct-parent-relationship"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800C2BAGI3VAGDP53/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800C2BAGI3VAGDP53/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800C2BAGI3VAGDP53/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800C2BAGI3VAGDP53/ultimate-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800C2BAGI3VAGDP53/ultimate-parent-relationship"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "1980-01-24T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "H0PO",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC LATIN AMERICA HOLDINGS (UK) LIMITED"
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": "01475009",
+          "registeredAt": {
+            "id": "RA000585",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "213800YFRSO98ACYHF78",
+        "mic": null,
+        "ocid": "gb/01475009",
+        "qcc": "QGB6NTJVYE",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2014-01-28T00:00:00Z",
+          "lastUpdateDate": "2026-01-05T10:35:41Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-01-31T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "01475009",
+          "validatedAt": {
+            "id": "RA000585",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "12784547"
+        ]
+      },
+      "id": "213800YFRSO98ACYHF78",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/213800YFRSO98ACYHF78"
+      },
+      "relationships": {
+        "direct-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800YFRSO98ACYHF78/direct-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/213800YFRSO98ACYHF78/direct-child-relationships"
+          }
+        },
+        "direct-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800YFRSO98ACYHF78/direct-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800YFRSO98ACYHF78/direct-parent-relationship"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800YFRSO98ACYHF78/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800YFRSO98ACYHF78/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800YFRSO98ACYHF78/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800YFRSO98ACYHF78/ultimate-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800YFRSO98ACYHF78/ultimate-parent-relationship"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "2001-11-23T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "H0PO",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC GLOBAL SERVICES (CHINA) HOLDINGS LIMITED"
+          },
+          "otherAddresses": [],
+          "otherNames": [
+            {
+              "language": "en",
+              "name": "HSBC CANADA HOLDINGS (UK) LIMITED",
+              "type": "PREVIOUS_LEGAL_NAME"
+            }
+          ],
+          "registeredAs": "04328242",
+          "registeredAt": {
+            "id": "RA000585",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "2138001GWUYX35HAJV27",
+        "mic": null,
+        "ocid": "gb/04328242",
+        "qcc": "QGB3B8E8DC",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2014-01-28T00:00:00Z",
+          "lastUpdateDate": "2026-01-05T10:35:41Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-01-31T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "04328242",
+          "validatedAt": {
+            "id": "RA000585",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "47127493"
+        ]
+      },
+      "id": "2138001GWUYX35HAJV27",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/2138001GWUYX35HAJV27"
+      },
+      "relationships": {
+        "direct-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/2138001GWUYX35HAJV27/direct-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/2138001GWUYX35HAJV27/direct-parent-relationship"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138001GWUYX35HAJV27/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138001GWUYX35HAJV27/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/2138001GWUYX35HAJV27/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/2138001GWUYX35HAJV27/ultimate-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/2138001GWUYX35HAJV27/ultimate-parent-relationship"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "2018-01-17T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 Canada Square"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "London",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "8 Canada Square"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "London",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "8888",
+            "other": "Pension Scheme"
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC ASIA HOLDINGS (NO. 4) PENSION PLAN"
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": null,
+          "registeredAt": {
+            "id": "RA999999",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "549300OR0851DOJ63G11",
+        "mic": null,
+        "ocid": null,
+        "qcc": null,
+        "registration": {
+          "corroborationLevel": "ENTITY_SUPPLIED_ONLY",
+          "initialRegistrationDate": "2018-01-17T15:32:00Z",
+          "lastUpdateDate": "2025-12-09T17:40:00Z",
+          "managingLou": "529900T8BM49AURSDO55",
+          "nextRenewalDate": "2027-02-07T17:20:47Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": null,
+          "validatedAt": {
+            "id": "RA999999",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "550331547"
+        ]
+      },
+      "id": "549300OR0851DOJ63G11",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/549300OR0851DOJ63G11"
+      },
+      "relationships": {
+        "direct-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/549300OR0851DOJ63G11/direct-parent-reporting-exception"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300OR0851DOJ63G11/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300OR0851DOJ63G11/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300OR0851DOJ63G11/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "reporting-exception": "https://api.gleif.org/api/v1/lei-records/549300OR0851DOJ63G11/ultimate-parent-reporting-exception"
+          }
+        }
+      },
+      "type": "lei-records"
+    },
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "2008-05-30T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "8 CANADA SQUARE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "E14 5HQ",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "H0PO",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "HSBC ASSET FINANCE M.O.G. HOLDINGS (UK) LIMITED"
+          },
+          "otherAddresses": [],
+          "otherNames": [],
+          "registeredAs": "06606400",
+          "registeredAt": {
+            "id": "RA000585",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "213800LCXB14POR1CL82",
+        "mic": null,
+        "ocid": "gb/06606400",
+        "qcc": "QGB1TTU9MJ",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2014-02-07T00:00:00Z",
+          "lastUpdateDate": "2026-02-02T11:57:42Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-02-28T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "06606400",
+          "validatedAt": {
+            "id": "RA000585",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "111598203"
+        ]
+      },
+      "id": "213800LCXB14POR1CL82",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/213800LCXB14POR1CL82"
+      },
+      "relationships": {
+        "direct-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800LCXB14POR1CL82/direct-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800LCXB14POR1CL82/direct-parent-relationship"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800LCXB14POR1CL82/field-modifications"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800LCXB14POR1CL82/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/213800LCXB14POR1CL82/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/213800LCXB14POR1CL82/ultimate-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/213800LCXB14POR1CL82/ultimate-parent-relationship"
+          }
+        }
+      },
+      "type": "lei-records"
+    }
+  ],
+  "query": {
+    "filter[entity.legalAddress.country]": "GB",
+    "filter[entity.legalName]": "HSBC Holdings",
+    "filter[entity.status]": "ACTIVE"
+  }
+}

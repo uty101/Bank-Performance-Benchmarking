@@ -1,0 +1,163 @@
+{
+  "data": [
+    {
+      "attributes": {
+        "bic": null,
+        "conformityFlag": "CONFORMING",
+        "entity": {
+          "associatedEntity": {
+            "lei": null,
+            "name": null
+          },
+          "category": "GENERAL",
+          "creationDate": "2013-09-23T00:00:00Z",
+          "eventGroups": [],
+          "expiration": {
+            "date": null,
+            "reason": null
+          },
+          "headquartersAddress": {
+            "addressLines": [
+              "2 TRITON SQUARE",
+              "REGENTS PLACE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "NW1 3AN",
+            "region": "GB-LND"
+          },
+          "jurisdiction": "GB",
+          "legalAddress": {
+            "addressLines": [
+              "2 TRITON SQUARE",
+              "REGENTS PLACE"
+            ],
+            "addressNumber": null,
+            "addressNumberWithinBuilding": null,
+            "city": "LONDON",
+            "country": "GB",
+            "language": "en",
+            "mailRouting": null,
+            "postalCode": "NW1 3AN",
+            "region": "GB-LND"
+          },
+          "legalForm": {
+            "id": "B6ES",
+            "other": null
+          },
+          "legalName": {
+            "language": "en",
+            "name": "SANTANDER UK GROUP HOLDINGS PLC"
+          },
+          "otherAddresses": [],
+          "otherNames": [
+            {
+              "language": "en",
+              "name": "SANTANDER UK GROUP HOLDINGS LIMITED",
+              "type": "PREVIOUS_LEGAL_NAME"
+            },
+            {
+              "language": "en",
+              "name": "SANTANDER UK GROUP LIMITED",
+              "type": "PREVIOUS_LEGAL_NAME"
+            },
+            {
+              "language": "en",
+              "name": "NUEVO TOPCO LIMITED",
+              "type": "PREVIOUS_LEGAL_NAME"
+            }
+          ],
+          "registeredAs": "08700698",
+          "registeredAt": {
+            "id": "RA000585",
+            "other": null
+          },
+          "status": "ACTIVE",
+          "subCategory": null,
+          "successorEntities": [],
+          "successorEntity": {
+            "lei": null,
+            "name": null
+          },
+          "transliteratedOtherNames": []
+        },
+        "gem": null,
+        "lei": "549300F5XIFGNNW4CF72",
+        "mic": null,
+        "ocid": "gb/08700698",
+        "qcc": "QGBM78FRCJ",
+        "registration": {
+          "corroborationLevel": "FULLY_CORROBORATED",
+          "initialRegistrationDate": "2014-12-18T01:45:00Z",
+          "lastUpdateDate": "2026-08-12T09:17:00Z",
+          "managingLou": "213800WAVVOPS85N2205",
+          "nextRenewalDate": "2027-09-15T00:00:00Z",
+          "otherValidationAuthorities": [],
+          "status": "ISSUED",
+          "validatedAs": "08700698",
+          "validatedAt": {
+            "id": "RA000585",
+            "other": null
+          }
+        },
+        "spglobal": [
+          "397634"
+        ]
+      },
+      "id": "549300F5XIFGNNW4CF72",
+      "links": {
+        "self": "https://api.gleif.org/api/v1/lei-records/549300F5XIFGNNW4CF72"
+      },
+      "relationships": {
+        "direct-children": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300F5XIFGNNW4CF72/direct-children",
+            "relationship-records": "https://api.gleif.org/api/v1/lei-records/549300F5XIFGNNW4CF72/direct-child-relationships"
+          }
+        },
+        "direct-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/549300F5XIFGNNW4CF72/direct-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/549300F5XIFGNNW4CF72/direct-parent-relationship"
+          }
+        },
+        "field-modifications": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300F5XIFGNNW4CF72/field-modifications"
+          }
+        },
+        "isins": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300F5XIFGNNW4CF72/isins"
+          }
+        },
+        "lei-issuer": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300F5XIFGNNW4CF72/lei-issuer"
+          }
+        },
+        "managing-lou": {
+          "links": {
+            "related": "https://api.gleif.org/api/v1/lei-records/549300F5XIFGNNW4CF72/managing-lou"
+          }
+        },
+        "ultimate-parent": {
+          "links": {
+            "lei-record": "https://api.gleif.org/api/v1/lei-records/549300F5XIFGNNW4CF72/ultimate-parent",
+            "relationship-record": "https://api.gleif.org/api/v1/lei-records/549300F5XIFGNNW4CF72/ultimate-parent-relationship"
+          }
+        }
+      },
+      "type": "lei-records"
+    }
+  ],
+  "query": {
+    "filter[entity.legalAddress.country]": "GB",
+    "filter[entity.legalName]": "Santander UK Group Holdings",
+    "filter[entity.status]": "ACTIVE"
+  }
+}
