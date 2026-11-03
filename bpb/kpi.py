@@ -27,6 +27,9 @@ FIRST_KPI_DATE = "2021-12-31"  # kickoff Section 3.3 and Correction 3: the first
 ONE_OFF_COSTS = {"interest_expense", "admin_expenses", "resolution_dgs_contrib", "depreciation", "impairments_fin",
                  "provisions", "impairments_nonfin"}
 ONE_OFF_PROFIT = ["pbt", "pat", "profit_owners"]
+# instruction 03 step 3.4: rote for EU banks at EBA dates combines eba rows with report rows (at1_coupons,
+# minority_interests) under the mixed currency rule (amendment 9), so its 2 derived inputs may be eba+report there
+EBA_MIXED = {"profit_to_ordinary", "tangible_equity"}
 FAMILY_ORDER = ["eba", "p3", "report"]  # a KPI at 2025-06-30 stays eba (OPEN-03); one family per value
 OK = "ok"
 # statuses that describe how a value was built but leave it usable (instruction 01b B.2; instruction 02 B.2)
@@ -113,7 +116,10 @@ def derived(facts: pd.DataFrame, rates: pd.DataFrame) -> pd.DataFrame:
                             [s for s in str(row["status"]).split(";") if s != OK] + [IN_ADMIN[f] for f in miss]))
                     new.append(row)
                     done = True
-            if done:
+            # instruction 03 step 3.4: rote's inputs at an EBA date are eba first, with report rows where eba has none,
+            # even when the report family alone holds every input (the eba+report row is the one rote uses there)
+            mixed = name in EBA_MIXED and "eba" in by_fam and not all(f in by_fam["eba"].index for f in inputs)
+            if done and not mixed:
                 continue
             picks = []
             for f in inputs:
@@ -331,7 +337,8 @@ def _kpis_one_basis(facts: pd.DataFrame, kpis: dict, rates: pd.DataFrame) -> pd.
         if bank in uk:
             keep = lambda f: f != "eba"
         else:
-            keep = (lambda f: f == "eba") if d <= eba_last else (lambda f: f != "eba")
+            keep = ((lambda f: f == "eba" or (field in EBA_MIXED and f.startswith("eba+"))) if d <= eba_last
+                    else (lambda f: f != "eba"))
         if field == "1":
             fams = [f for f in FAMILY_ORDER if keep(f)]
             return {fam: None for fam in fams}, None
@@ -376,7 +383,9 @@ def _one_kpi(bank, d, k, quantity, to_eur=None) -> dict:
         if part and all(_piece_status(p) != OK for p in part.values()):
             row["status"] = _piece_status(next(iter(part.values())))
             return row
-    fams = [f for f in FAMILY_ORDER if f in num and (df_ is None or f in den)]
+    # a family common to numerator and denominator: eba, p3, report first, then a combined one such as eba+report
+    common = [f for f in num if df_ is None or f in den]
+    fams = sorted(common, key=lambda f: FAMILY_ORDER.index(f) if f in FAMILY_ORDER else len(FAMILY_ORDER))
     if fams:
         fam = fams[0]
         n = num[fam]

@@ -63,3 +63,17 @@ def test_missing_input():
     roa = kpi[(kpi["kpi"] == "roa") & (kpi["date"] == "2023-12-31")]
     assert len(roa) == 2  # reported and underlying
     assert roa["value"].isna().all() and (roa["status"] == "missing_input:profit_owners").all()
+
+
+def test_rote_hand():
+    """Instruction 03 step 3.4: profit_owners 120, at1_coupons 20, average tangible equity 1,000 gives rote 0.10."""
+    base = {"lei": "L", "ccy": "GBP", "unit_scale": 1.0, "family": "report", "locator": "x@1", "status": "ok"}
+    rows = [("2025-12-31", "profit_owners", 120.0, 12), ("2025-12-31", "at1_coupons", 20.0, 12)]
+    for d, te in (("2024-12-31", 900.0), ("2025-12-31", 1100.0)):
+        rows += [(d, "total_equity", te + 150.0, None), (d, "minority_interests", 10.0, None),
+                 (d, "at1_instruments", 100.0, None), (d, "intangibles_deduction", 40.0, None)]
+    facts = pd.DataFrame([{**base, "bank_id": "LLOY", "ref_date": d, "field": f, "value": v, "period_months": pm,
+                           "lineage_id": f"{f}{d}"} for d, f, v, pm in rows])[FACTS_COLUMNS]
+    kpi = compute_kpis(facts, _kpis(), pd.DataFrame(), pd.DataFrame(columns=["date", "ccy", "per_eur"]))
+    rote = kpi[(kpi["kpi"] == "rote") & (kpi["date"] == "2025-12-31") & (kpi["basis"] == "reported")].iloc[0]
+    assert abs(rote["value"] - 0.10) < 1e-12 and rote["denominator"] == 1000.0 and rote["status"] == "ok"
