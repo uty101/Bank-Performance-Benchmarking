@@ -1,8 +1,8 @@
 # Internal fields and derived quantities: instructions/00_kickoff.md Section 5.1.
-# kind (instruction 01b step 1.2b): amount = a value in currency units, or a count; ratio = a decimal stored
-#       as reported (eba ratio items: unit_scale 1, ccy blank).
-# period: pl = year to date P&L value (Convention 4.3); bs = balance or ratio at the reference date;
-#         count = a period end count (fte, customers, shares_out).
+# kind (instruction 01b step 1.2b): amount = a value in currency units; ratio = a decimal stored as reported
+#       (eba ratio items: unit_scale 1, ccy blank); count (instruction 03 B.1) = a number of shares, employees or
+#       customers (unit_scale 1 times the printed scale, ccy blank).
+# period: pl = year to date P&L value (Convention 4.3); bs = balance, ratio or count at the reference date.
 # Signs follow Convention 4.2: expenses, impairments and tax stored positive, a net release negative.
 
 fields:
@@ -23,7 +23,6 @@ fields:
   - {field: total_assets, kind: amount, period: bs, meaning: "as in the EBA balance sheet templates"}
   - {field: total_liabilities, kind: amount, period: bs, meaning: "as in the EBA balance sheet templates"}
   - {field: total_equity, kind: amount, period: bs, meaning: "as in the EBA balance sheet templates"}
-  - {field: minority_interests, kind: amount, period: bs, meaning: "non controlling interests in equity"}
   - {field: cash_cb, kind: amount, period: bs, meaning: "cash, cash balances at central banks and other demand deposits"}
   - {field: debt_securities, kind: amount, period: bs, meaning: "debt securities, gross carrying amount, all accounting portfolios other than held for trading (instruction 01b OPEN-21)"}
   - {field: loans_all, kind: amount, period: bs, meaning: "loans and advances, gross carrying amount, all accounting portfolios other than held for trading (instruction 01b OPEN-21)"}
@@ -43,10 +42,13 @@ fields:
   - {field: intangibles_deduction, kind: amount, period: bs, meaning: "the CET1 deduction for intangible assets including goodwill (stored positive)"}
   - {field: lcr, kind: ratio, period: bs, meaning: "as reported in KM1 (p3 and report families only)"}
   - {field: nsfr, kind: ratio, period: bs, meaning: "as reported in KM1 (p3 and report families only)"}
-  - {field: fte, kind: amount, period: count, meaning: "period end headcount (full time equivalent), where reported"}
-  - {field: customers, kind: amount, period: count, meaning: "period end customer count, where reported"}
-  - {field: at1_coupons, kind: amount, period: pl, meaning: "AT1 coupons paid in the period, from the statement of changes in equity"}
-  - {field: shares_out, kind: amount, period: count, meaning: "ordinary shares outstanding net of treasury shares at the reference date"}
+  # instruction 03 B.1: report family, entered from annual and half year reports (Section 3)
+  - {field: minority_interests, kind: amount, period: bs, meaning: "non controlling interests in equity, as printed on the balance sheet"}
+  - {field: at1_coupons, kind: amount, period: pl, meaning: "distributions on AT1 instruments in the period, year to date, entered positive; statement of changes in equity, or the note on equity instruments"}
+  - {field: shares_out, kind: count, period: bs, meaning: "ordinary shares in issue net of treasury shares at the reference date; the share capital note or the EPS note (the period end number, not the weighted average)"}
+  - {field: fte, kind: count, period: bs, meaning: "full time equivalent employees at the reference date; key figures or the notes"}
+  - {field: customers, kind: count, period: bs, meaning: "customers at the reference date; key figures, entered only where printed"}
+  - {field: rote_reported, kind: ratio, period: pl, meaning: "the bank's own published RoTE (or RoTE equivalent named as such); key figures; FY2025 and H1 2026 only; used only for the comparison in step 3.4"}
   # instruction 02b B.1: EU LR1 at 2025-06-30, report family, used by the scope adjusted gate only
   - {field: lr1_total_assets, kind: amount, period: bs, meaning: "EU LR1 row 1: total assets as per published financial statements"}
   - {field: lr1_scope_adjustment, kind: amount, period: bs, meaning: "EU LR1 row 2: adjustment for entities consolidated for accounting purposes but outside the scope of prudential consolidation, sign as printed"}

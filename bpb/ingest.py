@@ -196,14 +196,26 @@ POSITIVE_FIELDS = {"interest_expense", "admin_expenses", "resolution_dgs_contrib
                    "intangibles_deduction"}
 
 
+# instruction 03 A.1 item 2: where no Pillar 3 report can be obtained, an EU bank's KM1 figures come from the capital
+# adequacy note of the same date's interim or annual report, as family p3 with status p3_from_report
+KM1_FIELDS = {"cet1", "tier1", "rwa", "cet1_ratio_reported", "leverage_exposure", "lcr", "nsfr"}
+P3_FROM_REPORT = "p3_from_report"
+
+
 def _family(source_map: dict, bank: str, field: str, ref_date: str, doc_type: str) -> str:
     """p3 for a pillar3 entry whose field the source map assigns to p3 at that bank group and date, else report
-    (instruction 02 B.1: the family comes from the source map, doc_type only names the document)."""
-    if doc_type != "pillar3":
-        return "report"
+    (instruction 02 B.1: the family comes from the source map, doc_type only names the document). A KM1 field
+    entered from an EU bank's interim or annual report is p3 on the same rule (instruction 03 A.1 item 2)."""
     group = "uk" if bank in set(source_map["bank_groups"]["uk"]) else "eu"
+    if doc_type != "pillar3" and not (group == "eu" and field in KM1_FIELDS):
+        return "report"
     rules = source_map["fields"].get(field, [])
     return "p3" if any(_rule_allows(r, group, "p3", ref_date) for r in rules) else "report"
+
+
+def _p3_from_report(source_map: dict, bank: str, field: str, doc_type: str) -> bool:
+    uk = set(source_map["bank_groups"]["uk"])
+    return doc_type != "pillar3" and field in KM1_FIELDS and bank not in uk
 
 
 def entries_facts(entries: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame:
@@ -234,6 +246,9 @@ def entries_facts(entries: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame
     comparative = [(period[s] != d) and not (dtype[s] == "annual" and period[s] == "2025-12-31" and d == "2024-12-31")
                    for s, d in zip(e["report_sha256"], e["ref_date"], strict=True)]
     e.loc[pd.Series(comparative, index=e.index) & (e["_status"] == "ok"), "_status"] = "from_comparative"
+    from_report = [_p3_from_report(smap, b, f, t) for b, f, t in zip(e["bank_id"], e["field"], e["doc_type"],
+                                                                     strict=True)]
+    e.loc[pd.Series(from_report, index=e.index) & (e["_status"] == "ok"), "_status"] = P3_FROM_REPORT
     e["_family"] = [_family(smap, b, f, d, t) for b, f, d, t in
                     zip(e["bank_id"], e["field"], e["ref_date"], e["doc_type"], strict=True)]
     rows = []
@@ -249,8 +264,9 @@ def entries_facts(entries: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame
             if set(ks) != set(range(1, n.pop() + 1)):
                 continue  # a missing component makes the field missing, never a partial sum
         locator = "+".join(dict.fromkeys(f"{s}@{p}" for s, p in zip(g["report_sha256"], g["page"], strict=True)))
-        bad = [s for s in g["_status"] if s not in ("ok", "from_comparative")]
-        status = bad[0] if bad else ("from_comparative" if "from_comparative" in set(g["_status"]) else "ok")
+        bad = [s for s in g["_status"] if s not in ("ok", "from_comparative", P3_FROM_REPORT)]
+        built = [s for s in ("from_comparative", P3_FROM_REPORT) if s in set(g["_status"])]
+        status = bad[0] if bad else (built[0] if built else "ok")
         if not bad and field == "total_operating_income" and len(g) > 1:
             status = "toi_summed"  # instruction 02b B.8: no printed total, the printed income lines summed
         scales = sorted(set(g["unit_scale"].astype(float)))
@@ -343,27 +359,13 @@ def report_p3_facts(cfg) -> tuple[pd.DataFrame, pd.DataFrame]:
     return entries_facts(e, man), prov
 
 
-def _apply_scope_gate(eba: pd.DataFrame, rp: pd.DataFrame) -> pd.DataFrame:
-    """Instruction 02b B.1: a bank failing the scope adjusted gate keeps its report and p3 rows and values, with
-    status `scope_gate_failed`, so the checks still see them but none of its bridge entries reaches a KPI (the KPI
-    code uses only usable statuses)."""
-    from bpb.checks import scope_gate
-
-    gate = scope_gate(pd.concat([eba, rp], ignore_index=True))
-    failed = set(gate.loc[~gate["passed"].astype(bool), "bank_id"])
-    if failed:
-        rp = rp.copy()
-        rp.loc[rp["bank_id"].isin(failed) & (rp["status"] == "ok"), "status"] = "scope_gate_failed"
-    return rp
-
-
 def build_facts(cfg) -> pd.DataFrame:
     """Loads every source, applies the source map and writes data/processed/facts.parquet: eba rows, and the report
-    and p3 rows of data/manual/report_entries.csv after provenance (Section 2)."""
+    and p3 rows of data/manual/report_entries.csv after provenance (Section 2). The scope adjusted gate is
+    informational (instruction 03 A.1 item 1) and blocks no bank."""
     kept, _ = eba_facts(cfg)
     rp, _ = report_p3_facts(cfg)
     rp_kept, _ = apply_source_map(rp, read_source_map(cfg.root))
-    rp_kept = _apply_scope_gate(kept, rp_kept)
     kept = pd.concat([kept, rp_kept], ignore_index=True) if len(rp_kept) else kept
     kept = kept.sort_values(["bank_id", "ref_date", "field", "family"]).reset_index(drop=True)
     out = cfg.root / "data" / "processed" / "facts.parquet"

@@ -95,6 +95,9 @@ fields:
   gains_hedge_accounting: *standard
   exchange_differences: *standard
   other_operating_net: *standard
+  rote_reported:                    # instruction 03 B.1: FY2025 and H1 2026 only, for the step 3.4 comparison
+    - {banks: eu, dates: ["2025-12-31", "2026-06-30"], family: report, role: check}
+    - {banks: uk, dates: ["2025-12-31", "2026-06-30"], family: report, role: check}
   lr1_total_assets: &lr1
     - {banks: eu, dates: ["2025-06-30"], family: report, role: check}
   lr1_scope_adjustment: *lr1

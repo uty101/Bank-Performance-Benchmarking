@@ -222,7 +222,7 @@ Per EU bank, in `report_urls.csv`:
 
 **Comparative columns.** A figure is entered from the document where it is the current period, except 2024-12-31 balance sheet values, which come from the FY2025 comparative column. Restated comparatives are not used for any other date.
 
-**Crédit Agricole Group (CAG).** Use the Group columns of Crédit Agricole SA's universal registration document and half year report, and the Group Pillar 3 report, never the CASA columns. Seam 2 shows whether this was done right: CAG total_assets at 2025-06-30 from report and from eba must agree within 2%. If not, stop under rule 4. *Superseded by the scope adjusted gate in amendments from instruction 02b.*
+**Crédit Agricole Group (CAG).** Use the Group columns of Crédit Agricole SA's universal registration document and half year report, and the Group Pillar 3 report, never the CASA columns. Seam 2 shows whether this was done right: CAG total_assets at 2025-06-30 from report and from eba must agree within 2%. If not, stop under rule 4. *Superseded by the scope adjusted gate in amendments from instruction 02b.* *The scope adjusted gate is itself superseded: it is informational (amendment 26).*
 
 14. **Page text cache and provenance (B.4).**
 
@@ -239,6 +239,8 @@ Per EU bank, in `report_urls.csv`:
    - `lr1_scope_adjustment` (row 2, the adjustment for entities consolidated for accounting purposes but outside the regulatory scope), entered with the sign as printed.
 
    The gate: |(lr1_total_assets + lr1_scope_adjustment) − eba total_assets| / eba total_assets ≤ 0.02 for every EU bank where LR1 is entered. Use the sign convention so that a printed negative reduces assets. This replaces the CAG only gate. A failure is a rule 4 stop for that bank only: leave its bridge entries out of the KPIs, finish every other bank, and report it. Seam 2 adds a column with the scope adjusted report total assets.
+
+   *Superseded by amendment 26: the gate is informational and blocks no bank.*
 
 17. **No time comparison crosses the family switch.** From this section on, every year on year change, every 3 year trend and every driver decomposition that compares 2 dates uses values from 1 family.
    - FY2024 P&L is entered from the FY2025 annual report's comparative column (role `bridge_input`, all P&L fields and `income_components_other`). FY2024 against FY2025 is then report against report.
@@ -277,3 +279,15 @@ Per EU bank, in `report_urls.csv`:
     - Size the UBI branch unit and AXA IM this way.
     - Add RON to `[fx] currencies` (a reviewer change to `config.toml`), re-run the fx stage, and compute Alpha Bank Romania's ratio.
     - BPER and Carige (0.164) is accepted as a material break.
+
+### Amendments from instructions/03_section_3.md (step 3.0; decisions in `decisions/section_2_review.md`)
+
+26. **The scope gate is informational (A.1 item 1).** Check `8b_scope_gate` keeps its rows, with threshold blank and passed blank. No bank is blocked by it. This supersedes amendment 13's CAG gate and the gate rule of amendment 16 (instruction 02b B.1).
+   - SHB's report and p3 rows are restored, and its KPIs at 2025-12-31 and 2026-06-30 are computed.
+   - The entity check is the combination already in place: provenance on every report figure; seam 1 (p3 against EBA, 72 of 72 within 0.1%); the published seam 2 table.
+   - The README states the scope difference for bank insurers as a caveat. Those banks are NDA, DANSKE, SWED, SEB, SHB, KBC, BNP, GLE and CAG, plus any with a total_assets seam above 5%.
+27. **Pillar 3 not obtainable (A.1 item 2).** For DNB, SHB and UCG at 2026-06-30, and CBK at every date, take the KM1 figures from the capital adequacy note of the same date's interim or annual report:
+   - cet1, tier1, rwa, cet1_ratio_reported and leverage_exposure;
+   - lcr and nsfr where printed.
+
+   These rows are family `p3`, with status `p3_from_report`. CR1 fields stay blank where no Pillar 3 exists.

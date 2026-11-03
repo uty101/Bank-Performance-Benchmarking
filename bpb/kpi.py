@@ -25,9 +25,9 @@ PENDING_SECTION_3 = {"rote", "income_fte", "cost_fte", "cost_customer"}  # instr
 FAMILY_ORDER = ["eba", "p3", "report"]  # a KPI at 2025-06-30 stays eba (OPEN-03); one family per value
 OK = "ok"
 # statuses that describe how a value was built but leave it usable (instruction 01b B.2; instruction 02 B.2)
-# instruction 02b: dep_in_admin (B.5), toi_summed (B.8), from_comparative (B.9). A status of several of these is
-# joined with ";".
-USABLE = (OK, "fx_combined", "levies_in_admin", "dep_in_admin", "toi_summed", "from_comparative")
+# instruction 02b: dep_in_admin (B.5), toi_summed (B.8), from_comparative (B.9); instruction 03 A.1 item 2:
+# p3_from_report. A status of several of these is joined with ";".
+USABLE = (OK, "fx_combined", "levies_in_admin", "dep_in_admin", "toi_summed", "from_comparative", "p3_from_report")
 # fields a report income statement may fold into administrative expenses: opex takes them as 0 with a status
 IN_ADMIN = {"resolution_dgs_contrib": "levies_in_admin", "depreciation": "dep_in_admin"}
 

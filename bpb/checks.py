@@ -280,7 +280,6 @@ def merger_provenance(mergers: pd.DataFrame, text_root: Path, decimal_marks: dic
 
 SEAM_DATE = "2025-06-30"
 SEAM_CAPITAL_FIELDS = ["cet1", "rwa", "leverage_exposure"]
-SCOPE_GATE_TOL = 0.02  # instruction 02b B.1: scope adjusted report total assets and eba agree within 2%
 
 
 def _to_eur_row(value: float, ccy: str, field: str, rates: pd.DataFrame) -> float:
@@ -334,8 +333,8 @@ def seam_pl(facts: pd.DataFrame) -> pd.DataFrame:
 def scope_gate(facts: pd.DataFrame) -> pd.DataFrame:
     """Instruction 02b B.1, for every EU bank with EU LR1 entered at 2025-06-30: value_a = eba total_assets (EUR),
     value_b = lr1_total_assets + lr1_scope_adjustment (the adjustment as printed, so a printed negative reduces
-    assets), converted to EUR at the 2025-06-30 rate; passed if |b - a| / a <= 0.02. A failure is a rule 4 stop for
-    that bank only: build_facts leaves its report and p3 rows out of the KPIs."""
+    assets), converted to EUR at the 2025-06-30 rate, and diff_rel = |b - a| / a. Informational since instruction 03
+    A.1 item 1: threshold and passed are blank and no bank is blocked by it."""
     from bpb.ingest import ROOT
 
     rates = fx.ecb_rates(ROOT / "data" / "raw")
@@ -350,8 +349,8 @@ def scope_gate(facts: pd.DataFrame) -> pd.DataFrame:
         ccy = lr1["ccy"].iloc[0]
         b = _to_eur_row(float(lr1["value"].sum()), ccy, "total_assets", rates)
         rel = abs(b - a) / abs(a)
-        rows.append(_row("8b_scope_gate", bank, SEAM_DATE, "total_assets", a, b, SCOPE_GATE_TOL,
-                         rel <= SCOPE_GATE_TOL, f"lr1 row 1 + row 2, {ccy}", diff_rel=rel))
+        rows.append(_row("8b_scope_gate", bank, SEAM_DATE, "total_assets", a, b, np.nan, None,
+                         f"informational; lr1 row 1 + row 2, {ccy}", diff_rel=rel))
     return pd.DataFrame(rows, columns=CHECKS_COLUMNS)
 
 

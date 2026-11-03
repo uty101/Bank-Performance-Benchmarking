@@ -1,1 +1,1 @@
-bank_id,ref_date,period_months,field,amount,description,report_sha256,page
+bank_id,ref_date,period_months,field,amount,description,report_sha256,page,value_as_printed,unit_scale,snippet
