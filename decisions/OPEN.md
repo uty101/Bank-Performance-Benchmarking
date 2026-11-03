@@ -329,3 +329,17 @@ Raised in session 3b (step 3.6). `GOVT_GENERIC_RATES/M.10Y.GBON` returns 2025-11
 
 - (a) Fill NO 2025-12 with the mean of the business-day series `B.10Y.GBON` over December 2025, from the same Norges Bank dataset, recorded with its own URL and a `derived_from_daily` note.
 - (b) Take NO from the ECB or another monthly source that has December 2025, if one is named.
+
+## OPEN-32: AT1 classified as a liability whose coupons are charged to reserves
+
+Raised in session 3b (step 3.5). Instruction 03b B.2 sets at1_coupons to 0 where at1_in_equity is 0 because "the coupons are already inside interest expense". SAN, BBVA, CABK, SAB and BKT book their AT1 (contingently convertible preference shares) as liabilities, so at1_in_equity is 0, but they charge the coupons directly to reserves: each deducts them from profit attributable in its EPS note (the at1_coupons entries of step 3.2 come from those notes). For these 5 banks profit_owners is not net of the coupons, and the B.2 rule as applied overstates rote by the coupon over average tangible equity (SAN about EUR 0.6bn a year, BBVA about 0.4bn). The rule was applied as written.
+
+- (a) Apply the at1_liability rule to the tangible_equity term only where the coupons are charged to reserves; keep the entered at1_coupons (deducted from profit_owners) for these banks.
+- (b) Keep the B.2 rule as applied.
+
+## OPEN-33: no non-controlling interests line leaves tangible_equity missing
+
+Raised in session 3b (step 3.5). SEB, Danske (all dates), Bankinter, Nordea (from 2022-06-30), Swedbank (30 June from 2024) and Santander UK (from 2022-06-30) print no non-controlling interests line on the balance sheet, or a dash. minority_interests is then missing, so tangible_equity and rote are blank at those dates (E3b.1).
+
+- (a) minority_interests is 0 where the balance sheet prints no non-controlling interests line or a dash, status `no_nci_line`, cited to the equity section of the balance sheet.
+- (b) Leave it missing, as now.
