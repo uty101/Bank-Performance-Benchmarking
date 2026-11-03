@@ -322,3 +322,10 @@ Raised in session 3 (step 3.1). Santander UK Group Holdings prints profit after 
 
 - (a) profit_owners = pat where the statements print no non-controlling interest, status `no_nci_line`.
 - (b) Leave profit_owners missing at these dates, as now.
+
+## OPEN-31: Norges Bank's monthly 10 year yield has no December 2025 value
+
+Raised in session 3b (step 3.6). `GOVT_GENERIC_RATES/M.10Y.GBON` returns 2025-11 and 2026-01 but no 2025-12 row (the API was queried for 2025-10 to 2026-02 and returned 4 months). The business-day series of the same dataset, `B.10Y.GBON`, has values for every business day of December 2025. `tests/test_yields.py::test_coverage` therefore fails for NO at 2025-12.
+
+- (a) Fill NO 2025-12 with the mean of the business-day series `B.10Y.GBON` over December 2025, from the same Norges Bank dataset, recorded with its own URL and a `derived_from_daily` note.
+- (b) Take NO from the ECB or another monthly source that has December 2025, if one is named.

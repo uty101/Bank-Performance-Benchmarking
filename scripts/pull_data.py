@@ -1,6 +1,6 @@
 """Pulls raw data. The only module besides fetch_reports.py that touches the network (CLAUDE.md rule 8).
 
-usage: python scripts/pull_data.py --stage eba [--stage fx ...]   (stages: eba, fx, gleif, market, fred)
+usage: python scripts/pull_data.py --stage eba [--stage fx ...]   (stages: eba, fx, gleif, market, yields)
 
 Every pull writes an entry per file to data/raw/MANIFEST.json (kickoff Section 3.2).
 """
@@ -350,33 +350,83 @@ def stage_market(cfg: dict) -> None:
     write_manifest(entries)
 
 
-# --- stage fred ----------------------------------------------------------------
+# --- stage yields --------------------------------------------------------------
 
-FRED_URL = "https://fred.stlouisfed.org/graph/fredgraph.csv?id=IRLTLT01{cc}M156N"  # kickoff 3.2
+# instruction 03b B.1: 10 year sovereign yields from central bank sources (FRED refused the connection in session 3)
+ECB_IRS_URL = "https://data-api.ecb.europa.eu/service/data/IRS/M.{cc}.L.L40.CI.0000.{ccy}.N.Z?format=csvdata"
+ECB_IRS_CCY = {"SE": "SEK", "DK": "DKK"}  # instruction 03b B.1: EUR for euro area members
+BOE_URL = ("https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp?csv.x=yes&Datefrom=01/Jan/2020"
+           "&Dateto=31/Jul/2026&SeriesCodes=IUMAMNPY&CSVF=TN&UsingCodes=Y&VPD=Y&VFD=N")
+NORGES_URL = ("https://data.norges-bank.no/api/data/GOVT_GENERIC_RATES/M.10Y.GBON.?format=csv&startPeriod=2020-01"
+              "&endPeriod=2026-07&locale=en")
+YIELDS_START, YIELDS_END = "2020-01", "2026-07"
+YIELD_COLUMNS = ["period", "yield_pct", "series"]
 
 
-def stage_fred(cfg: dict) -> None:
-    """Long-term government bond yields IRLTLT01{CC}M156N for every [sovereign] countries entry to
-    data/raw/fred/{CC}.csv (kickoff 3.2, PLAN step 3.4)."""
+def _get_text(url: str) -> str:
+    for i in range(3):
+        try:
+            r = requests.get(url, headers=HEADERS, timeout=120)
+            r.raise_for_status()
+            return r.content.decode("utf-8-sig")
+        except requests.RequestException as e:
+            print(f"  attempt {i + 1} failed: {e}", file=sys.stderr)
+            time.sleep(5)
+    raise SystemExit(f"data pull failed: {url}")
+
+
+def _yields_ecb(cc: str) -> tuple[str, list[dict]]:
+    url = ECB_IRS_URL.format(cc=cc, ccy=ECB_IRS_CCY.get(cc, "EUR")) + f"&startPeriod={YIELDS_START}&endPeriod={YIELDS_END}"
+    recs = list(csv.DictReader(io.StringIO(_get_text(url))))
+    return url, [{"period": r["TIME_PERIOD"], "yield_pct": r["OBS_VALUE"], "series": r["KEY"]} for r in recs
+                 if r["OBS_VALUE"] not in ("", "NaN")]
+
+
+def _yields_boe() -> tuple[str, list[dict]]:
+    rows = list(csv.reader(io.StringIO(_get_text(BOE_URL))))
+    code = rows[0][1]
+    out = []
+    for d, v in rows[1:]:
+        period = datetime.strptime(d.strip(), "%d %b %Y").strftime("%Y-%m")
+        out.append({"period": period, "yield_pct": v.strip(), "series": f"BoE IADB {code}"})
+    return BOE_URL, out
+
+
+def _yields_norges() -> tuple[str, list[dict]]:
+    recs = list(csv.DictReader(io.StringIO(_get_text(NORGES_URL)), delimiter=";"))
+    return NORGES_URL, [{"period": r["TIME_PERIOD"], "yield_pct": r["OBS_VALUE"],
+                         "series": f"Norges Bank GOVT_GENERIC_RATES M.{r['TENOR']}.{r['INSTRUMENT_TYPE']}"}
+                        for r in recs if r["OBS_VALUE"]]
+
+
+def stage_yields(cfg: dict) -> None:
+    """Monthly 10 year sovereign yields for every [sovereign] countries entry to data/raw/yields/{CC}.csv (period,
+    yield_pct, series): GB from the Bank of England (IUMAMNPY, monthly average 10 year nominal par yield), NO from
+    Norges Bank (GOVT_GENERIC_RATES, 10 year government bonds, monthly), every other country from the ECB IRS
+    dataset (Maastricht convergence criterion long-term yields), instruction 03b B.1."""
     entries = []
     for cc in cfg["sovereign"]["countries"]:
-        url = FRED_URL.format(cc=cc)
-        print(f"fred {cc}")
-        dest = RAW / "fred" / f"{cc}.csv"
+        print(f"yields {cc}")
         pulled = now_utc()
-        download(url, dest)
-        with open(dest, encoding="utf-8", newline="") as f:
-            recs = list(csv.reader(f))[1:]
-        dates = sorted(r[0] for r in recs if r and r[1] not in ("", "."))
-        if not dates:
+        url, rows = _yields_boe() if cc == "GB" else _yields_norges() if cc == "NO" else _yields_ecb(cc)
+        rows = sorted((r for r in rows if YIELDS_START <= r["period"] <= YIELDS_END), key=lambda r: r["period"])
+        if not rows:
             raise SystemExit(f"data pull failed: no rows for {cc}")
+        dest = RAW / "yields" / f"{cc}.csv"
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        buf = io.StringIO()
+        w = csv.DictWriter(buf, fieldnames=YIELD_COLUMNS, lineterminator="\n")
+        w.writeheader()
+        w.writerows(rows)
+        dest.write_bytes(buf.getvalue().encode("utf-8"))
         entries.append({"path": rel(dest), "committed": True, "url": url, "pulled_utc": pulled,
-                        "sha256": sha256_file(dest), "bytes": dest.stat().st_size, "rows": len(recs),
-                        "first_date": dates[0], "last_date": dates[-1], "encoding": "utf-8"})
+                        "sha256": sha256_file(dest), "bytes": dest.stat().st_size, "rows": len(rows),
+                        "first_date": rows[0]["period"], "last_date": rows[-1]["period"], "encoding": "utf-8",
+                        "series": rows[0]["series"]})
     write_manifest(entries)
 
 
-STAGES = {"eba": stage_eba, "fx": stage_fx, "gleif": stage_gleif, "market": stage_market, "fred": stage_fred}
+STAGES = {"eba": stage_eba, "fx": stage_fx, "gleif": stage_gleif, "market": stage_market, "yields": stage_yields}
 
 
 def main(argv: list[str] | None = None) -> int:
