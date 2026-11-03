@@ -1,6 +1,6 @@
 # Section 3
 
-Outcome: **stopped under rule 4 at step 3.4.** The `fred` data pull failed (read timeout, then the connection closed by fred.stlouisfed.org, on all 3 attempts). Steps 3.0 to 3.3 are complete for all 31 banks; step 3.4 is complete except the FRED series (rote for every bank, market data for 27 tickers, both tests).
+Outcome: **stopped under rule 4 at step 3.6** (instruction 03b). Norges Bank's monthly 10 year yield series has no December 2025 value, so `tests/test_yields.py::test_coverage` fails for NO at 2025-12; filling the month would be a design choice (OPEN-31). Steps 3.0 to 3.5 are complete for all 31 banks; step 3.6 is complete for the other 10 countries. The first stop of this section (step 3.4, FRED refused the connection) was resolved by instruction 03b B.1.
 
 ## Steps completed
 
@@ -9,7 +9,10 @@ Outcome: **stopped under rule 4 at step 3.4.** The `fred` data pull failed (read
 - 3.2 B.1 fields for all 31 banks, 1 commit per bank in universe order: LLOY 0924116, NWG 0591a57, BARC bf9e651, HSBA 2f7271a, SANUK 56c14d8, NDA 865d866, DNB 327d768, DANSKE 18397e6, SEB bcecc34, SHB 8028bb3, SWED 6e0b668, INGA 640d117, ABN d99d18e, KBC d575921, RABO b9d7cb6, BNP b7a803c, GLE 42b2cd5, CAG 2c1db2c, DBK 2cae2d7, CBK 6f49f3b, SAN b96f026, BBVA d24ba1f, CABK 3d2b7d2, SAB 64b3ac0, BKT a21ee33, UNI 5bceead, UCG 95188d6, ISP 6ab7a50, BAMI 618fbb6, BPE f9c667a, BMPS 016249a (see Deviation 9 on the NDA, SEB order)
 - 3.3 one offs and underlying KPIs (7f4b399)
 - 3.4 rote and market data; fred pull failed, rule 4 stop (d4c41c9)
-- open questions OPEN-27 to OPEN-30 (b1827f3)
+- open questions OPEN-27 to OPEN-30 (b1827f3); review and status of session 3 (be68a18, f933596)
+- 3.5 at1_in_equity UK (deb80cb), at1_in_equity EU (e89d51c), decisions 3 to 6 applied and rote recomputed (e7bef6e)
+- 3.6 yields from ECB, BoE and Norges Bank; NO 2025-12 missing, rule 4 stop (10aa994)
+- open questions OPEN-32 and OPEN-33 (9e19da4)
 
 ## Evidence
 
@@ -1032,7 +1035,7 @@ ref_date
 | DNB, DANSKE, SEB, SHB, SWED, ISP, RABO, ABN, CAG | rote_reported | 2025-12-31 and/or 2026-06-30 | bank publishes ROE only, or no RoTE for the period |
 
 
-### E3.3a one_offs.csv rows by bank
+### E3.3a one_offs.csv rows by bank at step 3.3 (616 rows; step 3.5 removed 40 under 03b B.6, E3b.3, leaving 576)
 
 ```
 bank_id
@@ -1087,182 +1090,28 @@ bank_id   ref_date                  field       amount  amount_in_toi_ccy       
 ```
 
 
-### E3.4a rote for every bank at every date, pct
+### E3.4a, E3.4b
 
-**reported**
+Superseded by E3b.1 and E3b.5 (rote after instruction 03b).
 
-```
-date     2021-12-31  2022-06-30  2022-12-31  2023-06-30  2023-12-31  2024-06-30  2024-12-31  2025-06-30  2025-12-31  2026-06-30
-bank_id                                                                                                                        
-ABN             NaN        7.90        8.75       11.60       12.17       11.74       10.27        9.49        8.88        9.79
-BAMI           4.71         NaN        5.62        7.93       10.73       11.60       15.39       20.90       16.96       16.60
-BARC          13.03       10.27       10.36       11.99        8.82        8.26       10.47       11.55       11.41       12.25
-BBVA          11.98       14.20       15.86       17.53       18.11       20.04       20.98       21.17       20.47       21.27
-BKT             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-BMPS            NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-BNP            9.41        9.99        9.91       11.73       10.35        9.51       10.70       10.61       11.19       12.46
-BPE             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-CABK          22.17        8.68       10.87       13.00       16.55       18.88       19.25       20.30       19.16       19.74
-CAG             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-CBK            1.17        5.58        4.84        6.10        7.44        7.81        8.57        8.34         NaN         NaN
-DANSKE          NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-DBK            3.86        4.59        8.72        8.28        7.23        5.72        4.62        8.24       10.03       10.60
-DNB             NaN         NaN         NaN       15.86       15.96       17.65       16.82       17.87       16.83         NaN
-GLE             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN        9.85       10.70
-HSBA           7.62        8.48        9.20       15.32       14.48       14.53       14.92       11.51       13.32       15.24
-INGA            NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-ISP             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-KBC           12.68         NaN       16.44       18.80       17.67       15.21       16.37       16.49         NaN         NaN
-LLOY          12.72       10.48       12.39       14.03       13.79       13.88       11.47       11.91       12.06       13.50
-NDA           13.60         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-NWG            9.23       10.08       11.70       14.61       17.18       17.23       17.31       18.26       19.16       21.00
-RABO           9.29        7.39        6.39        8.40        9.72         NaN       10.77         NaN        9.63        9.32
-SAB            4.93        6.49        8.44        9.83       12.61       14.45       16.52       19.20       16.23       18.44
-SAN           12.80         NaN       14.62         NaN       16.01       16.53       16.91       17.45       17.88       19.52
-SANUK          9.85         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-SEB             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-SHB             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-SWED            NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-UCG            2.22        2.83       11.10       14.73       16.09       17.92       16.62       17.67       18.46         NaN
-UNI           22.89         NaN        3.95         NaN        3.97        6.43        8.94        9.47        9.58         NaN
-```
-
-**underlying**
-
-```
-date     2021-12-31  2022-06-30  2022-12-31  2023-06-30  2023-12-31  2024-06-30  2024-12-31  2025-06-30  2025-12-31  2026-06-30
-bank_id                                                                                                                        
-ABN             NaN        7.19       10.35       13.18       12.71       12.25       10.69       10.07        9.13        9.80
-BAMI           6.66         NaN        7.00        8.21       11.49       12.43       17.56       23.12       17.25       16.98
-BARC          14.71       13.99       13.06       12.50       10.81       10.84       10.72       11.38       12.14       12.99
-BBVA          14.11       14.20       15.86       17.53       18.11       20.04       20.98       21.17       20.47       21.27
-BKT             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-BMPS            NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-BNP            9.79       10.15       10.38       12.90       13.01       11.77       11.18       11.11       11.78       12.87
-BPE             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-CABK          32.48       10.05       11.06       13.12       16.59       18.90       19.25       20.30       19.16       19.74
-CAG             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-CBK            5.54        6.14        5.21        6.33        7.51        7.86        8.58       10.19         NaN         NaN
-DANSKE          NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-DBK            7.47        7.29        8.97        9.58        9.20        9.74        8.93        9.43       10.62       11.12
-DNB             NaN         NaN         NaN       15.86       15.96       17.65       16.82       17.87       16.83         NaN
-GLE             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN       10.53       11.30
-HSBA           9.26       10.47       13.07       16.25       16.32       16.26       16.10       16.94       17.55       18.04
-INGA            NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-ISP             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-KBC           14.45         NaN       17.43       19.82       18.32       15.88       16.84       16.96         NaN         NaN
-LLOY          15.42       13.06       13.68       15.72       14.65       14.83       12.56       12.66       12.39       13.45
-NDA           13.60         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-NWG           12.37       11.92       12.71       15.41       16.95       17.84       18.23       19.62       18.90       19.91
-RABO          10.29        8.76        7.84        9.20        9.05         NaN       10.88         NaN        9.34        8.98
-SAB            8.61       10.06        8.44        9.83       12.95       14.78       16.72       19.41       16.23       19.46
-SAN           14.00         NaN       14.62         NaN       16.01       16.53       16.91       18.09       18.50       19.52
-SANUK         12.55         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-SEB             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-SHB             NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-SWED            NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN
-UCG            2.22        2.60       11.10       14.73       16.09       17.92       16.62       17.67       18.46         NaN
-UNI           31.50         NaN        3.95         NaN        5.04        7.51        8.94        9.47        9.58         NaN
-```
-
-Blank reported rote by status:
-
-```
-status
-missing_input:at1_coupons           44
-missing_input:at1_instruments        6
-missing_input:minority_interests     8
-missing_input:profit_owners          2
-missing_input:profit_to_ordinary    51
-missing_input:tangible_equity       33
-mixed_family                         1
-```
-
-### E3.4b rote against rote_reported at 2025-12-31 (pct; no threshold)
-
-```
-bank_id  rote  rote_reported  difference_pts
-   BAMI 16.96          22.38           -5.42
-   BARC 11.41          11.30            0.11
-   BBVA 20.47          19.30            1.17
-    BKT   NaN          20.03             NaN
-   BMPS   NaN          22.40             NaN
-    BNP 11.19          11.60           -0.41
-    BPE   NaN          20.05             NaN
-   CABK 19.16          17.50            1.66
-    CBK   NaN           8.70             NaN
-    DBK 10.03          10.30           -0.27
-    GLE  9.85          10.20           -0.35
-   HSBA 13.32          13.30            0.02
-   INGA   NaN          13.60             NaN
-    KBC   NaN          16.00             NaN
-   LLOY 12.06          12.90           -0.84
-    NWG 19.16          19.20           -0.04
-    SAB 16.23          14.30            1.93
-    SAN 17.88          17.10            0.78
-  SANUK   NaN          10.00             NaN
-    UCG 18.46          19.20           -0.74
-    UNI  9.58           9.80           -0.22
-```
-
-### E3.4c Hand checks
+### E3.4c Hand checks (recomputed after instruction 03b B.2)
 
 ```
 #### LLOY: rote at 2025-12-31
-
-  ref_date                 field family        value ccy                                                              locator status
-2024-12-31           at1_coupons report 4.980000e+08 GBP c39a7befff281d349c5ccfe8a29db6cc6adb42ad29e335e72d282e0eaad2b602@219     ok
-2024-12-31       at1_instruments report 6.170000e+09 GBP  3cd7dc96f380d7810aa10b87a7e0c34d8b67c5271ab13071fe7b8895f7132df0@37     ok
-2024-12-31 intangibles_deduction report 5.679000e+09 GBP  3cd7dc96f380d7810aa10b87a7e0c34d8b67c5271ab13071fe7b8895f7132df0@37     ok
-2024-12-31    minority_interests report 1.720000e+08 GBP c39a7befff281d349c5ccfe8a29db6cc6adb42ad29e335e72d282e0eaad2b602@218     ok
-2024-12-31         profit_owners report 4.421000e+09 GBP c39a7befff281d349c5ccfe8a29db6cc6adb42ad29e335e72d282e0eaad2b602@216     ok
-2024-12-31          total_equity report 4.588800e+10 GBP c39a7befff281d349c5ccfe8a29db6cc6adb42ad29e335e72d282e0eaad2b602@218     ok
-2025-12-31           at1_coupons report 4.630000e+08 GBP 9c7eeb9f6877c6be1fe991f2f776ede30c65043fab5a3f32475e9bc59a7a9ace@216     ok
-2025-12-31       at1_instruments report 5.947000e+09 GBP  7bdd2a718e77dbee96773774bcb6b1ec28b92221d0cd5db80f4d50e2a3afc436@25     ok
-2025-12-31 intangibles_deduction report 5.996000e+09 GBP  7bdd2a718e77dbee96773774bcb6b1ec28b92221d0cd5db80f4d50e2a3afc436@25     ok
-2025-12-31    minority_interests report 1.990000e+08 GBP 9c7eeb9f6877c6be1fe991f2f776ede30c65043fab5a3f32475e9bc59a7a9ace@215     ok
-2025-12-31         profit_owners report 4.659000e+09 GBP 9c7eeb9f6877c6be1fe991f2f776ede30c65043fab5a3f32475e9bc59a7a9ace@213     ok
-2025-12-31          total_equity report 4.786700e+10 GBP 9c7eeb9f6877c6be1fe991f2f776ede30c65043fab5a3f32475e9bc59a7a9ace@215     ok
-
-profit_to_ordinary = profit_owners 4,659,000,000 (report) - at1_coupons 463,000,000 (report) = 4,196,000,000
+at1_in_equity: 2024-12-31 = 1, 2025-12-31 = 1 (report entries)
+profit_to_ordinary = profit_owners 4,659,000,000 (report) - at1_coupons 463,000,000 = 4,196,000,000
 tangible_equity 2024-12-31 = total_equity 45,888,000,000 (report) - minority_interests 172,000,000 - at1_instruments 6,170,000,000 - intangibles_deduction 5,679,000,000 = 33,867,000,000
 tangible_equity 2025-12-31 = total_equity 47,867,000,000 (report) - minority_interests 199,000,000 - at1_instruments 5,947,000,000 - intangibles_deduction 5,996,000,000 = 35,725,000,000
-average tangible_equity = (33,867,000,000 + 35,725,000,000) / 2 = 34,796,000,000.0
-rote (hand) = 4,196,000,000 / 34,796,000,000.0 = 0.120589
-kpi.csv:
-   value    numerator  denominator family status
-0.120589 4196000000.0 3.479600e+10 report     ok
-difference = 7.59e-13
+average tangible_equity = 34,796,000,000.0; rote (hand) = 4,196,000,000 / 34,796,000,000.0 = 0.120589
+kpi.csv: value 0.120589, numerator 4,196,000,000, denominator 34,796,000,000.0, family report, status ok; difference 7.59e-13
 
 #### BBVA: rote at 2024-12-31
-
-  ref_date                 field family        value ccy                                                              locator status
-2023-12-31           at1_coupons report 3.450000e+08 EUR  806b2b1bebeca5b007265b8346d2b3d4e73d65594c027dca6fb52b36c4184c0e@62     ok
-2023-12-31       at1_instruments    eba 6.033455e+09 EUR                                                         2420129@2024     ok
-2023-12-31 intangibles_deduction    eba 1.421125e+09 EUR                                                         2420110@2024     ok
-2023-12-31    minority_interests report 3.564000e+09 EUR  806b2b1bebeca5b007265b8346d2b3d4e73d65594c027dca6fb52b36c4184c0e@18     ok
-2023-12-31         profit_owners    eba 7.987717e+09 EUR                                                         2420336@2024     ok
-2023-12-31          total_equity    eba 5.512835e+10 EUR                                                         2421216@2024     ok
-2024-12-31           at1_coupons report 3.880000e+08 EUR  f345f5556b89e26cd27d421b6f8993cfa24c52191326874dea39463843c0363d@64     ok
-2024-12-31       at1_instruments    eba 6.023283e+09 EUR                                                         2520129@2025     ok
-2024-12-31       at1_instruments report 5.638000e+09 EUR 5c70ff881de178cb8e0c0879404619d7e6d83aff9b66f67147a17a686ddb392c@325     ok
-2024-12-31 intangibles_deduction    eba 1.553379e+09 EUR                                                         2520110@2025     ok
-2024-12-31 intangibles_deduction report 1.553000e+09 EUR 5c70ff881de178cb8e0c0879404619d7e6d83aff9b66f67147a17a686ddb392c@324     ok
-2024-12-31    minority_interests report 4.359000e+09 EUR  f345f5556b89e26cd27d421b6f8993cfa24c52191326874dea39463843c0363d@21     ok
-2024-12-31         profit_owners    eba 1.004035e+10 EUR                                                         2520336@2025     ok
-2024-12-31         profit_owners report 1.005400e+10 EUR  5a932fd4c871df1d940492611fd2055386a052b7c90cfc322d88866b5f54e3c0@22     ok
-2024-12-31          total_equity    eba 5.982848e+10 EUR                                                         2521216@2025     ok
-2024-12-31          total_equity report 6.001400e+10 EUR  5a932fd4c871df1d940492611fd2055386a052b7c90cfc322d88866b5f54e3c0@21     ok
-
-profit_to_ordinary = profit_owners 10,040,349,000 (eba) - at1_coupons 388,000,000 (report) = 9,652,349,000
-tangible_equity 2023-12-31 = total_equity 55,128,346,000 (eba) - minority_interests 3,564,000,000 - at1_instruments 6,033,455,000 - intangibles_deduction 1,421,125,000 = 44,109,766,000
-tangible_equity 2024-12-31 = total_equity 59,828,484,000 (eba) - minority_interests 4,359,000,000 - at1_instruments 6,023,283,000 - intangibles_deduction 1,553,379,000 = 47,892,822,000
-average tangible_equity = (44,109,766,000 + 47,892,822,000) / 2 = 46,001,294,000.0
-rote (hand) = 9,652,349,000 / 46,001,294,000.0 = 0.209828
-kpi.csv:
-   value    numerator  denominator     family status
-0.209828 9652349000.0 4.600129e+10 eba+report     ok
-difference = 3.34e-11
+at1_in_equity: 2023-12-31 = 0, 2024-12-31 = 0 (report entries)
+profit_to_ordinary = profit_owners 10,040,349,000 (eba) - at1_coupons 0 (at1_in_equity 0: 0, status at1_liability) = 10,040,349,000
+tangible_equity 2023-12-31 = total_equity 55,128,346,000 (eba) - minority_interests 3,564,000,000 - at1_instruments 0 (at1_in_equity 0) - intangibles_deduction 1,421,125,000 = 50,143,221,000
+tangible_equity 2024-12-31 = total_equity 59,828,484,000 (eba) - minority_interests 4,359,000,000 - at1_instruments 0 (at1_in_equity 0) - intangibles_deduction 1,553,379,000 = 53,916,105,000
+average tangible_equity = 52,029,663,000.0; rote (hand) = 10,040,349,000 / 52,029,663,000.0 = 0.192974
+kpi.csv: value 0.192974, numerator 10,040,349,000, denominator 52,029,663,000.0, family eba+report, status at1_liability; difference 3.57e-11
 ```
 
 ### E3.4d Market coverage per ticker
@@ -1301,27 +1150,256 @@ SWED-A.ST 2020-12-01 2026-07-31  1422      SEK
 
 ### E3.4e FRED coverage
 
-None: the stage failed (Deviation 1); data/raw/fred/ is empty and MANIFEST.json has no fred entry.
+None: the FRED stage failed (Deviation 1) and was replaced by the yields stage (E3b.4).
+
+### E3b.1 rote for every bank at every date (pct; a blank shows its status, mi: = missing_input:)
+
+**reported**
+
+```
+date                2021-12-31             2022-06-30             2022-12-31             2023-06-30             2023-12-31             2024-06-30             2024-12-31             2025-06-30             2025-12-31                2026-06-30
+bank_id                                                                                                                                                                                                                                         
+ABN         mi:tangible_equity                   7.90                   8.75                  11.60                  12.17                  11.74                  10.27                   9.49                   8.88                      9.79
+BAMI                      4.71                   4.67                   5.62                   7.93                  10.73                  11.60                  15.39                  20.90                  16.96                     16.60
+BARC                     13.03                  10.27                  10.36                  11.99                   8.82                   8.26                  10.47                  11.55                  11.41                     12.25
+BBVA                     11.06                  13.14                  14.60                  15.99                  16.71                  18.38                  19.30                  19.65                  19.15                     19.81
+BKT         mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary  mi:minority_interests     mi:minority_interests
+BMPS                      5.28                   2.31                  -2.98                   5.49                  23.41                  27.19                  18.26                  15.28                  16.42                     18.71
+BNP                       9.41                   9.99                   9.91                  11.73                  10.35                   9.51                  10.70                  10.61                  11.19                     12.46
+BPE         mi:tangible_equity  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons            mi:at1_coupons
+CABK                     19.76                   8.39                  10.10                  11.99                  15.15                  17.14                  17.51                  18.42                  17.28                     17.84
+CAG         mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:at1_instruments        mi:at1_instruments
+CBK                       1.17                   5.58                   4.84                   6.10                   7.44                   7.81                   8.57                   8.34     mi:at1_instruments        mi:at1_instruments
+DANSKE      mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity  mi:minority_interests     mi:minority_interests
+DBK                       3.86                   4.59                   8.72                   8.28                   7.23                   5.72                   4.62                   8.24                  10.03                     10.60
+DNB      mi:profit_to_ordinary  mi:profit_to_ordinary     mi:tangible_equity                  15.86                  15.96                  17.65                  16.82                  17.87                  16.83        mi:at1_instruments
+GLE         mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity     mi:tangible_equity                   9.85                     10.70
+HSBA                      7.62                   8.48                   9.20                  15.32                  14.48                  14.53                  14.92                  11.51                  13.32                     15.24
+INGA                      8.96                   7.38                   7.19                  11.54                  14.66                  13.93                  12.84                  12.68                  12.94                     13.80
+ISP             mi:at1_coupons  mi:profit_to_ordinary                   8.43  mi:profit_to_ordinary                  15.53                  16.39                  16.70                  17.43                  18.09                     17.99
+KBC                      12.68     mi:tangible_equity                  16.44                  18.80                  17.67                  15.21                  16.37                  16.49                  15.68                     16.03
+LLOY                     12.72                  10.48                  12.39                  14.03                  13.79                  13.88                  11.47                  11.91                  12.06                     13.50
+NDA                      13.60     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity  mi:minority_interests     mi:minority_interests
+NWG                       9.23                  10.08                  11.70                  14.61                  17.18                  17.23                  17.31                  18.26                  19.16                     21.00
+RABO                      9.29                   7.39                   6.39                   8.40                   9.72  mi:profit_to_ordinary                  10.77  mi:profit_to_ordinary                   9.63                      9.32
+SAB                       5.06                   6.61                   7.88                   9.27                  11.74                  13.26                  14.96                  16.47                  14.44                     15.85
+SAN                      11.90                  13.17                  13.46                  13.45                  14.76                  15.38                  15.64                  16.25                  16.51                     18.12
+SANUK                     9.85  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests     mi:minority_interests
+SEB         mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity  mi:minority_interests     mi:minority_interests
+SHB                      10.85                  11.14                  11.11                  12.92                  14.34                  15.22                  12.68                  13.18                  12.06  mi:intangibles_deduction
+SWED                     14.68                  13.60                  13.93                  18.36                  20.18     mi:tangible_equity                  18.01     mi:tangible_equity                  16.14     mi:minority_interests
+UCG                       2.22                   2.83                  11.10                  14.73                  16.09                  17.92                  16.62                  17.67                  18.46        mi:at1_instruments
+UNI                      22.89  mi:profit_to_ordinary                   3.95  mi:profit_to_ordinary                   3.97                   6.43                   8.94                   9.47                   9.58              mixed_family
+```
+
+**underlying**
+
+```
+date                2021-12-31             2022-06-30             2022-12-31             2023-06-30             2023-12-31             2024-06-30             2024-12-31             2025-06-30             2025-12-31                2026-06-30
+bank_id                                                                                                                                                                                                                                         
+ABN         mi:tangible_equity                   7.19                  10.35                  13.18                  12.71                  12.25                  10.69                  10.07                   9.13                      9.80
+BAMI                      6.66                   6.80                   7.00                   8.21                  11.49                  12.43                  17.56                  23.12                  17.25                     16.98
+BARC                     14.71                  13.99                  13.06                  12.50                  10.81                  10.84                  10.72                  11.38                  12.14                     12.99
+BBVA                     12.87                  13.14                  14.60                  15.99                  16.71                  18.38                  19.30                  19.65                  19.15                     19.81
+BKT         mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary  mi:minority_interests     mi:minority_interests
+BMPS                      5.28                   2.31                  -2.98                   5.49                  23.41                  27.19                  18.26                  15.28                  16.42                     18.71
+BNP                       9.79                  10.15                  10.38                  12.90                  13.01                  11.77                  11.18                  11.11                  11.78                     12.87
+BPE         mi:tangible_equity  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons  mi:profit_to_ordinary         mi:at1_coupons            mi:at1_coupons
+CABK                     28.51                   9.57                  10.26                  12.09                  15.18                  17.15                  17.51                  18.42                  17.28                     17.84
+CAG         mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:at1_instruments        mi:at1_instruments
+CBK                       1.17                   5.58                   4.84                   6.10                   7.44                   7.81                   8.57                   8.34     mi:at1_instruments        mi:at1_instruments
+DANSKE      mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity  mi:minority_interests     mi:minority_interests
+DBK                       7.47                   7.29                   8.97                   9.58                   9.20                   9.74                   8.93                   9.43                  10.62                     11.12
+DNB      mi:profit_to_ordinary  mi:profit_to_ordinary     mi:tangible_equity                  15.86                  15.96                  17.65                  16.82                  17.87                  16.83        mi:at1_instruments
+GLE         mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity  mi:profit_to_ordinary     mi:tangible_equity     mi:tangible_equity                  10.53                     11.30
+HSBA                      9.26                  10.47                  13.07                  16.25                  16.32                  16.26                  16.10                  16.94                  17.55                     18.04
+INGA                      8.96                   7.38                   7.19                  11.54                  14.66                  13.93                  12.84                  12.68                  12.94                     13.80
+ISP             mi:at1_coupons  mi:profit_to_ordinary                   8.43  mi:profit_to_ordinary                  15.53                  16.39                  16.70                  17.43                  18.09                     17.99
+KBC                      13.77     mi:tangible_equity                  17.43                  19.82                  18.32                  15.88                  16.84                  16.96                  16.52                     16.85
+LLOY                     15.42                  13.06                  13.68                  15.72                  14.65                  14.83                  12.56                  12.66                  12.39                     13.45
+NDA                      13.60     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity  mi:minority_interests     mi:minority_interests
+NWG                      12.37                  11.92                  12.71                  15.41                  16.95                  17.84                  18.23                  19.62                  18.90                     19.91
+RABO                     10.29                   8.76                   7.84                   9.20                   9.05  mi:profit_to_ordinary                  10.88  mi:profit_to_ordinary                   9.34                      8.98
+SAB                       5.06                   6.61                   7.88                   9.27                  11.74                  13.26                  14.96                  16.47                  14.44                     15.85
+SAN                      12.94                  13.17                  13.46                  13.45                  14.76                  15.38                  15.64                  16.82                  17.06                     18.12
+SANUK                    12.55  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests  mi:minority_interests     mi:minority_interests
+SEB         mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity     mi:tangible_equity  mi:minority_interests     mi:minority_interests
+SHB                      10.65                  10.24                  10.74                  13.10                  14.41                  15.52                  13.04                  13.44                  12.18  mi:intangibles_deduction
+SWED                     14.68                  13.60                  13.93                  18.93                  20.69     mi:tangible_equity                  18.01     mi:tangible_equity                  16.14     mi:minority_interests
+UCG                       2.22                   2.60                  11.10                  14.73                  16.09                  17.92                  16.62                  17.67                  18.46        mi:at1_instruments
+UNI                      31.50  mi:profit_to_ordinary                   3.95  mi:profit_to_ordinary                   3.97                   6.43                   8.94                   9.47                   9.58              mixed_family
+```
+
+Blank rote by status (reported):
+
+```
+status
+missing_input:at1_coupons               6
+missing_input:at1_instruments           6
+missing_input:intangibles_deduction     1
+missing_input:minority_interests       18
+missing_input:profit_to_ordinary       23
+missing_input:tangible_equity          42
+mixed_family                            1
+```
+
+### E3b.2 at1_in_equity, bank x date (blank = not entered)
+
+```
+ref_date  2020-12-31  2021-06-30  2021-12-31  2022-06-30  2022-12-31  2023-06-30  2023-12-31  2024-06-30  2024-12-31  2025-06-30  2025-12-31  2026-06-30
+bank_id                                                                                                                                                 
+ABN                1           1           1           1           1           1           1           1           1           1           1           1
+BAMI               1           1           1           1           1           1           1           1           1           1           1           1
+BARC               1           1           1           1           1           1           1           1           1           1           1           1
+BBVA               0           0           0           0           0           0           0           0           0           0           0           0
+BKT                0         NaN           0         NaN           0         NaN           0         NaN           0           0           0           0
+BMPS               0           0           0           0           0           0           0           0           0           0           0           0
+BNP                1           1           1           1           1           1           1           1           1           1           1           1
+BPE                1           1           1           1           1           1           1           1           1           1           1           1
+CABK               0           0           0           0           0           0           0           0           0           0           0           0
+CAG              NaN         NaN         NaN         NaN         NaN         NaN         NaN         NaN           1           1           1           1
+CBK                1           1           1           1           1           1           1           1           1           1           1           1
+DANSKE             1           1           1           0           0           0           0           0           0           0           0           0
+DBK                1           1           1           1           1           1           1           1           1           1           1           1
+DNB                1           1           1           1           1           1           1           1           1           1           1           1
+GLE              NaN         NaN         NaN         NaN         NaN         NaN           1           1           1           1           1           1
+HSBA               1           1           1           1           1           1           1           1           1           1           1           1
+INGA               0           0           0           0           0           0           0           0           0           0           0           0
+ISP                1           1           1           1           1           1           1           1           1           1           1           1
+KBC                1           1           1           1           1           1           1           1           1           1           1           1
+LLOY               1           1           1           1           1           1           1           1           1           1           1           1
+NDA                1           1           1           1           1           1           1           1           1           0           0           0
+NWG                1           1           1           1           1           1           1           1           1           1           1           1
+RABO               1           1           1           1           1           1           1           1           1           1           1           1
+SAB                0           0           0           0           0           0           0           0           0           0           0           0
+SAN                0           0           0           0           0           0           0           0           0           0           0           0
+SANUK              1           1           1           1           1           1           1           1           1           1           1           1
+SEB                0           0           0           0           0           0           0           0           0           0           0           0
+SHB                0           0           0           0           0           0           0           0           0           0           0           0
+SWED               0           0           0           0           0           0           0           0           0           0           0           0
+UCG                1           1           1           1           1           1           1           1           1           1           1           1
+UNI                1           1           1           1           1           1           1           1           1           1           1           1
+```
+
+### E3b.3 Every one off removed under decision 6 (40 rows)
+
+```
+bank_id   ref_date                         field     amount page verdict                                                                                                                               reason
+   INGA 2020-12-31                admin_expenses  310000000  373  remove                                                                Capital management narrative text on resilient net profit not a table
+   INGA 2020-12-31           other_operating_net  230000000  373  remove                                                                Capital management narrative text on resilient net profit not a table
+    KBC 2021-12-31                admin_expenses   97000000  299  remove                                                KBC cost/income APM table lists only aggregate a1*/b2*; item appears only in footnote
+    KBC 2021-12-31                admin_expenses   18000000  299  remove                                                KBC cost/income APM table lists only aggregate a1*/b2*; item appears only in footnote
+    KBC 2021-12-31                admin_expenses   -9000000  299  remove                                                KBC cost/income APM table lists only aggregate a1*/b2*; item appears only in footnote
+    KBC 2021-12-31           other_operating_net   45000000  299  remove                                                KBC cost/income APM table lists only aggregate a1*/b2*; item appears only in footnote
+    KBC 2021-12-31           other_operating_net  -28000000  299  remove                                                KBC cost/income APM table lists only aggregate a1*/b2*; item appears only in footnote
+    CBK 2020-12-31            impairments_nonfin 1578000000  169  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    CBK 2020-12-31                admin_expenses  814000000  169  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    CBK 2021-12-31                admin_expenses 1078000000  151  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    CBK 2022-12-31                admin_expenses   94000000  157  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    CBK 2023-12-31                admin_expenses   18000000  270  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    CBK 2024-12-31                admin_expenses    3000000  389  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    CBK 2025-12-31                admin_expenses  562000000  287  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    CBK 2021-06-30                admin_expenses  976000000   39  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    CBK 2022-06-30                admin_expenses   39000000   40  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    CBK 2023-06-30                admin_expenses    8000000   37  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    CBK 2024-06-30                admin_expenses    2000000   37  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    CBK 2025-06-30                admin_expenses  534000000   38  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    CBK 2026-06-30                admin_expenses    1000000   38  remove                                                                   IFRS consolidated income statement not an APM reconciliation table
+    SAB 2020-12-31                admin_expenses  426000000  318  remove Directors report management income statement (Profit/(loss) for the year) with memorandum cost split not an APM reconciliation table
+    SAB 2021-12-31                admin_expenses  320000000  297  remove Directors report management income statement (Profit/(loss) for the year) with memorandum cost split not an APM reconciliation table
+    SAB 2023-12-31                admin_expenses   33000000  282  remove Directors report management income statement (Profit/(loss) for the year) with memorandum cost split not an APM reconciliation table
+    SAB 2024-12-31                admin_expenses   21000000  301  remove Directors report management income statement (Profit/(loss) for the year) with memorandum cost split not an APM reconciliation table
+    SAB 2026-06-30                admin_expenses   88000000  108  remove Directors report management income statement (Profit/(loss) for the year) with memorandum cost split not an APM reconciliation table
+    UNI 2023-12-31           other_operating_net   63800000  311  remove                                                          Management report key figures table; levy only in footnote not a table line
+    BPE 2025-12-31                admin_expenses  177500000   62  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2025-12-31                admin_expenses   57000000   62  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2025-12-31                    provisions   12200000   62  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2025-12-31           other_operating_net   11200000   62  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2025-12-31                  depreciation   30600000   62  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2025-12-31                  depreciation   11300000   62  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2025-12-31               impairments_fin  180000000   62  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2025-12-31               impairments_fin  -37900000   62  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2026-06-30                admin_expenses   11400000   52  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2026-06-30                admin_expenses   29900000   52  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2026-06-30                  depreciation   12700000   52  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2026-06-30 gains_derecognition_not_fvtpl    7200000   52  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2026-06-30                  depreciation   11800000   52  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+    BPE 2026-06-30               impairments_fin  -25800000   52  remove                                              Report on Operations narrative bullet list (Integration Costs / PPA Impact) not a table
+```
+
+### E3b.4 Yield coverage per country, with the 2025-12 value
+
+```
+country   first    last  rows 2025-12  2026-06                                    series
+     GB 2020-01 2026-07    79  4.4826    4.796                         BoE IADB IUMAMNPY
+     SE 2020-01 2026-07    79    2.82    2.780            IRS.M.SE.L.L40.CI.0000.SEK.N.Z
+     NO 2020-01 2026-07    78 missing    4.302 Norges Bank GOVT_GENERIC_RATES M.10Y.GBON
+     DK 2020-01 2026-07    79   2.707    2.807            IRS.M.DK.L.L40.CI.0000.DKK.N.Z
+     FI 2020-01 2026-07    79   3.165    3.310            IRS.M.FI.L.L40.CI.0000.EUR.N.Z
+     NL 2020-01 2026-07    79   2.968    3.077            IRS.M.NL.L.L40.CI.0000.EUR.N.Z
+     BE 2020-01 2026-07    79    3.32    3.510            IRS.M.BE.L.L40.CI.0000.EUR.N.Z
+     FR 2020-01 2026-07    79    3.56    3.680            IRS.M.FR.L.L40.CI.0000.EUR.N.Z
+     DE 2020-01 2026-07    79   2.813    2.964            IRS.M.DE.L.L40.CI.0000.EUR.N.Z
+     ES 2020-01 2026-07    79   3.271    3.413            IRS.M.ES.L.L40.CI.0000.EUR.N.Z
+     IT 2020-01 2026-07    79   3.552    3.734            IRS.M.IT.L.L40.CI.0000.EUR.N.Z
+```
+
+Exact URLs (MANIFEST.json):
+
+```
+GB: https://www.bankofengland.co.uk/boeapps/database/_iadb-fromshowcolumns.asp?csv.x=yes&Datefrom=01/Jan/2020&Dateto=31/Jul/2026&SeriesCodes=IUMAMNPY&CSVF=TN&UsingCodes=Y&VPD=Y&VFD=N
+NO: https://data.norges-bank.no/api/data/GOVT_GENERIC_RATES/M.10Y.GBON.?format=csv&startPeriod=2020-01&endPeriod=2026-07&locale=en
+DE: https://data-api.ecb.europa.eu/service/data/IRS/M.DE.L.L40.CI.0000.EUR.N.Z?format=csvdata&startPeriod=2020-01&endPeriod=2026-07
+```
+
+### E3b.5 rote against rote_reported at 2025-12-31, every bank that prints one (pct; no threshold)
+
+```
+bank_id  rote  rote_reported  difference_pts                           status
+   BAMI 16.96          22.38           -5.42                               ok
+   BARC 11.41          11.30            0.11                               ok
+   BBVA 19.15          19.30           -0.15                    at1_liability
+    BKT   NaN          20.03             NaN missing_input:minority_interests
+   BMPS 16.42          22.40           -5.98                    at1_liability
+    BNP 11.19          11.60           -0.41                 from_comparative
+    BPE   NaN          20.05             NaN        missing_input:at1_coupons
+   CABK 17.28          17.50           -0.22                    at1_liability
+    CBK   NaN           8.70             NaN    missing_input:at1_instruments
+    DBK 10.03          10.30           -0.27                               ok
+    GLE  9.85          10.20           -0.35                               ok
+   HSBA 13.32          13.30            0.02                               ok
+   INGA 12.94          13.60           -0.66                    at1_liability
+    KBC 15.68          16.00           -0.32                   at1_net_of_tax
+   LLOY 12.06          12.90           -0.84                               ok
+    NWG 19.16          19.20           -0.04                               ok
+    SAB 14.44          14.30            0.14                    at1_liability
+    SAN 16.51          17.10           -0.59                    at1_liability
+  SANUK   NaN          10.00             NaN missing_input:minority_interests
+    UCG 18.46          19.20           -0.74                               ok
+    UNI  9.58           9.80           -0.22                               ok
+```
+
 
 ## Tests run
 
 ```
 $ .venv/Scripts/python.exe -m pytest -p socket --disable-socket -q
-24 passed, 1 warning in 71.04s (0:01:11)
+FAILED tests/test_yields.py::test_coverage - AssertionError: ('NO', ['2025-12'])
+1 failed, 25 passed, 1 warning in 38.92s
 $ .venv/Scripts/python.exe -m ruff check .
 All checks passed!
 ```
 
-New tests: `tests/test_one_offs.py::test_underlying`, `tests/test_kpi.py::test_rote_hand`, `tests/test_market.py::test_gbp_pence`. The warning is the pytest-socket "module already imported" notice seen in every earlier section.
+New tests in this section: `test_one_offs.py::test_underlying`, `test_kpi.py::test_rote_hand`, `test_kpi.py::test_at1_liability`, `test_market.py::test_gbp_pence`, `test_yields.py::test_coverage`. The only failure is the NO 2025-12 gap (Deviation 1, OPEN-31); the test was not changed, skipped or marked (rule 5).
 
 ## Fresh-clone check
 
-Clone path `C:/bpbs3`, at b1827f3 (the push before this review).
+Clone path `C:/bpbs3b`, at 9e19da4.
 
 ```
-$ git clone https://github.com/uty101/Bank-Performance-Benchmarking.git C:/bpbs3
+$ git clone https://github.com/uty101/Bank-Performance-Benchmarking.git C:/bpbs3b
 $ git log --oneline -1
-b1827f3 section 3: open questions OPEN-27 to OPEN-30
+9e19da4 section 3: open questions OPEN-32 and OPEN-33
 $ uv venv --python 3.12
 Using CPython 3.12.13
 Creating virtual environment at: .venv
@@ -1330,16 +1408,36 @@ $ uv pip install -r requirements-lock.txt
  + xlrd==2.0.2
  + yfinance==1.7.0
 $ uv pip install -e . --no-deps
- + bpb==0.1.0 (from file:///C:/bpbs3)
+ + bpb==0.1.0 (from file:///C:/bpbs3b)
 $ .venv/Scripts/python -m pytest -p socket --disable-socket -q
-........................                                                 [100%]
+.........................F                                               [100%]
+================================== FAILURES ===================================
+________________________________ test_coverage ________________________________
+
+    def test_coverage():
+        """Every [sovereign] country has a yield for every December from 2020 to 2025 and for 2026-06."""
+        cfg = load_config(ROOT / "config.toml")
+        need = [f"{y}-12" for y in range(2020, 2026)] + ["2026-06"]
+        for cc in cfg.sovereign.countries:
+            y = pd.read_csv(ROOT / "data" / "raw" / "yields" / f"{cc}.csv", dtype={"period": str})
+            have = set(y.loc[y["yield_pct"].notna(), "period"])
+>           assert set(need) <= have, (cc, sorted(set(need) - have))
+E           AssertionError: ('NO', ['2025-12'])
+E           assert {'2020-12', '...2025-12', ...} <= {'2020-01', '...2020-06', ...}
+E             
+E             Extra items in the left set:
+E             '2025-12'
+
+tests\test_yields.py:19: AssertionError
 ============================== warnings summary ===============================
 .venv\Lib\site-packages\_pytest\config\__init__.py:894
-  C:\bpbs3\.venv\Lib\site-packages\_pytest\config\__init__.py:894: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; socket
+  C:\bpbs3b\.venv\Lib\site-packages\_pytest\config\__init__.py:894: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; socket
     self.import_plugin(arg, consider_entry_points=True)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-24 passed, 1 warning in 87.64s (0:01:27)
+=========================== short test summary info ===========================
+FAILED tests/test_yields.py::test_coverage - AssertionError: ('NO', ['2025-12'])
+1 failed, 25 passed, 1 warning in 56.38s
 ```
 
 ## Runtime per step
@@ -1349,11 +1447,13 @@ $ .venv/Scripts/python -m pytest -p socket --disable-socket -q
 - 3.2: URL search for 234 EU documents 15 to 48 minutes per group (4 in parallel); downloads about 40 minutes; entries 20 to 36 minutes per group of 2 or 3 banks (9 in parallel).
 - 3.3: entered with 3.2; one off provenance and commit about 5 minutes.
 - 3.4: market pull about 3 minutes; rote fixes and evidence about 30 minutes; fred pull failed after 3 attempts of 120 s.
+- 3.5: at1_in_equity and fte entries 5 to 17 minutes per group (6 in parallel); one off verification 5 minutes; merges and recompute about 15 minutes.
+- 3.6: yields pull under 1 minute.
 - `scripts/run_all.py`: about 4 minutes.
 
 ## Deviations from PLAN.md
 
-1. **Rule 4 stop at step 3.4.** `scripts/pull_data.py --stage fred` failed for GB, the first series: `Read timed out (read timeout=120)`, then twice `RemoteDisconnected('Remote end closed connection without response')`. A diagnostic request with a browser user agent was refused by this session's safety classifier as bot-check circumvention, so nothing further was tried. `data/raw/fred/` is empty; the stage code is committed. Every other step of the section is done.
+1. **Rule 4 stops.** (a) Session 3, step 3.4: `--stage fred` failed (read timeout, then the connection closed by fred.stlouisfed.org, 3 attempts); a diagnostic with a browser user agent was refused by this session's safety classifier and nothing more was tried. Instruction 03b B.1 replaced FRED. (b) Session 3b, step 3.6: Norges Bank's `GOVT_GENERIC_RATES/M.10Y.GBON` returns 2025-11 and 2026-01 but no 2025-12, so `test_coverage` fails for NO; the business-day series `B.10Y.GBON` has December 2025, but averaging it would be a design choice (OPEN-31). Every other step is done.
 2. **GLEIF match rule.** GLEIF's `filter[entity.legalName]` is a text search ("Barclays" returns 396 records). The stage also filters entity status ACTIVE and legal address country GB, and keeps records whose legal name equals the universe name followed by `PLC`, case and spacing normalised. Each of the 5 UK banks then has exactly 1 record (Evidence E3.1c). Appending `PLC` is my reading of "exactly 1 active record per bank".
 3. **Scope gate.** `8b_scope_gate` rows keep value_a, value_b and diff_rel, with threshold NaN and passed blank; `build_facts` no longer applies `scope_gate_failed`.
 4. **lcr and nsfr from interim reports are `report` family** with status `p3_from_report`. A.1 item 2 says "family p3", but the source map has no p3 rule for lcr or nsfr, and the family comes from the source map (amendment 11).
@@ -1369,6 +1469,12 @@ $ .venv/Scripts/python -m pytest -p socket --disable-socket -q
 14. **`report_urls.csv` re-sorted** by universe order, doc_type and period when the 354 new rows were added.
 15. **mergers.csv.** Tesco Bank and Sainsbury's Bank are sized by gross lending (`size_basis` loans): no total assets are published (02b B.10 order). UK acquirer total assets are the report family's at the last 31 Dec or 30 Jun before completion.
 
+16. **Flag fields (instruction 03b B.2).** `at1_in_equity` has kind `flag` in fields.yaml: value_as_printed is a phrase of the cited line, value is the entered 1 or 0, and provenance checks that the cited line is on the page (as the zero-cell rule of 02b B.4). The status decisions of 03b B.3 to B.5 (`at1_net_of_tax`, `headcount`, `no_nci_line`) are held in a new trailing column `decision_status` of report_entries.csv, blank for every other entry; `at1_liability` is set by the KPI code where at1_in_equity is 0.
+17. **at1_liability rule.** Where at1_in_equity is 0 at a bank and date, every family's at1_coupons and at1_instruments row there is set to 0 (a report row is added where none exists). Danske's 2022 and Nordea's H1 2025 coupons, paid on equity AT1 before its redemption, are therefore 0 at dates flagged 0. For SAN, BBVA, CABK, SAB and BKT the coupons are charged to reserves, not interest expense (OPEN-32); the rule was applied as written.
+18. **CAG at1_in_equity** at 2023-12-31 and 2024-06-30 left out: the comparative came from the H1 2025 report although that date's own document (CASA-only) was obtained, as for CAG's at1_coupons (Deviation 10).
+19. **BMPS fte** at 2020-12-31, 2021-06-30, 2021-12-31 and 2022-06-30 failed provenance when re-entered under decision 4 (text layer) and were left out.
+20. **Yields file format.** `data/raw/yields/{CC}.csv` holds the parsed rows (period, yield_pct, series), not the raw response; the exact URL and series of each file are in MANIFEST.json.
+
 ## Not verified
 
 - **Société Générale** FY2020 to FY2024 and H1 2021 to H1 2024, and **Bankinter** H1 2021 to H1 2024 and H1 2025: not downloaded (bot challenge / 403 / no verified URL); their dates stay blank except the comparative fallbacks above.
@@ -1378,24 +1484,21 @@ $ .venv/Scripts/python -m pytest -p socket --disable-socket -q
 
 ## Open questions
 
-1. **FRED.** Retry `--stage fred` from another network, or confirm a fixed host/user agent for fred.stlouisfed.org, so step 3.4 item 2 can finish.
-2. **OPEN-27:** at1_coupons where AT1 is not equity (SEB, SHB, SWED, INGA; DANSKE from 2023; NDA 2026-06-30; BMPS): 0 with a status, or blank.
-3. **OPEN-28:** AT1 coupons printed only net of tax (BKT, KBC 2025-12-31 and 2026-06-30, BAMI 2021-06-30; UCG possibly; ISP accrued in an own-funds note).
-4. **OPEN-29:** fte where only headcount is printed (SAN, BBVA, CABK, SAB, BKT, ISP, BPE, BMPS, BAMI 30 Jun).
-5. **OPEN-30:** SANUK profit_owners at 2025-12-31 and 2026-06-30, and the H1 2026 levy line.
-6. **One off sources to confirm.** SAB "non-recurrent costs" (feeds its core results measure, no profit reconciliation); CBK restructuring and the 2020 goodwill impairment (below its operating result); BPE integration costs and PPA lines (its recurring net profit); GLE "main exceptional items" (no adjusted profit published); UNI 2023 bank levy (removed only from its RoTE ratios); DBK litigation 2020 to 2022 (excluded from adjusted costs, not then from adjusted PBT); ING's 2020 resilient-profit items (printed as net result adjustments); KBC exceptional cost items (cost/income measure only).
-7. **Leverage exposure break for UK banks** at 2022-06-30: before it, the CRR measure including central bank claims; from it, UK KM1 row 13 excluding them (BARC, HSBA, NWG, SANUK; LLOY excludes them throughout).
-8. **SANUK leverage exposure 2022-06-30 to 2024-06-30** is printed with a "£m" header but in £bn; entered at 1e9.
-9. **BARC deposits_customers** to 2022-06-30 is "Deposits at amortised cost" (includes banks); **BARC shares_out** is gross (trust holdings printed only in £).
+1. **OPEN-31:** NO 2025-12 yield: the mean of Norges Bank's business-day series, or another monthly source.
+2. **OPEN-32:** SAN, BBVA, CABK, SAB and BKT charge AT1 coupons to reserves although the AT1 is a liability; the B.2 rule as applied drops their coupons from profit_to_ordinary.
+3. **OPEN-33:** banks printing no non-controlling interests line (SEB, DANSKE, BKT, NDA from 2022-06-30, SWED 30 June from 2024, SANUK from 2022-06-30) have no tangible_equity; most of the remaining rote blanks (E3b.1).
+4. **rote far from rote_reported** at 2025-12-31 for BAMI (-5.4 pts) and BMPS (-6.0 pts); both publish RoTE on a different profit or scope (BMPS excludes Mediobanca), E3b.5.
+5. **Weak at1_in_equity citations** (E3b.2): half year reports that never name the AT1 classification (SHB H1 2021, 2023, 2025; SWED every 30 June; NDA 2026-06-30; CABK H1 2022, 2024, 2026; BMPS 2026-06-30, where Tier 1 exceeds CET1 by EUR 95m of AT1 from Mediobanca's minorities) cite the subordinated liabilities line or the absence of an equity line. SAN's "Other equity instruments issued" (Popular fidelity bonds, to 2024) were not counted as AT1.
+6. **As in session 3:** the UK leverage exposure break at 2022-06-30, SANUK's leverage exposure unit from 2022-06-30 to 2024-06-30, BARC deposits_customers to 2022-06-30 and BARC's gross shares_out.
 
 ## Files changed
 
-`CLAUDE.md` (amendments 26, 27; rule 14 lifted for step 3.0), `decisions/section_2_review.md`, `decisions/OPEN.md`, `config/fields.yaml`, `config/source_map.yaml`, `bpb/checks.py`, `bpb/ingest.py`, `bpb/kpi.py`, `bpb/market.py` (new), `scripts/pull_data.py` (stages gleif, market, fred), `scripts/fetch_reports.py`, `scripts/run_all.py`, `scripts/merger_materiality.py`, `tests/test_kpi.py`, `tests/test_one_offs.py` (new), `tests/test_market.py` (new), `data/manual/universe.csv`, `data/manual/report_urls.csv`, `data/manual/report_entries.csv`, `data/manual/one_offs.csv`, `data/manual/mergers.csv`, `data/raw/report_manifest.csv`, `data/raw/report_text/`, `data/raw/gleif/`, `data/raw/market/`, `data/raw/MANIFEST.json`, `outputs/tables/kpi.csv`, `outputs/tables/checks.csv`.
+`CLAUDE.md` (amendments 26, 27; rule 14 lifted for step 3.0), `decisions/section_2_review.md`, `decisions/OPEN.md`, `config/fields.yaml`, `config/source_map.yaml`, `bpb/checks.py`, `bpb/ingest.py`, `bpb/kpi.py`, `bpb/market.py` (new), `scripts/pull_data.py` (stages gleif, market, fred), `scripts/fetch_reports.py`, `scripts/run_all.py`, `scripts/merger_materiality.py`, `tests/test_kpi.py`, `tests/test_one_offs.py` (new), `tests/test_market.py` (new), `tests/test_yields.py` (new), `data/raw/yields/`, `decisions/data_sources.md`, `data/manual/universe.csv`, `data/manual/report_urls.csv`, `data/manual/report_entries.csv`, `data/manual/one_offs.csv`, `data/manual/mergers.csv`, `data/raw/report_manifest.csv`, `data/raw/report_text/`, `data/raw/gleif/`, `data/raw/market/`, `data/raw/MANIFEST.json`, `outputs/tables/kpi.csv`, `outputs/tables/checks.csv`.
 
 ## Reviewer reads
 
-1. This file: Deviations 1, 6, 7, 10 and Open questions.
-2. `decisions/OPEN.md`, OPEN-27 to OPEN-30.
-3. `bpb/kpi.py`: `underlying_facts`, `EBA_MIXED`, `_one_kpi`.
-4. Evidence E3.4a to E3.4c (rote, comparison, hand checks).
-5. `data/manual/one_offs.csv` for the banks in Open question 6.
+1. This file: Outcome, Deviations 1, 16, 17 and Open questions.
+2. `decisions/OPEN.md`: OPEN-31 to OPEN-33.
+3. Evidence E3b.1 (rote with blank statuses), E3b.2 (at1_in_equity), E3b.5 (rote against rote_reported).
+4. `bpb/kpi.py`: `at1_liability_rule`, `underlying_facts`, `EBA_MIXED`.
+5. E3b.3 (one offs removed) and E3b.4 (yields).
