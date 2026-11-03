@@ -294,3 +294,31 @@ Raised in session 2 (step 2.2). Instruction 02 B.3 lists a Pillar 3 report per E
 
 - (a) Leave these pairs blank, as now. cet1, tier1, rwa, leverage_exposure, cet1_ratio_reported, lcr, nsfr, the CC1 fields and the CR1 fields are missing for those banks and dates, and the KPIs built on them (cet1_ratio, leverage_ratio, rwa_density, lcr, nsfr, npl_ratio, npl_coverage, cost_of_risk, loan_deposit, nim) are blank with `missing_input`.
 - (b) Accept a hashed Excel workbook as a source document. `fetch_reports.py` also downloads `.xlsx` and `.xls` files and hashes them; an entry's `page` holds the sheet name and cell (for example `EU KM1!D12`); the cache stores the cited cells' values; provenance compares the value with the cell. Data Hub only pairs stay blank under B.1.
+
+## OPEN-27: AT1 booked as a liability, or no AT1 in equity, leaves at1_coupons with no source
+
+Raised in session 3 (step 3.2). B.1 takes at1_coupons from the statement of changes in equity or the note on equity instruments. SEB, SHB, Swedbank and ING book their AT1 as subordinated liabilities, so the coupons sit in interest expense and no equity distribution is printed; Danske (from 2023), Nordea (2026-06-30) and Monte dei Paschi have no AT1 in equity at all. at1_coupons is then missing, so profit_to_ordinary and rote are blank for these banks, although the coupons are already deducted in profit_owners.
+
+- (a) at1_coupons is 0 where the bank's statements show no AT1 classified as equity for the period, stored with status `at1_not_equity` and cited to the equity statement page; rote is then computed.
+- (b) Leave at1_coupons missing, as now; rote stays blank for these banks.
+
+## OPEN-28: AT1 coupons printed only net of tax
+
+Raised in session 3 (step 3.2). Bankinter (all dates), KBC (2025-12-31, 2026-06-30) and Banco BPM (2021-06-30) print the AT1 coupon only net of tax; B.1 asks for the distribution. These rows were left out, so rote is blank there. UniCredit's equity statement coupons may be net of tax (its policy note says reserves are reduced "net of related taxes") and were kept. Intesa Sanpaolo's only figure is an accrued, probably net, coupon in an own-funds footnote, not a B.1 source, and was left out.
+
+- (a) Accept the net of tax coupon as printed, with status `at1_net_of_tax`.
+- (b) Leave them out, as now.
+
+## OPEN-29: fte where only headcount is printed
+
+Raised in session 3 (step 3.2). B.1 defines fte as full time equivalents. Santander, BBVA, CaixaBank, Sabadell, Bankinter, Intesa Sanpaolo, BPER, Monte dei Paschi and Banco BPM (30 June dates) print only a period-end headcount. These were left out, so income_fte and cost_fte are blank for them. Banco BPM prints a true FTE at each 31 Dec in its country-by-country annex; it was not entered in this session.
+
+- (a) Accept headcount as fte where no FTE is printed, with status `fte_headcount`.
+- (b) Leave fte missing where no FTE is printed, as now (Banco BPM's 31 Dec FTE to be entered).
+
+## OPEN-30: SANUK at 2025-12-31 and 2026-06-30 prints no profit attributable line
+
+Raised in session 3 (step 3.1). Santander UK Group Holdings prints profit after tax but no "attributable to equity holders of the parent" line, and no non-controlling interest line, at these 2 dates. profit_owners was not entered, so roa and rote are blank. The H1 2026 income statement also prints "Net operating income" after a new "Regulatory fees and levies" line; total_operating_income was entered as the sum of the income lines (status `toi_summed`) and the levies as resolution_dgs_contrib (the UK bank levy rule of B.3).
+
+- (a) profit_owners = pat where the statements print no non-controlling interest, status `no_nci_line`.
+- (b) Leave profit_owners missing at these dates, as now.
