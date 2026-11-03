@@ -12,7 +12,8 @@ is printed and left out of the manifest (instruction 02 step 2.2: listed, not a 
 PDF is also written to data/reports/text/{sha256}.jsonl.gz (gitignored) for locating figures.
 
 Page cache (instruction 02 B.4): data/raw/report_text/{sha256}.jsonl.gz holds only the pages cited by at least 1
-row of data/manual/report_entries.csv or data/manual/mergers.csv. Each line is {"page": n, "text": ...}, with n the
+row of data/manual/report_entries.csv, data/manual/mergers.csv or
+data/manual/one_offs.csv. Each line is {"page": n, "text": ...}, with n the
 1 based physical page index and the text extracted by pdfplumber. Cache files no longer cited are removed.
 """
 
@@ -37,6 +38,7 @@ ROOT = Path(__file__).resolve().parents[1]
 URLS = ROOT / "data" / "manual" / "report_urls.csv"
 ENTRIES = ROOT / "data" / "manual" / "report_entries.csv"
 MERGERS = ROOT / "data" / "manual" / "mergers.csv"
+ONE_OFFS = ROOT / "data" / "manual" / "one_offs.csv"
 MANIFEST = ROOT / "data" / "raw" / "report_manifest.csv"
 CACHE = ROOT / "data" / "raw" / "report_text"
 REPORTS = ROOT / "data" / "reports"
@@ -264,6 +266,8 @@ def cache_pages() -> int:
 
     cited: dict[str, set] = {}
     for r in read_csv(ENTRIES):
+        cited.setdefault(r["report_sha256"], set()).add(page_key(r["page"]))
+    for r in read_csv(ONE_OFFS):  # instruction 03 B.4: provenance applies to every one off row
         cited.setdefault(r["report_sha256"], set()).add(page_key(r["page"]))
     for r in read_csv(MERGERS):
         if r.get("source_sha256"):

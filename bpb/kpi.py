@@ -1,8 +1,7 @@
 """Derived quantities, rolling 12 months, averages and KPIs (kickoff Sections 5.1, 5.2; Conventions 4.3, 4.4, 4.8).
 
 Code holds decimals (Convention 4.7): a KPI value is numerator / denominator, and `unit` says how it is shown.
-A blank value always carries a status: `missing_input:<field>`, `mixed_family`, `zero_denominator` or
-`pending_section_3`.
+A blank value always carries a status: `missing_input:<field>`, `mixed_family` or `zero_denominator`.
 """
 
 from __future__ import annotations
@@ -16,12 +15,18 @@ import yaml
 
 from bpb import fx
 from bpb.config import load_config
-from bpb.ingest import ROOT, field_meta
+from bpb.ingest import ROOT, field_meta, read_source_map, read_universe
+from bpb.lineage import lineage_id
 
 KPI_COLUMNS = ["bank_id", "date", "kpi", "basis", "value", "numerator", "denominator", "unit", "family",
                "inputs_lineage", "status"]
 FIRST_KPI_DATE = "2021-12-31"  # kickoff Section 3.3 and Correction 3: the first KPI year is FY2021
-PENDING_SECTION_3 = {"rote", "income_fte", "cost_fte", "cost_customer"}  # instruction 01 step 1.5
+# instruction 03 B.4: one offs sit in a cost line (their amount is added back) or in an income component (a gain,
+# entered negative, is removed); the pre tax effect also reaches the profit lines, with tax not adjusted
+# (Convention 4.8), and an income component's effect reaches total operating income
+ONE_OFF_COSTS = {"interest_expense", "admin_expenses", "resolution_dgs_contrib", "depreciation", "impairments_fin",
+                 "provisions", "impairments_nonfin"}
+ONE_OFF_PROFIT = ["pbt", "pat", "profit_owners"]
 FAMILY_ORDER = ["eba", "p3", "report"]  # a KPI at 2025-06-30 stays eba (OPEN-03); one family per value
 OK = "ok"
 # statuses that describe how a value was built but leave it usable (instruction 01b B.2; instruction 02 B.2)
@@ -240,19 +245,74 @@ def kpi_dates(facts: pd.DataFrame) -> list[str]:
             if d.month in (6, 12)]
 
 
+def _income_fields() -> set[str]:
+    with open(ROOT / "config" / "fields.yaml", encoding="utf-8") as f:
+        raw = yaml.safe_load(f)
+    return {"interest_income", "dividend_income", "net_fees"} | set(raw["income_components_other"])
+
+
+def underlying_facts(facts: pd.DataFrame, one_offs: pd.DataFrame, rates: pd.DataFrame) -> pd.DataFrame:
+    """FACTS on the underlying basis (Convention 4.8, instruction 03 B.4): each one off's pre tax `amount` (positive
+    when it reduced profit) taken out of the field it sits in, in every family's row of that bank, date and field.
+
+    A cost field's underlying value is reported - amount; an income component's is reported + amount (a gain is
+    entered negative), and total operating income moves with it. pbt, pat and profit_owners move by + amount: the
+    item is added back or removed before tax and tax is not adjusted. The amount is in the bank's reporting currency;
+    a row in another currency (an eba row, EUR) gets it converted at the P&L rate of the year to date (Convention
+    4.6) and status fx_combined. Each adjusted row's lineage gains the one off's lineage ID. Fields not touched are
+    unchanged."""
+    out = facts.copy()
+    if one_offs is None or one_offs.empty:
+        return out
+    ccy_of = dict(zip(*(read_universe(ROOT)[c] for c in ("bank_id", "report_ccy")), strict=True))
+    income = _income_fields()
+    for o in one_offs.itertuples(index=False):
+        amount = float(o.amount)
+        lin = lineage_id(o.bank_id, o.ref_date, o.field, "one_off", f"{o.report_sha256}@{o.page}")
+        effects = {o.field: -amount if o.field in ONE_OFF_COSTS else amount}
+        if o.field in income:
+            effects["total_operating_income"] = amount
+        effects.update({f: amount for f in ONE_OFF_PROFIT})
+        for field, eff in effects.items():
+            hit = (out["bank_id"] == o.bank_id) & (out["ref_date"] == o.ref_date) & (out["field"] == field)
+            for i in out.index[hit & out["value"].notna()]:
+                row_ccy, e = out.at[i, "ccy"], eff
+                if row_ccy and row_ccy != ccy_of[o.bank_id]:
+                    e = fx.to_eur(eff, ccy_of[o.bank_id], o.ref_date, "pl", rates,
+                                  fx.period_start(o.ref_date, rolling=False))
+                    st = [s for s in str(out.at[i, "status"]).split(";") if s not in (OK, "nan")]
+                    out.at[i, "status"] = ";".join(dict.fromkeys(st + ["fx_combined"]))
+                out.at[i, "value"] = float(out.at[i, "value"]) + e
+                out.at[i, "lineage_id"] = _join([out.at[i, "lineage_id"], lin])
+    return out
+
+
 def compute_kpis(facts: pd.DataFrame, kpis: dict, one_offs: pd.DataFrame, rates: pd.DataFrame) -> pd.DataFrame:
     """Every KPI of config/kpis.yaml for every bank in `facts` at every KPI date, on both bases (Section 5.2).
 
     P&L quantities are the FY value at 31 Dec and the rolling 12 months at 30 Jun (Convention 4.3); averaged
     denominators follow Convention 4.4. Numerator and denominator come from one family, eba first. The underlying
-    basis equals the reported basis while `one_offs` is empty (Convention 4.8; one offs arrive in Section 3).
+    basis is the same computation on `underlying_facts` (Convention 4.8, step 3.3).
     """
-    if len(one_offs):
-        raise NotImplementedError("underlying KPIs from one offs are built in step 3.3")
+    rep = _kpis_one_basis(facts, kpis, rates).assign(basis="reported")
+    und = _kpis_one_basis(underlying_facts(facts, one_offs, rates), kpis, rates).assign(basis="underlying")
+    out = pd.concat([rep, und], ignore_index=True)
+    order = {k["kpi"]: i for i, k in enumerate(kpis["kpis"])}
+    out["_k"] = out["kpi"].map(order)
+    out = out.sort_values(["bank_id", "date", "_k", "basis"], kind="stable").drop(columns="_k")
+    return out.reset_index(drop=True)
+
+
+def _kpis_one_basis(facts: pd.DataFrame, kpis: dict, rates: pd.DataFrame) -> pd.DataFrame:
     period = quantity_period()
+    dq = derived(facts, rates)
     q = pd.concat([facts[["bank_id", "ref_date", "field", "value", "family", "lineage_id", "status"]],
-                   derived(facts, rates)[["bank_id", "ref_date", "field", "value", "family", "lineage_id",
-                                          "status"]]], ignore_index=True)
+                   dq[["bank_id", "ref_date", "field", "value", "family", "lineage_id", "status"]]],
+                  ignore_index=True)
+    # currency of each (bank, field, family): a P&L numerator converted to EUR (Section 5.2) needs it
+    ccys = pd.concat([facts[["bank_id", "field", "family", "ccy"]], dq[["bank_id", "field", "family", "ccy"]]])
+    ccys = ccys[ccys["ccy"].fillna("") != ""].drop_duplicates(["bank_id", "field", "family"])
+    ccy_of = {(b, f, fam): c for b, f, fam, c in ccys.itertuples(index=False)}
     pl = q[q["field"].map(period) == "pl"]
     bs = q[q["field"].map(period) == "bs"]
     roll = rolling_12m(pl).rename(columns={"inputs_lineage": "lineage_id"})
@@ -262,42 +322,48 @@ def compute_kpis(facts: pd.DataFrame, kpis: dict, one_offs: pd.DataFrame, rates:
     avg_i = _pieces(avg.rename(columns={"date": "ref_date"}))
 
     eba_last = load_config(ROOT / "config.toml").sources.eba_last
+    uk = set(read_source_map(ROOT)["bank_groups"]["uk"])
 
     def quantity(bank, field, d, average):
-        # a KPI at an EBA date stays eba (OPEN-03: report rows there are seam checks and bridge inputs only); after
-        # the last EBA date it comes from the report and p3 families
+        # a KPI of an EU bank at an EBA date stays eba (OPEN-03: report rows there are seam checks and bridge inputs
+        # only); after the last EBA date it comes from the report and p3 families. A UK bank is report family at
+        # every date (kickoff 3.3).
+        if bank in uk:
+            keep = lambda f: f != "eba"
+        else:
+            keep = (lambda f: f == "eba") if d <= eba_last else (lambda f: f != "eba")
         if field == "1":
-            fams = ["eba"] if d <= eba_last else ["p3", "report"]
+            fams = [f for f in FAMILY_ORDER if keep(f)]
             return {fam: None for fam in fams}, None
         if period.get(field) == "pl":
             src = point if d[5:] == "12-31" else roll_i
         else:
             src = avg_i if average else point
         got = src.get((bank, field, d), {})
-        keep = (lambda f: f == "eba") if d <= eba_last else (lambda f: f != "eba")
         return {f: r for f, r in got.items() if keep(f)}, field
+
+    eur = set(kpis.get("eur_converted", []))
+
+    def to_eur(bank, field, fam, d, value):
+        # Section 5.2: income_fte, cost_fte and cost_customer convert their P&L numerator to EUR at the mean rate of
+        # its period (Convention 4.6): the fiscal year at 31 Dec, the rolling 12 months at 30 Jun
+        c = ccy_of.get((bank, field, fam), "EUR")
+        if c == "EUR":
+            return value
+        return fx.to_eur(value, c, d, "pl", rates, fx.period_start(d, rolling=d[5:] == "06-30"))
 
     rows = []
     banks = sorted(facts["bank_id"].unique())
     for bank in banks:
         for d in kpi_dates(facts):
             for k in kpis["kpis"]:
-                rows.append(_one_kpi(bank, d, k, quantity))
-    rep = pd.DataFrame(rows, columns=KPI_COLUMNS)
-    und = rep.assign(basis="underlying")
-    out = pd.concat([rep, und], ignore_index=True)
-    order = {k["kpi"]: i for i, k in enumerate(kpis["kpis"])}
-    out["_k"] = out["kpi"].map(order)
-    out = out.sort_values(["bank_id", "date", "_k", "basis"], kind="stable").drop(columns="_k")
-    return out.reset_index(drop=True)
+                rows.append(_one_kpi(bank, d, k, quantity, to_eur if k["kpi"] in eur else None))
+    return pd.DataFrame(rows, columns=KPI_COLUMNS)
 
 
-def _one_kpi(bank, d, k, quantity) -> dict:
+def _one_kpi(bank, d, k, quantity, to_eur=None) -> dict:
     row = {"bank_id": bank, "date": d, "kpi": k["kpi"], "basis": "reported", "value": np.nan, "numerator": np.nan,
            "denominator": np.nan, "unit": k["unit"], "family": "", "inputs_lineage": "", "status": ""}
-    if k["kpi"] in PENDING_SECTION_3:
-        row["status"] = "pending_section_3"
-        return row
     num, nf = quantity(bank, k["numerator"], d, False)
     den, df_ = quantity(bank, str(k["denominator"]), d, bool(k["average"]))
     if not num:
@@ -328,6 +394,8 @@ def _one_kpi(bank, d, k, quantity) -> dict:
             row["status"] = _piece_status(part)
             return row
     nv = float(n.value)
+    if to_eur is not None:
+        nv = to_eur(bank, k["numerator"], fam.split("+")[0], d, nv)
     dv = 1.0 if dn is None else float(dn.value)
     row.update(numerator=nv, denominator=dv, family=fam,
                inputs_lineage=_join([n.lineage_id] + ([dn.lineage_id] if dn is not None else [])))

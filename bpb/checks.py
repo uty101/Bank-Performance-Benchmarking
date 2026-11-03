@@ -252,6 +252,24 @@ def provenance(entries: pd.DataFrame, text_root: Path) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=CHECKS_COLUMNS)
 
 
+def one_off_provenance(one_offs: pd.DataFrame, text_root: Path, decimal_marks: dict[str, str]) -> pd.DataFrame:
+    """Check 1 on every one_offs.csv row (instruction 03 B.4: provenance applies to every row): the snippet holds
+    value_as_printed and |amount| / unit_scale appears on the cited page. Rows are check `1_provenance_one_off`; the
+    note starts `one_off <i>`, the row's position in `one_offs`."""
+    if one_offs.empty:
+        return pd.DataFrame(columns=CHECKS_COLUMNS)
+    o = one_offs.reset_index(drop=True)
+    e = pd.DataFrame({"bank_id": o["bank_id"], "ref_date": o["ref_date"], "field": o["field"],
+                      "value_as_printed": o["value_as_printed"].astype(str), "unit_scale": o["unit_scale"],
+                      "value": o["amount"].astype(str), "report_sha256": o["report_sha256"],
+                      "page": o["page"].astype(str), "snippet": o["snippet"],
+                      "decimal_mark": [decimal_marks.get(s, ".") or "." for s in o["report_sha256"]]})
+    out = provenance(e, text_root)
+    out["check"] = "1_provenance_one_off"
+    out["note"] = out["note"].str.replace(r"^entry ", "one_off ", regex=True)
+    return out
+
+
 MERGER_SCALES = (1.0, 1e3, 1e6, 1e9)  # mergers.csv records no unit: printed in units, thousands, millions or billions
 
 
