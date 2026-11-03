@@ -143,6 +143,10 @@ def apply_source_map(facts: pd.DataFrame, source_map: dict) -> tuple[pd.DataFram
 ENTRY_COLUMNS = ["bank_id", "ref_date", "field", "value_as_printed", "unit_scale", "value", "ccy", "period_months",
                  "doc_type", "report_sha256", "page", "snippet", "entered_utc"]
 COMPONENT = re.compile(r"component (\d+)/(\d+)")  # the `component` note of a summed field's snippet (B.2)
+# instruction 03b B.2 to B.5: a status the reviewer fixed for an entry (at1_net_of_tax, headcount, no_nci_line),
+# held in an optional trailing column of report_entries.csv; blank for every other entry
+DECISION_COLUMN = "decision_status"
+DECISION_STATUSES = ("at1_net_of_tax", "headcount", "no_nci_line")
 VALUE_REL_TOL = 1e-9  # |value| against |value_as_printed| x unit_scale: equal up to float rounding
 # instruction 02b B.4: a dash or empty cell in a printed template row is a component of value 0
 ZERO_PRINTED = {"-", "–", "—", "blank"}  # hyphen, en dash, em dash, or an empty cell
@@ -165,6 +169,11 @@ def read_entries(path: Path) -> pd.DataFrame:
     e = pd.read_csv(path, dtype=str, keep_default_na=False)
     if list(e.columns[:len(ENTRY_COLUMNS)]) != ENTRY_COLUMNS:
         raise ValueError(f"{path}: columns {list(e.columns)} != {ENTRY_COLUMNS}")
+    if DECISION_COLUMN not in e:
+        e[DECISION_COLUMN] = ""
+    bad = sorted(set(e[DECISION_COLUMN]) - {"", *DECISION_STATUSES})
+    if bad:
+        raise ValueError(f"{path}: unknown {DECISION_COLUMN} {bad}")
     return e
 
 
@@ -174,9 +183,13 @@ def entry_values(e: pd.DataFrame) -> pd.Series:
     positive amount for a field stored positive (expenses, impairments, allowances, deductions) and the printed sign
     otherwise. An entered value whose magnitude differs gives NaN."""
     marks = e["decimal_mark"] if "decimal_mark" in e else pd.Series(".", index=e.index)
+    meta = field_meta()
     out = []
     for printed, scale, value, field, mark in zip(e["value_as_printed"], e["unit_scale"], e["value"], e["field"],
                                                  marks, strict=True):
+        if meta.get(field, {}).get("kind") == "flag":  # instruction 03b B.2: the entered 1 or 0, printed is a phrase
+            out.append(float(value) if str(value).strip() in ("0", "1") else np.nan)
+            continue
         if str(printed).strip() in ZERO_PRINTED:
             out.append(0.0 if str(value).strip() in ("", "0") else np.nan)
             continue
@@ -249,6 +262,9 @@ def entries_facts(entries: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame
     from_report = [_p3_from_report(smap, b, f, t) for b, f, t in zip(e["bank_id"], e["field"], e["doc_type"],
                                                                      strict=True)]
     e.loc[pd.Series(from_report, index=e.index) & (e["_status"] == "ok"), "_status"] = P3_FROM_REPORT
+    if DECISION_COLUMN in e:
+        dec = e[DECISION_COLUMN].fillna("")
+        e.loc[(dec != "") & e["_status"].isin(["ok", "from_comparative"]), "_status"] = dec
     e["_family"] = [_family(smap, b, f, d, t) for b, f, d, t in
                     zip(e["bank_id"], e["field"], e["ref_date"], e["doc_type"], strict=True)]
     rows = []
@@ -264,8 +280,9 @@ def entries_facts(entries: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame
             if set(ks) != set(range(1, n.pop() + 1)):
                 continue  # a missing component makes the field missing, never a partial sum
         locator = "+".join(dict.fromkeys(f"{s}@{p}" for s, p in zip(g["report_sha256"], g["page"], strict=True)))
-        bad = [s for s in g["_status"] if s not in ("ok", "from_comparative", P3_FROM_REPORT)]
-        built = [s for s in ("from_comparative", P3_FROM_REPORT) if s in set(g["_status"])]
+        built_all = ("from_comparative", P3_FROM_REPORT, *DECISION_STATUSES)
+        bad = [s for s in g["_status"] if s not in ("ok", *built_all)]
+        built = [s for s in built_all if s in set(g["_status"])]
         status = bad[0] if bad else (built[0] if built else "ok")
         if not bad and field == "total_operating_income" and len(g) > 1:
             status = "toi_summed"  # instruction 02b B.8: no printed total, the printed income lines summed

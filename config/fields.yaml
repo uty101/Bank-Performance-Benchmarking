@@ -1,7 +1,8 @@
 # Internal fields and derived quantities: instructions/00_kickoff.md Section 5.1.
 # kind (instruction 01b step 1.2b): amount = a value in currency units; ratio = a decimal stored as reported
 #       (eba ratio items: unit_scale 1, ccy blank); count (instruction 03 B.1) = a number of shares, employees or
-#       customers (unit_scale 1 times the printed scale, ccy blank).
+#       customers (unit_scale 1 times the printed scale, ccy blank); flag (instruction 03b B.2) = 1 or 0, entered,
+#       with value_as_printed a phrase of the cited line.
 # period: pl = year to date P&L value (Convention 4.3); bs = balance, ratio or count at the reference date.
 # Signs follow Convention 4.2: expenses, impairments and tax stored positive, a net release negative.
 
@@ -49,6 +50,8 @@ fields:
   - {field: fte, kind: count, period: bs, meaning: "full time equivalent employees at the reference date; key figures or the notes"}
   - {field: customers, kind: count, period: bs, meaning: "customers at the reference date; key figures, entered only where printed"}
   - {field: rote_reported, kind: ratio, period: pl, meaning: "the bank's own published RoTE (or RoTE equivalent named as such); key figures; FY2025 and H1 2026 only; used only for the comparison in step 3.4"}
+  # instruction 03b B.2: 1 when AT1 instruments are classified as equity at the reference date, 0 when as a liability
+  - {field: at1_in_equity, kind: flag, period: bs, meaning: "1 if AT1 instruments are classified as equity at the reference date, 0 if as liabilities (or no AT1 in equity); equity note or AT1 note"}
   # instruction 02b B.1: EU LR1 at 2025-06-30, report family, used by the scope adjusted gate only
   - {field: lr1_total_assets, kind: amount, period: bs, meaning: "EU LR1 row 1: total assets as per published financial statements"}
   - {field: lr1_scope_adjustment, kind: amount, period: bs, meaning: "EU LR1 row 2: adjustment for entities consolidated for accounting purposes but outside the scope of prudential consolidation, sign as printed"}

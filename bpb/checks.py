@@ -231,13 +231,20 @@ def provenance(entries: pd.DataFrame, text_root: Path) -> pd.DataFrame:
         if sha not in cache:
             cache[sha] = _read_cache(text_root, sha)
         text = cache[sha].get(key)
-        target = values[i] / float(r["unit_scale"]) if pd.notna(values[i]) else np.nan
+        target = values[i] / float(r["unit_scale"]) if pd.notna(values[i]) else np.nan  # a flag: 1 or 0
         zero = str(r["value_as_printed"]).strip() in ZERO_PRINTED
+        flag = field_meta().get(r["field"], {}).get("kind") == "flag"
         why = []
         if str(r["value_as_printed"]) not in str(r["snippet"]) and str(r["value_as_printed"]) != "blank":
             why.append("value_as_printed not in snippet")
         if text is None:
             why.append("page not in cache")
+        elif flag:
+            # instruction 03b B.2: a flag's value_as_printed is a phrase of the cited line, which must be on the page
+            if not _label_on_page(str(r["snippet"]), text):
+                why.append("row label not on page")
+            elif pd.isna(values[i]):
+                why.append("flag value is not 0 or 1")
         elif zero:
             # instruction 02b B.4: a dash or blank cell of a printed row: the row label must be on the page
             if not _label_on_page(str(r["snippet"]), text):
