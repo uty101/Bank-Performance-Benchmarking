@@ -188,12 +188,18 @@ def _span(index, bank: str, field: str, dates: list[str]):
     return None, "mixed_family"
 
 
+def _carried(rows) -> str:
+    """The usable statuses of the input rows, joined with ";" in USABLE order (OK when there are none)."""
+    st = {s for r in rows if r is not None for s in str(getattr(r, "status", OK)).split(";") if s not in (OK, "nan")}
+    return ";".join(sorted(st, key=USABLE.index)) or OK
+
+
 def _flat(fam_rows, op) -> dict:
     fam, rows = fam_rows
     if fam is None:
         return {"value": np.nan, "family": "", "lineage": "", "status": rows}
     return {"value": op([float(r.value) for r in rows]), "family": fam,
-            "lineage": _join(r.lineage_id for r in rows), "status": OK}
+            "lineage": _join(r.lineage_id for r in rows), "status": _carried(rows)}
 
 
 def rolling_12m(pl: pd.DataFrame) -> pd.DataFrame:
@@ -328,5 +334,5 @@ def _one_kpi(bank, d, k, quantity) -> dict:
     if dv == 0:
         row["status"] = "zero_denominator"
         return row
-    row.update(value=nv / dv, status=OK)
+    row.update(value=nv / dv, status=_carried([n, dn]))
     return row
