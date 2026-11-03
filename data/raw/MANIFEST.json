@@ -377,7 +377,7 @@
       "first_date": "2020-01-02",
       "last_date": "2026-07-31",
       "path": "data/raw/fx/CHF.csv",
-      "pulled_utc": "2026-11-02T15:44:24Z",
+      "pulled_utc": "2026-11-03T14:41:17Z",
       "rows": 1686,
       "sha256": "1aa744c91f174beeeb60ff41104cb1e5471d3ff5695a47d1dc82cab5b7089c08",
       "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.CHF.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"
@@ -389,7 +389,7 @@
       "first_date": "2020-01-02",
       "last_date": "2026-07-31",
       "path": "data/raw/fx/DKK.csv",
-      "pulled_utc": "2026-11-02T15:44:03Z",
+      "pulled_utc": "2026-11-03T14:35:32Z",
       "rows": 1686,
       "sha256": "0e88b5cd7eda62fe6c404781634e58f79e54a10051fa0798f6cfe1110221dfd4",
       "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.DKK.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"
@@ -401,7 +401,7 @@
       "first_date": "2020-01-02",
       "last_date": "2026-07-31",
       "path": "data/raw/fx/GBP.csv",
-      "pulled_utc": "2026-11-02T15:43:32Z",
+      "pulled_utc": "2026-11-03T14:25:52Z",
       "rows": 1686,
       "sha256": "6854d03c862bc480c73aa62f45290442866b44757cd287895543af96e1f33818",
       "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.GBP.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"
@@ -413,10 +413,22 @@
       "first_date": "2020-01-02",
       "last_date": "2026-07-31",
       "path": "data/raw/fx/NOK.csv",
-      "pulled_utc": "2026-11-02T15:43:53Z",
+      "pulled_utc": "2026-11-03T14:31:53Z",
       "rows": 1686,
       "sha256": "64fab2602fe09e7f71b9027af5b23e3e81b6d13ab9333660b20579122c16a2e0",
       "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.NOK.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"
+    },
+    {
+      "bytes": 480577,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": "2020-01-02",
+      "last_date": "2026-07-31",
+      "path": "data/raw/fx/RON.csv",
+      "pulled_utc": "2026-11-03T14:43:14Z",
+      "rows": 1686,
+      "sha256": "c06c679f73093dec3a66a68774f4d68962a1feb332c26d81ab675b397c4e2612",
+      "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.RON.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"
     },
     {
       "bytes": 365497,
@@ -425,7 +437,7 @@
       "first_date": "2020-01-02",
       "last_date": "2026-07-31",
       "path": "data/raw/fx/SEK.csv",
-      "pulled_utc": "2026-11-02T15:43:42Z",
+      "pulled_utc": "2026-11-03T14:30:03Z",
       "rows": 1686,
       "sha256": "4a8a716c8722d76770f167f3ca9c4f902fed3c1a325edcca0df8bec3f609813f",
       "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.SEK.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"
@@ -437,7 +449,7 @@
       "first_date": "2020-01-02",
       "last_date": "2026-07-31",
       "path": "data/raw/fx/USD.csv",
-      "pulled_utc": "2026-11-02T15:44:13Z",
+      "pulled_utc": "2026-11-03T14:39:19Z",
       "rows": 1686,
       "sha256": "e74a73fa578f678bf0176eb46f077dacb4fdcda6d91d6f1208d68f4dad1596d7",
       "url": "https://data-api.ecb.europa.eu/service/data/EXR/D.USD.EUR.SP00.A?format=csvdata&startPeriod=2020-01-01&endPeriod=2026-07-31"

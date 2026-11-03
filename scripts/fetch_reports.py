@@ -4,7 +4,8 @@ usage:
   python scripts/fetch_reports.py [--bank ID ...] [--force]   download every row of data/manual/report_urls.csv
   python scripts/fetch_reports.py --cache-pages               rebuild data/raw/report_text/ (no network)
 
-Download (PLAN step 2.2): each PDF goes to data/reports/ (gitignored) as {bank_id}_{doc_type}_{period}.pdf, and
+Download (PLAN step 2.2): each document goes to data/reports/ (gitignored) as {bank_id}_{doc_type}_{period}.pdf, or
+.xlsx / .xls for a Pillar 3 workbook, or the PDF inside a ZIP served by the EBA Data Hub (instruction 02b B.3), and
 data/raw/report_manifest.csv gets bank_id, doc_type, period, url, sha256, bytes, pages, downloaded_utc. A row already
 in the manifest with the same url is skipped unless --force. A document that cannot be downloaded, or is not a PDF,
 is printed and left out of the manifest (instruction 02 step 2.2: listed, not a stop). The full page text of each
@@ -26,6 +27,7 @@ import json
 import subprocess
 import sys
 import time
+import zipfile
 from datetime import UTC, datetime
 from pathlib import Path
 
@@ -68,14 +70,100 @@ def write_manifest(rows: list[dict]) -> None:
     MANIFEST.write_bytes(buf.getvalue().encode("utf-8"))
 
 
-def pdf_path(bank_id: str, doc_type: str, period: str) -> Path:
-    return REPORTS / f"{bank_id}_{doc_type}_{period}.pdf"
+DOC_EXTS = ("pdf", "xlsx", "xls")  # instruction 02b B.3: a Pillar 3 workbook is a valid source
 
 
-def download(url: str, dest: Path, attempts: int = 3) -> str | None:
-    """Downloads url to dest. Returns None on success, else the reason."""
-    dest.parent.mkdir(parents=True, exist_ok=True)
-    tmp = dest.with_suffix(".part")
+def pdf_path(bank_id: str, doc_type: str, period: str, ext: str | None = None) -> Path:
+    """The downloaded document: {bank_id}_{doc_type}_{period}.{pdf|xlsx|xls}; without ext, the one on disk."""
+    stem = REPORTS / f"{bank_id}_{doc_type}_{period}"
+    if ext:
+        return stem.with_name(stem.name + "." + ext)
+    for e in DOC_EXTS:
+        if stem.with_name(stem.name + "." + e).exists():
+            return stem.with_name(stem.name + "." + e)
+    return stem.with_name(stem.name + ".pdf")
+
+
+def kind_of(path: Path) -> str | None:
+    """pdf, xlsx, xls, zip_pdf (a ZIP holding a PDF, as the EBA Pillar 3 Data Hub serves), or None."""
+    with open(path, "rb") as f:
+        head = f.read(1024)
+    if b"%PDF" in head:
+        return "pdf"
+    if head.startswith(bytes.fromhex("d0cf11e0")):  # OLE2: an .xls workbook
+        return "xls"
+    if head.startswith(b"PK"):
+        with zipfile.ZipFile(path) as z:
+            names = z.namelist()
+        if "[Content_Types].xml" in names and any(n.startswith("xl/") for n in names):
+            return "xlsx"
+        if any(n.lower().endswith(".pdf") for n in names):
+            return "zip_pdf"
+    return None
+
+
+def _cell(v) -> str:
+    """A cell value as text: numbers in shortest form at 15 significant digits, strings with tabs and newlines as
+    spaces, empty cells blank."""
+    if v is None:
+        return ""
+    if isinstance(v, bool):
+        return str(v)
+    if isinstance(v, int | float):
+        s = format(v, ".15g")
+        if "e" in s:  # never an exponent: provenance reads plain decimal numbers
+            s = format(v, ".15f").rstrip("0").rstrip(".")
+        return s
+    return " ".join(str(v).split())
+
+
+def sheet_texts(path: Path) -> dict[str, str]:
+    """Every sheet of a workbook as text: one line per row, cell values tab separated, trailing blanks dropped
+    (instruction 02b B.3)."""
+    out = {}
+    if path.suffix == ".xls":
+        import xlrd
+
+        book = xlrd.open_workbook(path)
+        for sh in book.sheets():
+            rows = [[_cell(sh.cell_value(r, c)) if sh.cell_type(r, c) not in (0, 6) else ""
+                     for c in range(sh.ncols)] for r in range(sh.nrows)]
+            out[sh.name] = "\n".join("\t".join(r).rstrip("\t") for r in rows)
+    else:
+        import openpyxl
+
+        book = openpyxl.load_workbook(path, read_only=True, data_only=True)
+        for sh in book.worksheets:
+            lines = ["\t".join(_cell(v) for v in row).rstrip("\t") for row in sh.iter_rows(values_only=True)]
+            out[sh.title] = "\n".join(lines)
+        book.close()
+    return out
+
+
+def _accept(tmp: Path, stem: Path) -> tuple[Path | None, str]:
+    """Moves a finished download into place by kind; a ZIP holding a PDF keeps the PDF. (path, "") or (None, why)."""
+    kind = kind_of(tmp)
+    if kind is None:
+        with open(tmp, "rb") as f:
+            head = f.read(40)
+        tmp.unlink()
+        return None, f"not a PDF or workbook (starts {head!r})"
+    if kind == "zip_pdf":
+        with zipfile.ZipFile(tmp) as z:
+            pdfs = sorted(n for n in z.namelist() if n.lower().endswith(".pdf"))
+            dest = stem.with_name(stem.name + ".pdf")
+            dest.write_bytes(z.read(pdfs[0]))
+        tmp.unlink()
+        return dest, ""
+    dest = stem.with_name(stem.name + "." + kind)
+    tmp.replace(dest)
+    return dest, ""
+
+
+def download(url: str, stem: Path, attempts: int = 3) -> tuple[Path | None, str]:
+    """Downloads url to stem.{pdf|xlsx|xls}. Returns (path, "") on success, else (None, the reason)."""
+    stem.parent.mkdir(parents=True, exist_ok=True)
+    tmp = stem.with_name(stem.name + ".part")
     reason = ""
     for i in range(attempts):
         # some hosts refuse a browser user agent but serve the library default: the last attempt sends no headers
@@ -85,33 +173,21 @@ def download(url: str, dest: Path, attempts: int = 3) -> str | None:
                 r.raise_for_status()
                 with open(tmp, "wb") as f:
                     f.writelines(r.iter_content(CHUNK))
-            with open(tmp, "rb") as f:
-                head = f.read(1024)
-            if b"%PDF" not in head:
-                tmp.unlink()
-                return f"not a PDF (starts {head[:40]!r})"
-            tmp.replace(dest)
-            return None
+            return _accept(tmp, stem)
         except requests.exceptions.SSLError as e:
             # certifi lacks the chain some hosts serve; curl verifies against the operating system's store instead
             reason = str(e)
             r = subprocess.run(["curl", "-sSfL", "-A", HEADERS["User-Agent"], "-o", str(tmp), url],
                                capture_output=True, text=True, check=False)
             if r.returncode == 0:
-                with open(tmp, "rb") as f:
-                    head = f.read(1024)
-                if b"%PDF" in head:
-                    tmp.replace(dest)
-                    return None
-                tmp.unlink()
-                return f"not a PDF (starts {head[:40]!r})"
+                return _accept(tmp, stem)
             reason += f"; curl: {r.stderr.strip()}"
             break
         except requests.RequestException as e:
             reason = str(e)
             print(f"  attempt {i + 1} failed: {e}", file=sys.stderr)
             time.sleep(3)
-    return reason
+    return None, reason
 
 
 def sha256_file(path: Path) -> str:
@@ -131,7 +207,12 @@ def write_gz_jsonl(path: Path, records: list[dict]) -> None:
 
 
 def search_text(pdf: Path, sha: str) -> int:
-    """Every page's text (PyMuPDF, fast) to data/reports/text/ for locating figures; returns the page count."""
+    """Every page's text (PyMuPDF, fast), or every sheet's text for a workbook, to data/reports/text/ for locating
+    figures; returns the page (or sheet) count."""
+    if pdf.suffix in (".xlsx", ".xls"):
+        recs = [{"page": name, "text": text} for name, text in sheet_texts(pdf).items()]
+        write_gz_jsonl(SEARCH_TEXT / f"{sha}.jsonl.gz", recs)
+        return len(recs)
     import fitz  # pymupdf
 
     with fitz.open(pdf) as doc:
@@ -151,11 +232,11 @@ def fetch(banks: set[str] | None, force: bool) -> int:
         have = manifest.get(key)
         if have and have["url"] == u["url"] and not force and pdf_path(*key).exists():
             continue
-        dest = pdf_path(*key)
+        stem = REPORTS / f"{key[0]}_{key[1]}_{key[2]}"
         print(f"{' '.join(key)}: {u['url']}")
         when = now_utc()
-        reason = download(u["url"], dest)
-        if reason:
+        dest, reason = download(u["url"], stem)
+        if dest is None:
             failed.append((*key, u["url"], reason))
             continue
         sha = sha256_file(dest)
@@ -170,13 +251,20 @@ def fetch(banks: set[str] | None, force: bool) -> int:
     return 0
 
 
+def page_key(page: str) -> int | str:
+    """An entry's page: the 1 based physical page of a PDF, or for a workbook `sheet!cell`, cached by sheet."""
+    page = str(page)
+    return page.rsplit("!", 1)[0] if "!" in page else int(page)
+
+
 def cache_pages() -> int:
-    """Rebuilds data/raw/report_text/ from the cited pages, extracting text with pdfplumber."""
+    """Rebuilds data/raw/report_text/ from the cited pages: PDF page text by pdfplumber, workbook sheets as tab
+    separated rows (instruction 02b B.3)."""
     import pdfplumber
 
-    cited: dict[str, set[int]] = {}
+    cited: dict[str, set] = {}
     for r in read_csv(ENTRIES):
-        cited.setdefault(r["report_sha256"], set()).add(int(r["page"]))
+        cited.setdefault(r["report_sha256"], set()).add(page_key(r["page"]))
     for r in read_csv(MERGERS):
         if r.get("source_sha256"):
             cited.setdefault(r["source_sha256"], set()).add(int(r["source_page"]))
@@ -194,12 +282,16 @@ def cache_pages() -> int:
         if dest.exists():
             with gzip.open(dest, "rt", encoding="utf-8") as f:
                 old = {json.loads(line)["page"]: json.loads(line) for line in f}
-        need = sorted(p for p in pages if p not in old)
-        if need:
+        need = sorted((p for p in pages if p not in old), key=str)
+        if need and pdf.suffix in (".xlsx", ".xls"):
+            sheets = sheet_texts(pdf)
+            for p in need:
+                old[p] = {"page": p, "text": sheets[p]}
+        elif need:
             with pdfplumber.open(pdf) as doc:
                 for p in need:
                     old[p] = {"page": p, "text": doc.pages[p - 1].extract_text() or ""}
-        write_gz_jsonl(dest, [old[p] for p in sorted(pages)])
+        write_gz_jsonl(dest, [old[p] for p in sorted(pages, key=lambda x: (isinstance(x, str), str(x).zfill(6)))])
         print(f"{sha[:12]} {m['bank_id']} {m['doc_type']} {m['period']}: {len(pages)} pages ({len(need)} new)")
     for f in CACHE.glob("*.jsonl.gz"):
         if f.name.removesuffix(".jsonl.gz") not in cited:

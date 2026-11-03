@@ -164,9 +164,9 @@ BAMI,annual,2025-12-31,https://gruppo.bancobpm.it/media/dlm_uploads/Annual-Repor
 BAMI,half_year,2025-06-30,https://gruppo.bancobpm.it/media/dlm_uploads/Consolidated-interim-financial-report-as-at-30-June-2025-1.pdf,
 BAMI,half_year,2026-06-30,https://gruppo.bancobpm.it/media/dlm_uploads/Consolidated-interim-financial-report-as-at-30-June-2026-1.pdf,
 BAMI,pillar3,2024-12-31,https://gruppo.bancobpm.it/media/dlm_uploads/Pillar-3-December-2024_Doc_EN.pdf,
-BAMI,pillar3,2025-06-30,https://gruppo.bancobpm.it/media/dlm_uploads/P3-Giugno-2025_Documento_EN.pdf,","
-BAMI,pillar3,2025-12-31,https://gruppo.bancobpm.it/media/dlm_uploads/Pillar-3-BBPM-31.12.2025_Doc_EN.pdf,","
-BAMI,pillar3,2026-06-30,https://gruppo.bancobpm.it/media/dlm_uploads/Informativa-Pillar-3-giugno-2026_Documento_vdef_EN_v1.pdf,","
+BAMI,pillar3,2025-06-30,https://gruppo.bancobpm.it/media/dlm_uploads/P3-Giugno-2025_Documento_EN.pdf,
+BAMI,pillar3,2025-12-31,https://gruppo.bancobpm.it/media/dlm_uploads/Pillar-3-BBPM-31.12.2025_Doc_EN.pdf,
+BAMI,pillar3,2026-06-30,https://gruppo.bancobpm.it/media/dlm_uploads/Informativa-Pillar-3-giugno-2026_Documento_vdef_EN_v1.pdf,
 BPE,annual,2025-12-31,https://group.bper.it/documents/133577364/2795795058/2025+Annual+Reports.pdf/d62fc4b8-e447-b337-c81b-d518cf6d25a0,
 BPE,half_year,2025-06-30,https://group.bper.it/documents/133577364/2795795058/Consolidated+Half-Year+Report+as+at+30+06+2025.pdf/ee8e303c-519c-d986-4655-01592227dfab,
 BPE,half_year,2026-06-30,https://group.bper.it/documents/133577364/2801082007/CONSOLIDATED+INTERIM+FINANCIAL+REPORT+AT+30+JUNE+2026.pdf/aff85517-7264-dc67-1748-8f695a06bdcf,
@@ -190,3 +190,5 @@ DBK,merger_target,2022-09-30,https://web.archive.org/web/20240803225040id_/https
 GLE,merger_target,2022-12-31,https://www.ayvens.com/-/media/ayvens/public/cp/files/leaseplan-documents-and-publication-archives/white-papers-and-reports/2023/22-mar-2023-leaseplan-2022-annual-report.pdf?rev=c373f50c16c84083b79ca401e9c95dba,
 UCG,merger_target,2023-12-31,https://www.alpha.gr/-/media/AlphaHoldings/Files/group/oikonomikes-katastaseis-etairion-omilou/2023/2023-ABR-IFRS-Financial-Statements.pdf,
 UNI,merger_target,2020-12-31,https://www.unicajabanco.com/content/dam/unicaja/unicaja-corporacion/documentos-corporacion/junta-general-de-accionistas/2021-extraordinaria/2021-extraordinaria-Cuentas-anuales-individuales-consolidadas-liberbank-2020-en.pdf,","
+BNP,merger_target,2025-07-01,https://www-axa-com.cdn.prismic.io/www-axa-com/aN0fn55xUNkB1XJ6_axa_pr_20250701.pdf,
+BPE,merger_target,2021-02-19,https://group.bper.it/documents/133577364/0/21.02.19_ComSt_Accordo_Gruppo_Intesa_ENG_.pdf/37706018-c10c-0719-33bf-cc9fb050841d?t=1613760496854,

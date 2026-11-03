@@ -47,6 +47,9 @@ fields:
   - {field: customers, kind: amount, period: count, meaning: "period end customer count, where reported"}
   - {field: at1_coupons, kind: amount, period: pl, meaning: "AT1 coupons paid in the period, from the statement of changes in equity"}
   - {field: shares_out, kind: amount, period: count, meaning: "ordinary shares outstanding net of treasury shares at the reference date"}
+  # instruction 02b B.1: EU LR1 at 2025-06-30, report family, used by the scope adjusted gate only
+  - {field: lr1_total_assets, kind: amount, period: bs, meaning: "EU LR1 row 1: total assets as per published financial statements"}
+  - {field: lr1_scope_adjustment, kind: amount, period: bs, meaning: "EU LR1 row 2: adjustment for entities consolidated for accounting purposes but outside the scope of prudential consolidation, sign as printed"}
   # OPEN-06 (a): EBA P&L lines between net fees and TOTAL OPERATING INCOME, NET (step 1.2); check 3 only
   - {field: gains_derecognition_not_fvtpl, kind: amount, period: pl, meaning: "EBA P&L: Gains or (-) losses on derecognition of financial assets and liabilities not measured at fair value through profit or loss_ and of non financial assets_ net"}
   - {field: gains_held_for_trading, kind: amount, period: pl, meaning: "EBA P&L: Gains or (-) losses on financial assets and liabilities held for trading_ net"}

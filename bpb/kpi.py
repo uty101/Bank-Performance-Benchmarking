@@ -15,6 +15,7 @@ import pandas as pd
 import yaml
 
 from bpb import fx
+from bpb.config import load_config
 from bpb.ingest import ROOT, field_meta
 
 KPI_COLUMNS = ["bank_id", "date", "kpi", "basis", "value", "numerator", "denominator", "unit", "family",
@@ -24,8 +25,15 @@ PENDING_SECTION_3 = {"rote", "income_fte", "cost_fte", "cost_customer"}  # instr
 FAMILY_ORDER = ["eba", "p3", "report"]  # a KPI at 2025-06-30 stays eba (OPEN-03); one family per value
 OK = "ok"
 # statuses that describe how a value was built but leave it usable (instruction 01b B.2; instruction 02 B.2)
-USABLE = (OK, "fx_combined", "levies_in_admin")
-LEVIES = "resolution_dgs_contrib"
+# instruction 02b: dep_in_admin (B.5), toi_summed (B.8), from_comparative (B.9). A status of several of these is
+# joined with ";".
+USABLE = (OK, "fx_combined", "levies_in_admin", "dep_in_admin", "toi_summed", "from_comparative")
+# fields a report income statement may fold into administrative expenses: opex takes them as 0 with a status
+IN_ADMIN = {"resolution_dgs_contrib": "levies_in_admin", "depreciation": "dep_in_admin"}
+
+
+def usable(status) -> bool:
+    return pd.isna(status) or all(s in USABLE for s in str(status).split(";"))
 
 
 @cache
@@ -86,16 +94,18 @@ def derived(facts: pd.DataFrame, rates: pd.DataFrame) -> pd.DataFrame:
                 if all(f in gg.index for f in inputs):
                     new.append(_combine(name, bank, ref_date, terms, [gg.loc[f] for f in inputs], fam, rates))
                     done = True
-                elif fam == "report" and LEVIES in inputs and all(f in gg.index for f in inputs if f != LEVIES):
-                    # instruction 02 B.2: no levy line in the income statement means the levies sit in admin
-                    # expenses; opex takes them as 0 with status levies_in_admin, never a missing input
-                    ref = gg.loc[next(f for f in inputs if f != LEVIES)]
-                    zero = pd.Series({"value": 0.0, "ccy": ref["ccy"], "period_months": ref["period_months"],
-                                      "family": fam, "lineage_id": "", "status": OK}, name=LEVIES)
-                    picks = [zero if f == LEVIES else gg.loc[f] for f in inputs]
+                elif fam == "report" and (miss := [f for f in inputs if f not in gg.index])                         and all(f in IN_ADMIN for f in miss) and len(miss) < len(inputs):
+                    # instruction 02 B.2 and 02b B.5: no levy line, or no depreciation line, in the income
+                    # statement means it sits in administrative expenses; opex takes it as 0 with status
+                    # levies_in_admin or dep_in_admin, never a missing input
+                    ref = gg.loc[next(f for f in inputs if f not in miss)]
+                    picks = [pd.Series({"value": 0.0, "ccy": ref["ccy"], "period_months": ref["period_months"],
+                                        "family": fam, "lineage_id": "", "status": OK}, name=f)
+                             if f in miss else gg.loc[f] for f in inputs]
                     row = _combine(name, bank, ref_date, terms, picks, fam, rates)
-                    if row["status"] == OK:
-                        row["status"] = "levies_in_admin"
+                    if usable(row["status"]):
+                        row["status"] = ";".join(dict.fromkeys(
+                            [s for s in str(row["status"]).split(";") if s != OK] + [IN_ADMIN[f] for f in miss]))
                     new.append(row)
                     done = True
             if done:
@@ -122,15 +132,16 @@ def derived(facts: pd.DataFrame, rates: pd.DataFrame) -> pd.DataFrame:
 
 def _combine(name, bank, ref_date, terms, rows, family, rates) -> dict:
     lineage = _join(r["lineage_id"] for r in rows)
-    bad = [r for r in rows if r["status"] not in USABLE]
+    bad = [r for r in rows if not usable(r["status"])]
     pm = next((r["period_months"] for r in rows if pd.notna(r["period_months"])), pd.NA)
     if bad:
         return {"bank_id": bank, "ref_date": ref_date, "field": name, "value": np.nan, "ccy": "",
                 "period_months": pm, "family": family, "lineage_id": lineage, "status": bad[0]["status"]}
     ccys = {r["ccy"] for r in rows}
     status, ccy = OK, next(iter(ccys))
-    if any(r["status"] == "levies_in_admin" for r in rows):
-        status = "levies_in_admin"
+    carried = [s for r in rows for s in str(r["status"]).split(";") if s not in (OK, "fx_combined", "nan")]
+    if carried:
+        status = ";".join(dict.fromkeys(carried))
     values = [float(r["value"]) for r in rows]
     if len(ccys) > 1:  # instruction 01b B.2: convert the non-EUR values to EUR first
         status, ccy = "fx_combined", "EUR"
@@ -156,7 +167,7 @@ def _pieces(df: pd.DataFrame) -> dict:
 
 def _piece_status(r) -> str:
     st = getattr(r, "status", OK)
-    return OK if st in USABLE or pd.isna(st) else st
+    return OK if usable(st) else st
 
 
 def _span(index, bank: str, field: str, dates: list[str]):
@@ -244,14 +255,21 @@ def compute_kpis(facts: pd.DataFrame, kpis: dict, one_offs: pd.DataFrame, rates:
     roll_i = _pieces(roll.rename(columns={"date": "ref_date"}))
     avg_i = _pieces(avg.rename(columns={"date": "ref_date"}))
 
+    eba_last = load_config(ROOT / "config.toml").sources.eba_last
+
     def quantity(bank, field, d, average):
+        # a KPI at an EBA date stays eba (OPEN-03: report rows there are seam checks and bridge inputs only); after
+        # the last EBA date it comes from the report and p3 families
         if field == "1":
-            return {fam: None for fam in FAMILY_ORDER}, None
+            fams = ["eba"] if d <= eba_last else ["p3", "report"]
+            return {fam: None for fam in fams}, None
         if period.get(field) == "pl":
             src = point if d[5:] == "12-31" else roll_i
         else:
             src = avg_i if average else point
-        return src.get((bank, field, d), {}), field
+        got = src.get((bank, field, d), {})
+        keep = (lambda f: f == "eba") if d <= eba_last else (lambda f: f != "eba")
+        return {f: r for f, r in got.items() if keep(f)}, field
 
     rows = []
     banks = sorted(facts["bank_id"].unique())
@@ -286,13 +304,19 @@ def _one_kpi(bank, d, k, quantity) -> dict:
         if part and all(_piece_status(p) != OK for p in part.values()):
             row["status"] = _piece_status(next(iter(part.values())))
             return row
-    fams =[f for f in FAMILY_ORDER if f in num and (df_ is None or f in den)]
-    if not fams:
+    fams = [f for f in FAMILY_ORDER if f in num and (df_ is None or f in den)]
+    if fams:
+        fam = fams[0]
+        n = num[fam]
+        dn = den[fam] if df_ is not None else None
+    elif df_ is not None and set(num) | set(den) <= {"p3", "report"}:
+        # after the last EBA date a ratio may pair a p3 amount with a report amount (e.g. rwa / total_assets): both
+        # are the bank's own disclosures at the same date; averages and rolling sums stay within one family
+        fn, fd = next(f for f in ("p3", "report") if f in num), next(f for f in ("p3", "report") if f in den)
+        n, dn, fam = num[fn], den[fd], f"{fn}+{fd}"
+    else:
         row["status"] = "mixed_family"
         return row
-    fam = fams[0]
-    n = num[fam]
-    dn = den[fam] if df_ is not None else None
     for part in (n, dn):
         if part is not None and _piece_status(part) != OK:
             row["status"] = _piece_status(part)

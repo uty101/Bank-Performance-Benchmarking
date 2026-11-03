@@ -7,6 +7,7 @@ from __future__ import annotations
 
 import gzip
 import json
+import re
 from pathlib import Path
 
 import numpy as np
@@ -14,7 +15,9 @@ import pandas as pd
 import yaml
 
 from bpb import fx
-from bpb.ingest import field_meta
+from bpb.ingest import ZERO_PRINTED, field_meta
+
+COMPONENT_NOTE = re.compile(r"^component \d+/\d+:\s*")
 
 CHECKS_COLUMNS = ["check", "bank_id", "ref_date", "field", "value_a", "value_b", "diff_abs", "diff_rel",
                   "threshold", "passed", "note"]
@@ -25,7 +28,8 @@ def _row(check, bank, ref_date, field, a, b, threshold, passed, note="", diff_re
     if diff_rel is None:
         diff_rel = diff / abs(a) if pd.notna(diff) and a != 0 else np.nan
     return {"check": check, "bank_id": bank, "ref_date": ref_date, "field": field, "value_a": a, "value_b": b,
-            "diff_abs": diff, "diff_rel": diff_rel, "threshold": threshold, "passed": bool(passed), "note": note}
+            "diff_abs": diff, "diff_rel": diff_rel, "threshold": threshold,
+            "passed": None if passed is None else bool(passed), "note": note}
 
 
 def _wide(facts: pd.DataFrame) -> pd.DataFrame:
@@ -53,6 +57,10 @@ def identities(facts: pd.DataFrame, cfg) -> pd.DataFrame:
             diff_rel = abs(ta - tl - te) / abs(ta)
             rows.append(_row("2_balance_sheet", bank, d, "total_assets", ta, tl + te, c.bs_tol,
                              diff_rel <= c.bs_tol, fam, diff_rel))
+        elif fam == "report" and pd.notna(ta) and pd.isna(tl):
+            # instruction 02b B.8: no total liabilities line printed: a row with no pass or fail
+            rows.append(_row("2_balance_sheet", bank, d, "total_assets", ta, np.nan, c.bs_tol, None,
+                             f"{fam}; no_liabilities_line", diff_rel=np.nan))
         # 3: total_operating_income against nii + dividend_income + net_fees + income_components_other
         toi = get("total_operating_income")
         if pd.notna(toi):
@@ -184,6 +192,25 @@ def _read_cache(text_root: Path, sha: str) -> dict[int, str]:
         return {(r := json.loads(line))["page"]: r["text"] for line in f}
 
 
+def _norm_words(s: str) -> list[str]:
+    return re.findall(r"[^\W\d_]{3,}", s.lower())
+
+
+def _label_on_page(snippet: str, text: str) -> bool:
+    """The row label of a snippet (its words of 3+ letters, after any `component k/n:` note) all appear, in order,
+    in one line of the page."""
+    line = COMPONENT_NOTE.sub("", snippet).strip()
+    words = _norm_words(line)
+    if not words:  # the label wraps onto another line: the cited row line itself must be on the page
+        return any(line == l.strip() for l in text.splitlines())
+    for line in text.splitlines():
+        lw = _norm_words(line)
+        it = iter(lw)
+        if all(w in it for w in words):
+            return True
+    return False
+
+
 def provenance(entries: pd.DataFrame, text_root: Path) -> pd.DataFrame:
     """Check 1 on every entry: the snippet contains value_as_printed verbatim, and |value| / unit_scale appears as a
     number on the cited page of the cached page text, at the decimals the page shows. A failing row is excluded from
@@ -199,16 +226,22 @@ def provenance(entries: pd.DataFrame, text_root: Path) -> pd.DataFrame:
     marks = e["decimal_mark"] if "decimal_mark" in e else pd.Series(".", index=e.index)
     cache: dict[str, dict[int, str]] = {}
     for i, r in e.iterrows():
-        sha, page = r["report_sha256"], int(r["page"])
+        sha, page = r["report_sha256"], str(r["page"])
+        key = page.rsplit("!", 1)[0] if "!" in page else int(page)  # a workbook entry cites sheet!cell
         if sha not in cache:
             cache[sha] = _read_cache(text_root, sha)
-        text = cache[sha].get(page)
+        text = cache[sha].get(key)
         target = values[i] / float(r["unit_scale"]) if pd.notna(values[i]) else np.nan
+        zero = str(r["value_as_printed"]).strip() in ZERO_PRINTED
         why = []
-        if str(r["value_as_printed"]) not in str(r["snippet"]):
+        if str(r["value_as_printed"]) not in str(r["snippet"]) and str(r["value_as_printed"]) != "blank":
             why.append("value_as_printed not in snippet")
         if text is None:
             why.append("page not in cache")
+        elif zero:
+            # instruction 02b B.4: a dash or blank cell of a printed row: the row label must be on the page
+            if not _label_on_page(str(r["snippet"]), text):
+                why.append("row label not on page")
         elif pd.isna(target):
             why.append("value disagrees with value_as_printed x unit_scale")
         elif not _on_page(target, _page_numbers(text, marks[i] or ".")):
@@ -219,7 +252,7 @@ def provenance(entries: pd.DataFrame, text_root: Path) -> pd.DataFrame:
     return pd.DataFrame(rows, columns=CHECKS_COLUMNS)
 
 
-MERGER_SCALES = (1.0, 1e3, 1e6)  # mergers.csv records no unit: the figure may be printed in units, thousands or millions
+MERGER_SCALES = (1.0, 1e3, 1e6, 1e9)  # mergers.csv records no unit: printed in units, thousands, millions or billions
 
 
 def merger_provenance(mergers: pd.DataFrame, text_root: Path, decimal_marks: dict[str, str]) -> pd.DataFrame:
@@ -247,7 +280,7 @@ def merger_provenance(mergers: pd.DataFrame, text_root: Path, decimal_marks: dic
 
 SEAM_DATE = "2025-06-30"
 SEAM_CAPITAL_FIELDS = ["cet1", "rwa", "leverage_exposure"]
-CAG_TOTAL_ASSETS_TOL = 0.02  # instruction 02 B.3: CAG total_assets from report and eba agree within 2%
+SCOPE_GATE_TOL = 0.02  # instruction 02b B.1: scope adjusted report total assets and eba agree within 2%
 
 
 def _to_eur_row(value: float, ccy: str, field: str, rates: pd.DataFrame) -> float:
@@ -280,7 +313,7 @@ def seam_capital(facts: pd.DataFrame, cfg) -> pd.DataFrame:
 def seam_pl(facts: pd.DataFrame) -> pd.DataFrame:
     """Check 8: every field present in eba and report at 2025-06-30: eba (value_a, EUR) against report (value_b,
     converted to EUR: balance sheet at the 2025-06-30 rate, P&L at the H1 2025 mean), absolute and relative
-    difference. No threshold, except CAG total_assets within 2% (instruction 02 B.3)."""
+    difference. No threshold: the scope adjusted gate on total assets is scope_gate (instruction 02b B.1)."""
     from bpb.ingest import ROOT
 
     rates = fx.ecb_rates(ROOT / "data" / "raw")
@@ -293,19 +326,40 @@ def seam_pl(facts: pd.DataFrame) -> pd.DataFrame:
         a = float(eba["value"].iloc[0])
         b = _to_eur_row(float(rep["value"].iloc[0]), rep["ccy"].iloc[0], field, rates)
         rel = abs(b - a) / abs(a) if a else np.nan
-        if bank == "CAG" and field == "total_assets":
-            rows.append(_row("8_seam_pl", bank, SEAM_DATE, field, a, b, CAG_TOTAL_ASSETS_TOL,
-                             rel <= CAG_TOTAL_ASSETS_TOL, f"report {rep['ccy'].iloc[0]}", diff_rel=rel))
-        else:
-            rows.append(_row("8_seam_pl", bank, SEAM_DATE, field, a, b, np.nan, True,
-                             f"no threshold; report {rep['ccy'].iloc[0]}", diff_rel=rel))
+        rows.append(_row("8_seam_pl", bank, SEAM_DATE, field, a, b, np.nan, True,
+                         f"no threshold; report {rep['ccy'].iloc[0]}", diff_rel=rel))
+    return pd.DataFrame(rows, columns=CHECKS_COLUMNS)
+
+
+def scope_gate(facts: pd.DataFrame) -> pd.DataFrame:
+    """Instruction 02b B.1, for every EU bank with EU LR1 entered at 2025-06-30: value_a = eba total_assets (EUR),
+    value_b = lr1_total_assets + lr1_scope_adjustment (the adjustment as printed, so a printed negative reduces
+    assets), converted to EUR at the 2025-06-30 rate; passed if |b - a| / a <= 0.02. A failure is a rule 4 stop for
+    that bank only: build_facts leaves its report and p3 rows out of the KPIs."""
+    from bpb.ingest import ROOT
+
+    rates = fx.ecb_rates(ROOT / "data" / "raw")
+    f = facts[facts["ref_date"] == SEAM_DATE]
+    rows = []
+    for bank, g in f.groupby("bank_id"):
+        eba = g[(g["family"] == "eba") & (g["field"] == "total_assets")]
+        lr1 = g[(g["family"] == "report") & g["field"].isin(["lr1_total_assets", "lr1_scope_adjustment"])]
+        if eba.empty or lr1["field"].nunique() < 2 or lr1["value"].isna().any():
+            continue
+        a = float(eba["value"].iloc[0])
+        ccy = lr1["ccy"].iloc[0]
+        b = _to_eur_row(float(lr1["value"].sum()), ccy, "total_assets", rates)
+        rel = abs(b - a) / abs(a)
+        rows.append(_row("8b_scope_gate", bank, SEAM_DATE, "total_assets", a, b, SCOPE_GATE_TOL,
+                         rel <= SCOPE_GATE_TOL, f"lr1 row 1 + row 2, {ccy}", diff_rel=rel))
     return pd.DataFrame(rows, columns=CHECKS_COLUMNS)
 
 
 def run_checks(facts: pd.DataFrame, cfg, provenance_rows: pd.DataFrame | None = None) -> pd.DataFrame:
     """CHECKS rows for every check built so far, failed rows kept and flagged. Checks 2 to 6 run on every family,
     check 9 on eba rows; provenance rows (check 1) are computed with the entries and passed in."""
-    parts = [identities(facts, cfg), outliers(facts, cfg), seam_capital(facts, cfg), seam_pl(facts)]
+    parts = [identities(facts, cfg), outliers(facts, cfg), seam_capital(facts, cfg), seam_pl(facts),
+             scope_gate(facts)]
     if provenance_rows is not None and len(provenance_rows):
         parts.append(provenance_rows)
     out = pd.concat([p for p in parts if len(p)], ignore_index=True)

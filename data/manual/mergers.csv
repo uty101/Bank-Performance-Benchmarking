@@ -1,6 +1,6 @@
 acquirer_id,target_name,completion_date,target_total_assets,target_ccy,source_url,source_sha256,source_page,size_basis
 KBC,OTP Banka Slovensko a.s.,2020-11-26,1433000000,EUR,https://cdn.assets.prezly.com/8b650d62-c523-41df-b3ec-23bf419680d1/-/inline/no/20201126_PB_closing%20OTP_ENG.pdf,,,total_assets
-BPE,UBI Banca business unit sold by Intesa Sanpaolo (branches),2021-02-22,,EUR,https://group.bper.it/documents/133577364/0/21.02.19_ComSt_Accordo_Gruppo_Intesa_ENG_.pdf/37706018-c10c-0719-33bf-cc9fb050841d?t=1613760496854,,,
+BPE,UBI Banca business unit sold by Intesa Sanpaolo (branches),2021-02-22,644040000,EUR,https://group.bper.it/documents/133577364/0/21.02.19_ComSt_Accordo_Gruppo_Intesa_ENG_.pdf/37706018-c10c-0719-33bf-cc9fb050841d?t=1613760496854,79289deaf7981a4e0d54b495cb9523536b5cbaa63759b11e96059b6f3635dffe,1,consideration
 CABK,Bankia S.A.,2021-03-26,209841949000,EUR,https://www.caixabank.com/StaticFiles/pdfs/210326_OIR_merger_registration_en.pdf,89d03b3cfde98980e10d005e88f08af9568aa9ad496bf36693d7a57ef9cb120f,15,total_assets
 CAG,Credito Valtellinese S.p.A.,2021-04-30,23881672000,EUR,https://credit-agricole.it/media/filer_public/c5/ac/c5acfa20-7b56-47ae-87ca-e9aa5ae886db/cs-opa-creval-successo-dell-offerta-pubblica-di-acquisto-volontaria-promossa-da-credit-agricole-italia-sulla-totalita-delle-azioni-di-credito-valtellinese-eng-sito.pdf,,,total_assets
 ISP,REYL & Cie S.A.,2021-05-28,2060197900,CHF,https://emarketstorage.it/sites/default/files/comunicati/2022-05/20210903_101936.pdf,,,total_assets
@@ -21,7 +21,7 @@ UCG,Aion Bank SA/NV and Vodeno Sp. z o.o.,2025-03-07,1283866000,EUR,https://www.
 BAMI,Anima Holding S.p.A. (via Banco BPM Vita),2025-04-11,2689939000,EUR,https://www.emarketstorage.it/sites/default/files/comunicati/2025-04/20250409_164754.pdf,049915f5f8b264b652311a495b7f243c15c1878499dea1a2f08289bacb85897f,38,total_assets
 NWG,Sainsbury's Bank retail banking business,2025-05-01,,GBP,https://www.sec.gov/Archives/edgar/data/844150/000165495425005032/a1510h.htm,,,
 ABN,Hauck Aufhäuser Lampe Privatbank AG,2025-07-01,11777000000,EUR,https://www.abnamro.com/en/news/abn-amro-completes-acquisition-of-hauck-aufhaeuser-lampe-in-germany,,,total_assets
-BNP,AXA Investment Managers (via BNP Paribas Cardif),2025-07-01,,EUR,https://group.bnpparibas/en/press-release/bnp-paribas-cardif-completes-the-acquisition-of-axa-investment-managers,,,
+BNP,AXA Investment Managers (via BNP Paribas Cardif),2025-07-01,5100000000,EUR,https://group.bnpparibas/en/press-release/bnp-paribas-cardif-completes-the-acquisition-of-axa-investment-managers,f45473228567c4c0f5022b050f0961ed0ef3afdf4b35c1cd17405ac3c7692161,1,consideration
 BPE,Banca Popolare di Sondrio S.p.A.,2025-07-18,56628582000,EUR,https://group.bper.it/documents/133577364/2795795058/Consolidated+Half-Year+Report+as+at+30+06+2025.pdf/ee8e303c-519c-d986-4655-01592227dfab?version=1.0&t=1758275603287,766c124b21821a3dc7829c1384361b8281075f0b57648c7c42e65994364194b4,40,total_assets
 BMPS,Mediobanca S.p.A.,2025-09-15,99911654000,EUR,https://www.gruppomps.it/en/media-and-news/press-releases/pr-15-09-2025.html,0d1119ccb84dcd0bb91e9842b46ff3bf4b3e0621b0e68403bc6cbe78beafbf17,58,total_assets
 KBC,365.bank a.s.,2026-01-15,4700000000,EUR,https://www.kbc.com/content/dam/kbccom/doc/newsroom/pressreleases/2026/20260115-pb-closing-365-bank-en-2.pdf,,,total_assets

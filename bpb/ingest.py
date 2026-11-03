@@ -144,6 +144,8 @@ ENTRY_COLUMNS = ["bank_id", "ref_date", "field", "value_as_printed", "unit_scale
                  "doc_type", "report_sha256", "page", "snippet", "entered_utc"]
 COMPONENT = re.compile(r"component (\d+)/(\d+)")  # the `component` note of a summed field's snippet (B.2)
 VALUE_REL_TOL = 1e-9  # |value| against |value_as_printed| x unit_scale: equal up to float rounding
+# instruction 02b B.4: a dash or empty cell in a printed template row is a component of value 0
+ZERO_PRINTED = {"-", "–", "—", "blank"}  # hyphen, en dash, em dash, or an empty cell
 
 
 def parse_printed(text: str, decimal_mark: str = ".") -> float:
@@ -175,6 +177,9 @@ def entry_values(e: pd.DataFrame) -> pd.Series:
     out = []
     for printed, scale, value, field, mark in zip(e["value_as_printed"], e["unit_scale"], e["value"], e["field"],
                                                  marks, strict=True):
+        if str(printed).strip() in ZERO_PRINTED:
+            out.append(0.0 if str(value).strip() in ("", "0") else np.nan)
+            continue
         mag = abs(parse_printed(printed, mark or ".")) * float(scale)
         if str(value).strip() == "":
             sign = 1.0 if field in POSITIVE_FIELDS else (-1.0 if parse_printed(printed, mark or ".") < 0 else 1.0)
@@ -222,6 +227,13 @@ def entries_facts(entries: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame
     e["_value"] = entry_values(e)
     e["_status"] = e.get("entry_status", "ok")
     e.loc[e["_value"].isna() & (e["_status"] == "ok"), "_status"] = "value_mismatch"
+    # instruction 02b B.9: a figure taken from a later document's comparative column. The FY2025 annual report's
+    # 2024-12-31 column is the prescribed source for that date (instruction 02 B.3, 02b B.2), not a fallback.
+    period = dict(zip(manifest["sha256"], manifest["period"], strict=True))
+    dtype = dict(zip(manifest["sha256"], manifest["doc_type"], strict=True))
+    comparative = [(period[s] != d) and not (dtype[s] == "annual" and period[s] == "2025-12-31" and d == "2024-12-31")
+                   for s, d in zip(e["report_sha256"], e["ref_date"], strict=True)]
+    e.loc[pd.Series(comparative, index=e.index) & (e["_status"] == "ok"), "_status"] = "from_comparative"
     e["_family"] = [_family(smap, b, f, d, t) for b, f, d, t in
                     zip(e["bank_id"], e["field"], e["ref_date"], e["doc_type"], strict=True)]
     rows = []
@@ -237,7 +249,10 @@ def entries_facts(entries: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame
             if set(ks) != set(range(1, n.pop() + 1)):
                 continue  # a missing component makes the field missing, never a partial sum
         locator = "+".join(dict.fromkeys(f"{s}@{p}" for s, p in zip(g["report_sha256"], g["page"], strict=True)))
-        bad = [s for s in g["_status"] if s != "ok"]
+        bad = [s for s in g["_status"] if s not in ("ok", "from_comparative")]
+        status = bad[0] if bad else ("from_comparative" if "from_comparative" in set(g["_status"]) else "ok")
+        if not bad and field == "total_operating_income" and len(g) > 1:
+            status = "toi_summed"  # instruction 02b B.8: no printed total, the printed income lines summed
         scales = sorted(set(g["unit_scale"].astype(float)))
         pm = g["period_months"].iloc[0]
         rows.append({
@@ -245,7 +260,7 @@ def entries_facts(entries: pd.DataFrame, manifest: pd.DataFrame) -> pd.DataFrame
             "value": np.nan if bad else float(g["_value"].sum()), "ccy": g["ccy"].iloc[0],
             "unit_scale": scales[0] if len(scales) == 1 else np.nan,
             "period_months": int(pm) if str(pm).strip() else None, "family": fam, "locator": locator,
-            "lineage_id": lineage_id(bank, ref_date, field, fam, locator), "status": bad[0] if bad else "ok",
+            "lineage_id": lineage_id(bank, ref_date, field, fam, locator), "status": status,
         })
     out = pd.DataFrame(rows, columns=FACTS_COLUMNS)
     out["period_months"] = out["period_months"].astype("Int64")
@@ -328,12 +343,27 @@ def report_p3_facts(cfg) -> tuple[pd.DataFrame, pd.DataFrame]:
     return entries_facts(e, man), prov
 
 
+def _apply_scope_gate(eba: pd.DataFrame, rp: pd.DataFrame) -> pd.DataFrame:
+    """Instruction 02b B.1: a bank failing the scope adjusted gate keeps its report and p3 rows and values, with
+    status `scope_gate_failed`, so the checks still see them but none of its bridge entries reaches a KPI (the KPI
+    code uses only usable statuses)."""
+    from bpb.checks import scope_gate
+
+    gate = scope_gate(pd.concat([eba, rp], ignore_index=True))
+    failed = set(gate.loc[~gate["passed"].astype(bool), "bank_id"])
+    if failed:
+        rp = rp.copy()
+        rp.loc[rp["bank_id"].isin(failed) & (rp["status"] == "ok"), "status"] = "scope_gate_failed"
+    return rp
+
+
 def build_facts(cfg) -> pd.DataFrame:
     """Loads every source, applies the source map and writes data/processed/facts.parquet: eba rows, and the report
     and p3 rows of data/manual/report_entries.csv after provenance (Section 2)."""
     kept, _ = eba_facts(cfg)
     rp, _ = report_p3_facts(cfg)
     rp_kept, _ = apply_source_map(rp, read_source_map(cfg.root))
+    rp_kept = _apply_scope_gate(kept, rp_kept)
     kept = pd.concat([kept, rp_kept], ignore_index=True) if len(rp_kept) else kept
     kept = kept.sort_values(["bank_id", "ref_date", "field", "family"]).reset_index(drop=True)
     out = cfg.root / "data" / "processed" / "facts.parquet"
