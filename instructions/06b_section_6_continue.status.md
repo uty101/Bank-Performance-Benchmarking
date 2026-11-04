@@ -57,7 +57,7 @@ C:\bpbs6, C:\bpbs6b and C:\bpbs6c join the other `C:\bpbs*` folders for the owne
 ## git log origin/main --oneline -3
 
 ```
+7d84701 section 6: review with both fresh clone runs
+31f34ae section 6: status of instruction 06b (completed)
 a61681d section 6: review of the whole section
-77c368f step 6.5: drop my dashboard test, which needs a socket under rule 7
-0dcaffd step 6.5: MIT licence, project_outline rename, final spec_log stamp
 ```
