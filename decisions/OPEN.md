@@ -363,3 +363,28 @@ Raised in session 3c (step 3.7). Instruction 03c B.2 enters minority_interests 0
 
 - (a) Read both conditions on the reference period only: comparative-period amounts do not count, and a printed line or column holding only dashes or zeros counts as no NCI. Enter these 0 with status `no_nci_line` (the BKT and ABN entries are already built, not merged).
 - (b) Keep the strict reading, as now.
+
+## OPEN-36: no k qualifies for the 2024 clusters
+
+Raised in session 4 (step 4.1). A rule 4 stop under kickoff 5.4. At year 2024, 29 banks have all 6 features, and every cut of `k_range` holds a cluster below `min_cluster_size` = 6: BARC, BNP, DBK, GLE and HSBA stay together as a cluster of 5 at k = 2, 3, 4 and 5. The sizes are [24, 5], [15, 9, 5], [9, 8, 7, 5] and [9, 8, 5, 4, 3]. The outcome is the same on the underlying basis and with either reading in OPEN-37. 2023 and 2025 qualify only at k = 2.
+
+- (a) Set `min_cluster_size` to 5 in `config.toml`. Measured: 2023 k = 3 (sizes 5, 11, 14 after assignment, silhouette 0.2393), 2024 k = 2 (5, 26, silhouette 0.3085), 2025 k = 2 (10, 21, silhouette 0.1943); ARI 0.368 for 2023 to 2024, 0.416 for 2024 to 2025. No bank is borderline.
+- (b) Keep 6. A year with no qualifying k keeps the previous year's clusters, with a status on its PEERS rows, so 2024 uses the 2023 k = 2 clusters.
+
+## OPEN-37: unstated readings in the peer features
+
+Raised in session 4 (step 4.1). `bpb/peers.py` currently applies the first option of each. None of them changes OPEN-36.
+
+1. **A value missing at 1 of the 3 year ends.** (a) The feature is missing (Convention 4.9): DNB has no 2021 row, so it has no features at all in 2023, and 7 banks with no 2025 trading_assets row (BNP, DNB, GLE, NDA, SEB, SHB, SWED) and 2 with no 2025 customer loans row (BKT, CBK) drop out of the 2025 clustering, on top of LLOY and SANUK, leaving 20 banks. (b) The mean of the values present: every year clusters 29 banks, but 2025 then also has no qualifying k ([24, 5], [15, 9, 5], [9, 9, 6, 5], [9, 6, 5, 5, 4]).
+2. **Basis of fee_share.** (a) reported. (b) underlying. The k and sizes agree in 2023 and 2025; in 2024 the k = 4 sizes differ, and no k qualifies under either.
+3. **PEERS has no status column,** but B.1 gives `assigned_nearest` as a status. (a) Add a trailing `status` column. (b) Hold the status in `override_reason`.
+4. **Recluster in a stability draw.** (a) Standardise again within the drawn banks. (b) Keep the standardisation of the full year.
+
+## OPEN-38: O in the joint gap counts dividends twice, and is often blank
+
+Raised in session 4, read ahead of step 4.3, which is not built. Kickoff 5.6 has O = other_income + dividend_income, and 5.1 has other_income = total_operating_income − nii − net_fees, a residual that already holds dividends. Then I′ = NII′ + F′ + O exceeds I by dividend_income even when no driver moves, so a single sized gap on real data would not equal its joint gap (B.4 `test_joint_single`). dividend_income also has no report row for 16 banks at 2025-12-31, including hand check banks LLOY and SWED, so O would be blank there and the joint hand check could not run.
+
+- (a) O = other_income, so I = NII + F + O holds for every bank.
+- (b) O = other_income + dividend_income as written, with a missing dividend_income taken as 0.
+
+A related reading for the reviewer to confirm: kickoff 5.6 recomputes F′ and C′ from shares even when those gaps are not sized, which also breaks `test_joint_single`. B.3 "drivers that are not sized keep the bank's own value" is read as F′ = F and C′ = C in that case.
