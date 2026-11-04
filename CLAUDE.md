@@ -291,3 +291,15 @@ Per EU bank, in `report_urls.csv`:
    - lcr and nsfr where printed.
 
    These rows are family `p3`, with status `p3_from_report`. CR1 fields stay blank where no Pillar 3 exists.
+
+### Amendments from instructions/04_section_4.md (step 3.8; decisions in `decisions/section_3_review.md`, with the 03b and 03c rules they complete)
+
+28. **at1_in_equity (03b B.2, 03c B.1 and B.4).** A flag, 1 or 0, `report` family, read from the annual report: the accounting policy for AT1, or the balance sheet line. A half year date takes the classification from the annual report of the same year, status `class_from_annual`, unless the half year report states a different one. Where it is 0, AT1 is not in total_equity, so the at1_instruments term of tangible_equity is 0, status `at1_liability`. Where it is 1, at1_instruments is deducted.
+29. **at1_coupon_in_pl (03c B.1 and B.4).** A flag, `report` family, entered at the same dates as at1_in_equity under the same `class_from_annual` rule: 1 if the coupons are in interest expense, 0 if they are charged to equity or reserves. Where the bond sits and where its coupon is charged are separate questions.
+30. **at1_coupons (03b B.3, 03c B.1, OPEN-34).** The coupons charged directly to equity or reserves in the period, entered positive from the statement of changes in equity or the EPS note. It is 0 in 2 cases:
+    - at1_coupon_in_pl is 1: status `coupon_in_pl`;
+    - the bank had no AT1 in equity during the period, or the period's coupon line is printed as a dash or as nil: status `no_at1_coupon`, citing the page that says so (BMPS: the "no equity instruments" statement, with CC1 row 30 a dash; NDA H1 2026: the cash flow line).
+
+    Coupons printed only net of tax are entered net, status `at1_net_of_tax`.
+31. **Comparative columns (OPEN-35).** A comparative column in a later document counts as a printed amount for its date, with status `from_comparative`. This applies to SANUK, DANSKE and ABN.
+32. **Dash-only lines (OPEN-35).** A balance sheet non controlling interests line printed only as dashes is 0 with status `no_nci_line`, the same as no line. This applies to BKT.

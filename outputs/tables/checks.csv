@@ -3,6 +3,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,ABN,2020-12-31,at1_coupons,117,,,,,True,entry 5643; e84cfe4f9e7d@209
 1_provenance,ABN,2020-12-31,at1_in_equity,1,,,,,True,entry 5679; e84cfe4f9e7d@208
 1_provenance,ABN,2020-12-31,fte,19234,,,,,True,entry 5667; e84cfe4f9e7d@27
+1_provenance,ABN,2020-12-31,minority_interests,0,,,,,True,entry 10958; 2b0878657f5f@267
 1_provenance,ABN,2020-12-31,shares_out,940,,,,,True,entry 5655; e84cfe4f9e7d@11
 1_provenance,ABN,2021-06-30,at1_coupon_in_pl,0,,,,,True,entry 5691; 2b0878657f5f@267
 1_provenance,ABN,2021-06-30,at1_coupons,46,,,,,True,entry 5644; 1715577a378e@51
@@ -1681,6 +1682,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,BKT,2020-12-31,at1_in_equity,0,,,,,True,entry 9139; a5078f458331@83
 1_provenance,BKT,2020-12-31,fte,4122,,,,,True,entry 9153; a5078f458331@101
 1_provenance,BKT,2020-12-31,fte,4546,,,,,True,entry 9154; a5078f458331@101
+1_provenance,BKT,2020-12-31,minority_interests,0,,,,,True,entry 10959; a5078f458331@17
 1_provenance,BKT,2020-12-31,shares_out,898866154,,,,,True,entry 9123; a5078f458331@90
 1_provenance,BKT,2020-12-31,shares_out,-892226,,,,,True,entry 9124; a5078f458331@91
 1_provenance,BKT,2021-06-30,at1_coupon_in_pl,0,,,,,True,entry 9173; d358147d5a4e@82
@@ -1690,6 +1692,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,BKT,2021-12-31,at1_in_equity,0,,,,,True,entry 9140; d358147d5a4e@77
 1_provenance,BKT,2021-12-31,fte,3046,,,,,True,entry 9155; d358147d5a4e@92
 1_provenance,BKT,2021-12-31,fte,3092,,,,,True,entry 9156; d358147d5a4e@92
+1_provenance,BKT,2021-12-31,minority_interests,0,,,,,True,entry 10960; d358147d5a4e@15
 1_provenance,BKT,2021-12-31,shares_out,898866154,,,,,True,entry 9125; d358147d5a4e@80
 1_provenance,BKT,2021-12-31,shares_out,-227619,,,,,True,entry 9126; d358147d5a4e@81
 1_provenance,BKT,2022-06-30,at1_coupon_in_pl,0,,,,,True,entry 9174; c147a66dd7e6@75
@@ -1699,6 +1702,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,BKT,2022-12-31,at1_in_equity,0,,,,,True,entry 9141; c147a66dd7e6@69
 1_provenance,BKT,2022-12-31,fte,3216,,,,,True,entry 9157; c147a66dd7e6@84
 1_provenance,BKT,2022-12-31,fte,3203,,,,,True,entry 9158; c147a66dd7e6@84
+1_provenance,BKT,2022-12-31,minority_interests,0,,,,,True,entry 10961; c147a66dd7e6@13
 1_provenance,BKT,2022-12-31,shares_out,898866154,,,,,True,entry 9127; c147a66dd7e6@72
 1_provenance,BKT,2022-12-31,shares_out,-221302,,,,,True,entry 9128; c147a66dd7e6@74
 1_provenance,BKT,2023-06-30,at1_coupon_in_pl,0,,,,,True,entry 9175; aac957b28b25@77
@@ -1708,6 +1712,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,BKT,2023-12-31,at1_in_equity,0,,,,,True,entry 9142; aac957b28b25@70
 1_provenance,BKT,2023-12-31,fte,3272,,,,,True,entry 9159; aac957b28b25@86
 1_provenance,BKT,2023-12-31,fte,3269,,,,,True,entry 9160; aac957b28b25@86
+1_provenance,BKT,2023-12-31,minority_interests,0,,,,,True,entry 10962; aac957b28b25@13
 1_provenance,BKT,2023-12-31,shares_out,898866154,,,,,True,entry 9129; aac957b28b25@73
 1_provenance,BKT,2023-12-31,shares_out,-220643,,,,,True,entry 9130; aac957b28b25@75
 1_provenance,BKT,2024-06-30,at1_coupon_in_pl,0,,,,,True,entry 9176; ba181cbb1047@75
@@ -1731,6 +1736,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,BKT,2024-12-31,impairments_nonfin,28937,,,,,True,entry 9051; ac77dad5439c@15
 1_provenance,BKT,2024-12-31,interest_expense,2121380,,,,,True,entry 9033; ac77dad5439c@15
 1_provenance,BKT,2024-12-31,interest_income,4399788,,,,,True,entry 9032; ac77dad5439c@15
+1_provenance,BKT,2024-12-31,minority_interests,0,,,,,True,entry 10963; ac77dad5439c@14
 1_provenance,BKT,2024-12-31,net_fees,917332,,,,,True,entry 9035; ac77dad5439c@15
 1_provenance,BKT,2024-12-31,net_fees,-200265,,,,,True,entry 9036; ac77dad5439c@15
 1_provenance,BKT,2024-12-31,other_operating_net,34864,,,,,True,entry 9041; ac77dad5439c@15
@@ -1767,6 +1773,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,BKT,2025-06-30,interest_expense,868614,,,,,True,entry 9056; f2545819677a@14
 1_provenance,BKT,2025-06-30,interest_income,1969723,,,,,True,entry 9055; f2545819677a@14
 1_provenance,BKT,2025-06-30,leverage_exposure,123997403.1,,,,,True,entry 9122; 70b2f74c95af@7- KM1!H35
+1_provenance,BKT,2025-06-30,minority_interests,0,,,,,True,entry 10966; f2545819677a@17
 1_provenance,BKT,2025-06-30,net_fees,474254,,,,,True,entry 9058; f2545819677a@14
 1_provenance,BKT,2025-06-30,net_fees,-94110,,,,,True,entry 9059; f2545819677a@14
 1_provenance,BKT,2025-06-30,other_operating_net,20787,,,,,True,entry 9064; f2545819677a@14
@@ -1803,6 +1810,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,BKT,2025-12-31,interest_income,3865362,,,,,True,entry 8980; ac77dad5439c@15
 1_provenance,BKT,2025-12-31,lcr,1.9736,,,,,True,entry 9116; 70b2f74c95af@7- KM1!F49
 1_provenance,BKT,2025-12-31,leverage_exposure,125191297,,,,,True,entry 9115; 70b2f74c95af@7- KM1!F35
+1_provenance,BKT,2025-12-31,minority_interests,0,,,,,True,entry 10964; ac77dad5439c@14
 1_provenance,BKT,2025-12-31,net_fees,996380,,,,,True,entry 8983; ac77dad5439c@15
 1_provenance,BKT,2025-12-31,net_fees,-201327,,,,,True,entry 8984; ac77dad5439c@15
 1_provenance,BKT,2025-12-31,nsfr,1.5294,,,,,True,entry 9117; 70b2f74c95af@7- KM1!F53
@@ -1870,6 +1878,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,BKT,2026-06-30,loans_customers_gross,719363.235,,,,,True,entry 9096; 70b2f74c95af@11- CR1!G17
 1_provenance,BKT,2026-06-30,loans_households_gross,43654039.56,,,,,True,entry 9105; 70b2f74c95af@11- CR1!D17
 1_provenance,BKT,2026-06-30,loans_households_gross,719363.235,,,,,True,entry 9106; 70b2f74c95af@11- CR1!G17
+1_provenance,BKT,2026-06-30,minority_interests,0,,,,,True,entry 10965; f2545819677a@13
 1_provenance,BKT,2026-06-30,net_fees,547966,,,,,True,entry 9012; f2545819677a@14
 1_provenance,BKT,2026-06-30,net_fees,-107558,,,,,True,entry 9013; f2545819677a@14
 1_provenance,BKT,2026-06-30,npl_allowance,1084898.628,,,,,True,entry 9108; 70b2f74c95af@11- CR1!M10
@@ -1893,38 +1902,47 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,BKT,2026-06-30,total_liabilities,134229965,,,,,True,entry 9004; f2545819677a@12
 1_provenance,BKT,2026-06-30,total_operating_income,1602972,,,,,True,entry 9022; f2545819677a@14
 1_provenance,BKT,2026-06-30,trading_assets,6481747,,,,,True,entry 9007; f2545819677a@11
+1_provenance,BMPS,2020-12-31,at1_coupons,0,,,,,True,entry 10936; 5056ed3ec8a7@339
 1_provenance,BMPS,2020-12-31,at1_in_equity,0,,,,,True,entry 10916; 5056ed3ec8a7@339
 1_provenance,BMPS,2020-12-31,customers,3.9,,,,,True,entry 10908; 5056ed3ec8a7@27
 1_provenance,BMPS,2020-12-31,minority_interests,1310,,,,,True,entry 10886; 5056ed3ec8a7@159
 1_provenance,BMPS,2020-12-31,shares_out,966125139,,,,,True,entry 10898; 5056ed3ec8a7@338
+1_provenance,BMPS,2021-06-30,at1_coupons,0,,,,,True,entry 10937; 84c99f6a9db1@353
 1_provenance,BMPS,2021-06-30,at1_in_equity,0,,,,,True,entry 10930; 84c99f6a9db1@353
 1_provenance,BMPS,2021-06-30,minority_interests,1.4,,,,,True,entry 10887; 7366575102c3@30
+1_provenance,BMPS,2021-12-31,at1_coupons,0,,,,,True,entry 10938; 84c99f6a9db1@353
 1_provenance,BMPS,2021-12-31,at1_in_equity,0,,,,,True,entry 10917; 84c99f6a9db1@353
 1_provenance,BMPS,2021-12-31,customers,3.7,,,,,True,entry 10909; 84c99f6a9db1@25
 1_provenance,BMPS,2021-12-31,minority_interests,1346,,,,,True,entry 10888; 84c99f6a9db1@159
+1_provenance,BMPS,2022-06-30,at1_coupons,0,,,,,True,entry 10939; d957c1105f0f@348
 1_provenance,BMPS,2022-06-30,at1_in_equity,0,,,,,True,entry 10931; d957c1105f0f@348
 1_provenance,BMPS,2022-06-30,minority_interests,1.4,,,,,True,entry 10889; 8023ba019adc@28
 1_provenance,BMPS,2022-06-30,shares_out,1002405887,,,,,True,entry 10899; 8023ba019adc@17
+1_provenance,BMPS,2022-12-31,at1_coupons,0,,,,,True,entry 10940; d957c1105f0f@348
 1_provenance,BMPS,2022-12-31,at1_in_equity,0,,,,,True,entry 10918; d957c1105f0f@348
 1_provenance,BMPS,2022-12-31,customers,3.7,,,,,True,entry 10910; d957c1105f0f@25
 1_provenance,BMPS,2022-12-31,fte,17020,,,,,True,entry 10922; d957c1105f0f@9
 1_provenance,BMPS,2022-12-31,minority_interests,936,,,,,True,entry 10890; d957c1105f0f@161
 1_provenance,BMPS,2022-12-31,shares_out,1259689706,,,,,True,entry 10900; d957c1105f0f@347
+1_provenance,BMPS,2023-06-30,at1_coupons,0,,,,,True,entry 10941; ae414dfd1480@310
 1_provenance,BMPS,2023-06-30,at1_in_equity,0,,,,,True,entry 10932; ae414dfd1480@310
 1_provenance,BMPS,2023-06-30,fte,16843,,,,,True,entry 10923; 49195053c1ea@5
 1_provenance,BMPS,2023-06-30,minority_interests,0.8,,,,,True,entry 10891; 49195053c1ea@28
 1_provenance,BMPS,2023-06-30,shares_out,1259689706,,,,,True,entry 10901; 49195053c1ea@14
+1_provenance,BMPS,2023-12-31,at1_coupons,0,,,,,True,entry 10942; ae414dfd1480@310
 1_provenance,BMPS,2023-12-31,at1_in_equity,0,,,,,True,entry 10919; ae414dfd1480@310
 1_provenance,BMPS,2023-12-31,customers,3.6,,,,,True,entry 10911; ae414dfd1480@22
 1_provenance,BMPS,2023-12-31,fte,16737,,,,,True,entry 10924; ae414dfd1480@9
 1_provenance,BMPS,2023-12-31,minority_interests,651,,,,,True,entry 10892; ae414dfd1480@131
 1_provenance,BMPS,2023-12-31,shares_out,1259689706,,,,,True,entry 10902; ae414dfd1480@309
+1_provenance,BMPS,2024-06-30,at1_coupons,0,,,,,True,entry 10943; e6dd32115a5f@471
 1_provenance,BMPS,2024-06-30,at1_in_equity,0,,,,,True,entry 10933; e6dd32115a5f@471
 1_provenance,BMPS,2024-06-30,fte,16632,,,,,True,entry 10925; a722f0badae8@5
 1_provenance,BMPS,2024-06-30,minority_interests,0.4,,,,,True,entry 10893; a722f0badae8@28
 1_provenance,BMPS,2024-06-30,shares_out,1259689706,,,,,True,entry 10903; a722f0badae8@12
 1_provenance,BMPS,2024-12-31,admin_expenses,1247607,,,,,True,entry 10695; e35390a41b09@338
 1_provenance,BMPS,2024-12-31,admin_expenses,825620,,,,,True,entry 10696; e35390a41b09@338
+1_provenance,BMPS,2024-12-31,at1_coupons,0,,,,,True,entry 10944; e6dd32115a5f@471
 1_provenance,BMPS,2024-12-31,at1_in_equity,0,,,,,True,entry 10920; e6dd32115a5f@471
 1_provenance,BMPS,2024-12-31,at1_instruments,0,,,,,True,entry 10781; 68708350cc06@34
 1_provenance,BMPS,2024-12-31,cash_cb,13249398,,,,,True,entry 10742; e35390a41b09@336
@@ -1980,6 +1998,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,BMPS,2024-12-31,trading_assets,6076580,,,,,True,entry 10743; e35390a41b09@336
 1_provenance,BMPS,2025-06-30,admin_expenses,646.8,,,,,True,entry 10714; 84d7df338b99@25
 1_provenance,BMPS,2025-06-30,admin_expenses,371,,,,,True,entry 10715; 84d7df338b99@25
+1_provenance,BMPS,2025-06-30,at1_coupons,0,,,,,True,entry 10945; e35390a41b09@524
 1_provenance,BMPS,2025-06-30,at1_in_equity,0,,,,,True,entry 10934; e35390a41b09@524
 1_provenance,BMPS,2025-06-30,at1_instruments,0,,,,,True,entry 10783; 77457ff941a4@16
 1_provenance,BMPS,2025-06-30,cash_cb,11794.3,,,,,True,entry 10752; 84d7df338b99@23
@@ -2041,6 +2060,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,BMPS,2025-06-30,trading_assets,8262.1,,,,,True,entry 10753; 84d7df338b99@23
 1_provenance,BMPS,2025-12-31,admin_expenses,1555115,,,,,True,entry 10676; e35390a41b09@338
 1_provenance,BMPS,2025-12-31,admin_expenses,970479,,,,,True,entry 10677; e35390a41b09@338
+1_provenance,BMPS,2025-12-31,at1_coupons,0,,,,,True,entry 10946; e35390a41b09@524
 1_provenance,BMPS,2025-12-31,at1_in_equity,0,,,,,True,entry 10921; e35390a41b09@524
 1_provenance,BMPS,2025-12-31,at1_instruments,0,,,,,True,entry 10785; 5bde7cd552b4@41
 1_provenance,BMPS,2025-12-31,cash_cb,14632041,,,,,True,entry 10747; e35390a41b09@336
@@ -2104,6 +2124,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,BMPS,2025-12-31,trading_assets,23751707,,,,,True,entry 10748; e35390a41b09@336
 1_provenance,BMPS,2026-06-30,admin_expenses,1122.5,,,,,True,entry 10733; 6fb43542d891@100
 1_provenance,BMPS,2026-06-30,admin_expenses,713.6,,,,,True,entry 10734; 6fb43542d891@100
+1_provenance,BMPS,2026-06-30,at1_coupons,0,,,,,True,entry 10947; e35390a41b09@524
 1_provenance,BMPS,2026-06-30,at1_in_equity,0,,,,,True,entry 10935; e35390a41b09@524
 1_provenance,BMPS,2026-06-30,at1_instruments,0,,,,,True,entry 10787; 11fa0beb2ad5@15
 1_provenance,BMPS,2026-06-30,cash_cb,11019.5,,,,,True,entry 10757; 6fb43542d891@98
@@ -3557,19 +3578,23 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,DANSKE,2022-06-30,at1_coupons,164,,,,,True,entry 4340; 7f0e9ca218eb@38
 1_provenance,DANSKE,2022-06-30,at1_in_equity,0,,,,,True,entry 4361; 59ddd318ea16@135
 1_provenance,DANSKE,2022-06-30,fte,21663,,,,,True,entry 4317; 7f0e9ca218eb@3
+1_provenance,DANSKE,2022-06-30,minority_interests,0,,,,,True,entry 10954; ac936a6fc8f3@38
 1_provenance,DANSKE,2022-06-30,shares_out,851334055,,,,,True,entry 4329; 7f0e9ca218eb@39
 1_provenance,DANSKE,2022-12-31,at1_coupon_in_pl,0,,,,,True,entry 4350; 59ddd318ea16@71
 1_provenance,DANSKE,2022-12-31,at1_coupons,164,,,,,True,entry 4341; 59ddd318ea16@71
 1_provenance,DANSKE,2022-12-31,at1_in_equity,0,,,,,True,entry 4344; 59ddd318ea16@135
 1_provenance,DANSKE,2022-12-31,fte,21022,,,,,True,entry 4318; 59ddd318ea16@8
+1_provenance,DANSKE,2022-12-31,minority_interests,0,,,,,True,entry 10955; 982705c52fd3@70
 1_provenance,DANSKE,2022-12-31,shares_out,850946772,,,,,True,entry 4330; 59ddd318ea16@72
 1_provenance,DANSKE,2023-06-30,at1_coupon_in_pl,1,,,,,True,entry 4356; 982705c52fd3@97
 1_provenance,DANSKE,2023-06-30,at1_in_equity,0,,,,,True,entry 4362; 982705c52fd3@143
 1_provenance,DANSKE,2023-06-30,fte,21339,,,,,True,entry 4319; ac936a6fc8f3@3
+1_provenance,DANSKE,2023-06-30,minority_interests,0,,,,,True,entry 10956; dccc73ff738a@32
 1_provenance,DANSKE,2023-06-30,shares_out,858778466,,,,,True,entry 4331; ac936a6fc8f3@39
 1_provenance,DANSKE,2023-12-31,at1_coupon_in_pl,1,,,,,True,entry 4351; 982705c52fd3@97
 1_provenance,DANSKE,2023-12-31,at1_in_equity,0,,,,,True,entry 4345; 982705c52fd3@143
 1_provenance,DANSKE,2023-12-31,fte,20021,,,,,True,entry 4320; 982705c52fd3@5
+1_provenance,DANSKE,2023-12-31,minority_interests,0,,,,,True,entry 10957; b662c01b9704@126
 1_provenance,DANSKE,2023-12-31,shares_out,859773706,,,,,True,entry 4332; 982705c52fd3@71
 1_provenance,DANSKE,2024-06-30,at1_coupon_in_pl,1,,,,,True,entry 4357; b662c01b9704@144
 1_provenance,DANSKE,2024-06-30,at1_in_equity,0,,,,,True,entry 4363; b662c01b9704@181
@@ -7179,6 +7204,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,NDA,2026-06-30,admin_expenses,1797,,,,,True,entry 3622; 507954f1ddb8@33
 1_provenance,NDA,2026-06-30,admin_expenses,732,,,,,True,entry 3623; 507954f1ddb8@33
 1_provenance,NDA,2026-06-30,at1_coupon_in_pl,0,,,,,True,entry 3844; cce7c2004fbe@272
+1_provenance,NDA,2026-06-30,at1_coupons,0,,,,,True,entry 10948; 507954f1ddb8@37
 1_provenance,NDA,2026-06-30,at1_in_equity,0,,,,,True,entry 3850; cce7c2004fbe@215
 1_provenance,NDA,2026-06-30,at1_instruments,3227,,,,,True,entry 3660; db2a2ec98167@8
 1_provenance,NDA,2026-06-30,cash_cb,44594,,,,,True,entry 3633; 507954f1ddb8@35
@@ -9111,6 +9137,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,SANUK,2022-06-30,loans_customers_gross,2615,,,,,True,entry 3290; 4e1136a935f2@24
 1_provenance,SANUK,2022-06-30,loans_households_gross,194415,,,,,True,entry 3299; 4e1136a935f2@24
 1_provenance,SANUK,2022-06-30,loans_households_gross,2615,,,,,True,entry 3300; 4e1136a935f2@24
+1_provenance,SANUK,2022-06-30,minority_interests,0,,,,,True,entry 10949; c557363b6dda@59
 1_provenance,SANUK,2022-06-30,net_fees,166,,,,,True,entry 3047; b2b6a6c8dc3d@55
 1_provenance,SANUK,2022-06-30,npl_allowance,286,,,,,True,entry 3302; 4e1136a935f2@24
 1_provenance,SANUK,2022-06-30,npl_gross,3329,,,,,True,entry 3301; 4e1136a935f2@24
@@ -9165,6 +9192,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,SANUK,2022-12-31,loans_customers_gross,2471,,,,,True,entry 3314; c66b3d859247@39
 1_provenance,SANUK,2022-12-31,loans_households_gross,199721,,,,,True,entry 3323; c66b3d859247@39
 1_provenance,SANUK,2022-12-31,loans_households_gross,2471,,,,,True,entry 3324; c66b3d859247@39
+1_provenance,SANUK,2022-12-31,minority_interests,0,,,,,True,entry 10950; 1289444817c4@186
 1_provenance,SANUK,2022-12-31,net_fees,324,,,,,True,entry 2968; 1b3392bc491e@196
 1_provenance,SANUK,2022-12-31,npl_allowance,333,,,,,True,entry 3326; c66b3d859247@39
 1_provenance,SANUK,2022-12-31,npl_gross,3142,,,,,True,entry 3325; c66b3d859247@39
@@ -9218,6 +9246,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,SANUK,2023-06-30,loans_customers_gross,2690,,,,,True,entry 3338; 7ed00ee2a67d@18
 1_provenance,SANUK,2023-06-30,loans_households_gross,189464,,,,,True,entry 3347; 7ed00ee2a67d@18
 1_provenance,SANUK,2023-06-30,loans_households_gross,2690,,,,,True,entry 3348; 7ed00ee2a67d@18
+1_provenance,SANUK,2023-06-30,minority_interests,0,,,,,True,entry 10951; 5b2ea145bee0@55
 1_provenance,SANUK,2023-06-30,net_fees,148,,,,,True,entry 3063; c557363b6dda@55
 1_provenance,SANUK,2023-06-30,npl_allowance,350,,,,,True,entry 3350; 7ed00ee2a67d@18
 1_provenance,SANUK,2023-06-30,npl_gross,3429,,,,,True,entry 3349; 7ed00ee2a67d@18
@@ -9272,6 +9301,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,SANUK,2023-12-31,loans_customers_gross,2881,,,,,True,entry 3362; a831511e047b@24
 1_provenance,SANUK,2023-12-31,loans_households_gross,185200,,,,,True,entry 3371; a831511e047b@24
 1_provenance,SANUK,2023-12-31,loans_households_gross,2881,,,,,True,entry 3372; a831511e047b@24
+1_provenance,SANUK,2023-12-31,minority_interests,0,,,,,True,entry 10952; b7951f065ea1@171
 1_provenance,SANUK,2023-12-31,net_fees,296,,,,,True,entry 2984; 1289444817c4@182
 1_provenance,SANUK,2023-12-31,npl_allowance,364,,,,,True,entry 3374; a831511e047b@24
 1_provenance,SANUK,2023-12-31,npl_gross,3684,,,,,True,entry 3373; a831511e047b@24
@@ -9380,6 +9410,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,SANUK,2024-12-31,loans_customers_gross,2518,,,,,True,entry 3410; 33787d0a6b3a@24
 1_provenance,SANUK,2024-12-31,loans_households_gross,177170,,,,,True,entry 3419; 33787d0a6b3a@24
 1_provenance,SANUK,2024-12-31,loans_households_gross,2518,,,,,True,entry 3420; 33787d0a6b3a@24
+1_provenance,SANUK,2024-12-31,minority_interests,0,,,,,True,entry 10953; 6cfa80bc14e5@163
 1_provenance,SANUK,2024-12-31,net_fees,246,,,,,True,entry 3000; b7951f065ea1@167
 1_provenance,SANUK,2024-12-31,npl_allowance,364,,,,,True,entry 3422; 33787d0a6b3a@24
 1_provenance,SANUK,2024-12-31,npl_gross,3237,,,,,True,entry 3421; 33787d0a6b3a@24
@@ -14757,6 +14788,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,BKT,2026-06-30,rote_reported,6,6,0,,,True,report
 5_period_length,BKT,2026-06-30,total_operating_income,6,6,0,,,True,report
 5_period_length,BMPS,2020-12-31,admin_expenses,12,12,0,,,True,eba
+5_period_length,BMPS,2020-12-31,at1_coupons,12,12,0,,,True,report
 5_period_length,BMPS,2020-12-31,depreciation,12,12,0,,,True,eba
 5_period_length,BMPS,2020-12-31,dividend_income,12,12,0,,,True,eba
 5_period_length,BMPS,2020-12-31,exchange_differences,12,12,0,,,True,eba
@@ -14777,6 +14809,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,BMPS,2020-12-31,resolution_dgs_contrib,12,12,0,,,True,eba
 5_period_length,BMPS,2020-12-31,total_operating_income,12,12,0,,,True,eba
 5_period_length,BMPS,2021-06-30,admin_expenses,6,6,0,,,True,eba
+5_period_length,BMPS,2021-06-30,at1_coupons,6,6,0,,,True,report
 5_period_length,BMPS,2021-06-30,depreciation,6,6,0,,,True,eba
 5_period_length,BMPS,2021-06-30,dividend_income,6,6,0,,,True,eba
 5_period_length,BMPS,2021-06-30,exchange_differences,6,6,0,,,True,eba
@@ -14797,6 +14830,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,BMPS,2021-06-30,resolution_dgs_contrib,6,6,0,,,True,eba
 5_period_length,BMPS,2021-06-30,total_operating_income,6,6,0,,,True,eba
 5_period_length,BMPS,2021-12-31,admin_expenses,12,12,0,,,True,eba
+5_period_length,BMPS,2021-12-31,at1_coupons,12,12,0,,,True,report
 5_period_length,BMPS,2021-12-31,depreciation,12,12,0,,,True,eba
 5_period_length,BMPS,2021-12-31,dividend_income,12,12,0,,,True,eba
 5_period_length,BMPS,2021-12-31,exchange_differences,12,12,0,,,True,eba
@@ -14817,6 +14851,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,BMPS,2021-12-31,resolution_dgs_contrib,12,12,0,,,True,eba
 5_period_length,BMPS,2021-12-31,total_operating_income,12,12,0,,,True,eba
 5_period_length,BMPS,2022-06-30,admin_expenses,6,6,0,,,True,eba
+5_period_length,BMPS,2022-06-30,at1_coupons,6,6,0,,,True,report
 5_period_length,BMPS,2022-06-30,depreciation,6,6,0,,,True,eba
 5_period_length,BMPS,2022-06-30,dividend_income,6,6,0,,,True,eba
 5_period_length,BMPS,2022-06-30,exchange_differences,6,6,0,,,True,eba
@@ -14837,6 +14872,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,BMPS,2022-06-30,resolution_dgs_contrib,6,6,0,,,True,eba
 5_period_length,BMPS,2022-06-30,total_operating_income,6,6,0,,,True,eba
 5_period_length,BMPS,2022-12-31,admin_expenses,12,12,0,,,True,eba
+5_period_length,BMPS,2022-12-31,at1_coupons,12,12,0,,,True,report
 5_period_length,BMPS,2022-12-31,depreciation,12,12,0,,,True,eba
 5_period_length,BMPS,2022-12-31,dividend_income,12,12,0,,,True,eba
 5_period_length,BMPS,2022-12-31,exchange_differences,12,12,0,,,True,eba
@@ -14857,6 +14893,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,BMPS,2022-12-31,resolution_dgs_contrib,12,12,0,,,True,eba
 5_period_length,BMPS,2022-12-31,total_operating_income,12,12,0,,,True,eba
 5_period_length,BMPS,2023-06-30,admin_expenses,6,6,0,,,True,eba
+5_period_length,BMPS,2023-06-30,at1_coupons,6,6,0,,,True,report
 5_period_length,BMPS,2023-06-30,depreciation,6,6,0,,,True,eba
 5_period_length,BMPS,2023-06-30,dividend_income,6,6,0,,,True,eba
 5_period_length,BMPS,2023-06-30,exchange_differences,6,6,0,,,True,eba
@@ -14877,6 +14914,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,BMPS,2023-06-30,resolution_dgs_contrib,6,6,0,,,True,eba
 5_period_length,BMPS,2023-06-30,total_operating_income,6,6,0,,,True,eba
 5_period_length,BMPS,2023-12-31,admin_expenses,12,12,0,,,True,eba
+5_period_length,BMPS,2023-12-31,at1_coupons,12,12,0,,,True,report
 5_period_length,BMPS,2023-12-31,depreciation,12,12,0,,,True,eba
 5_period_length,BMPS,2023-12-31,dividend_income,12,12,0,,,True,eba
 5_period_length,BMPS,2023-12-31,exchange_differences,12,12,0,,,True,eba
@@ -14897,6 +14935,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,BMPS,2023-12-31,resolution_dgs_contrib,12,12,0,,,True,eba
 5_period_length,BMPS,2023-12-31,total_operating_income,12,12,0,,,True,eba
 5_period_length,BMPS,2024-06-30,admin_expenses,6,6,0,,,True,eba
+5_period_length,BMPS,2024-06-30,at1_coupons,6,6,0,,,True,report
 5_period_length,BMPS,2024-06-30,depreciation,6,6,0,,,True,eba
 5_period_length,BMPS,2024-06-30,dividend_income,6,6,0,,,True,eba
 5_period_length,BMPS,2024-06-30,exchange_differences,6,6,0,,,True,eba
@@ -14918,6 +14957,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,BMPS,2024-06-30,total_operating_income,6,6,0,,,True,eba
 5_period_length,BMPS,2024-12-31,admin_expenses,12,12,0,,,True,eba
 5_period_length,BMPS,2024-12-31,admin_expenses,12,12,0,,,True,report
+5_period_length,BMPS,2024-12-31,at1_coupons,12,12,0,,,True,report
 5_period_length,BMPS,2024-12-31,depreciation,12,12,0,,,True,eba
 5_period_length,BMPS,2024-12-31,depreciation,12,12,0,,,True,report
 5_period_length,BMPS,2024-12-31,dividend_income,12,12,0,,,True,eba
@@ -14955,6 +14995,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,BMPS,2024-12-31,total_operating_income,12,12,0,,,True,report
 5_period_length,BMPS,2025-06-30,admin_expenses,6,6,0,,,True,eba
 5_period_length,BMPS,2025-06-30,admin_expenses,6,6,0,,,True,report
+5_period_length,BMPS,2025-06-30,at1_coupons,6,6,0,,,True,report
 5_period_length,BMPS,2025-06-30,depreciation,6,6,0,,,True,eba
 5_period_length,BMPS,2025-06-30,depreciation,6,6,0,,,True,report
 5_period_length,BMPS,2025-06-30,dividend_income,6,6,0,,,True,eba
@@ -14991,6 +15032,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,BMPS,2025-06-30,total_operating_income,6,6,0,,,True,eba
 5_period_length,BMPS,2025-06-30,total_operating_income,6,6,0,,,True,report
 5_period_length,BMPS,2025-12-31,admin_expenses,12,12,0,,,True,report
+5_period_length,BMPS,2025-12-31,at1_coupons,12,12,0,,,True,report
 5_period_length,BMPS,2025-12-31,depreciation,12,12,0,,,True,report
 5_period_length,BMPS,2025-12-31,dividend_income,12,12,0,,,True,report
 5_period_length,BMPS,2025-12-31,gains_derecognition_not_fvtpl,12,12,0,,,True,report
@@ -15009,6 +15051,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,BMPS,2025-12-31,rote_reported,12,12,0,,,True,report
 5_period_length,BMPS,2025-12-31,total_operating_income,12,12,0,,,True,report
 5_period_length,BMPS,2026-06-30,admin_expenses,6,6,0,,,True,report
+5_period_length,BMPS,2026-06-30,at1_coupons,6,6,0,,,True,report
 5_period_length,BMPS,2026-06-30,depreciation,6,6,0,,,True,report
 5_period_length,BMPS,2026-06-30,dividend_income,6,6,0,,,True,report
 5_period_length,BMPS,2026-06-30,gains_derecognition_not_fvtpl,6,6,0,,,True,report
@@ -18682,6 +18725,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 5_period_length,NDA,2025-12-31,resolution_dgs_contrib,12,12,0,,,True,report
 5_period_length,NDA,2025-12-31,total_operating_income,12,12,0,,,True,report
 5_period_length,NDA,2026-06-30,admin_expenses,6,6,0,,,True,report
+5_period_length,NDA,2026-06-30,at1_coupons,6,6,0,,,True,report
 5_period_length,NDA,2026-06-30,depreciation,6,6,0,,,True,report
 5_period_length,NDA,2026-06-30,gains_held_for_trading,6,6,0,,,True,report
 5_period_length,NDA,2026-06-30,impairments_fin,6,6,0,,,True,report

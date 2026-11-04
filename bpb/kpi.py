@@ -36,9 +36,10 @@ OK = "ok"
 # instruction 02b: dep_in_admin (B.5), toi_summed (B.8), from_comparative (B.9); instruction 03 A.1 item 2:
 # p3_from_report. A status of several of these is joined with ";".
 # instruction 03b: at1_liability (B.2), at1_net_of_tax (B.3), headcount (B.4), no_nci_line (B.5); instruction 03c:
-# coupon_in_pl (B.1), class_from_annual (B.4)
+# coupon_in_pl (B.1), class_from_annual (B.4); instruction 04 A.1: no_at1_coupon
 USABLE = (OK, "fx_combined", "levies_in_admin", "dep_in_admin", "toi_summed", "from_comparative", "p3_from_report",
-          "at1_liability", "at1_net_of_tax", "headcount", "no_nci_line", "coupon_in_pl", "class_from_annual")
+          "at1_liability", "at1_net_of_tax", "headcount", "no_nci_line", "coupon_in_pl", "class_from_annual",
+          "no_at1_coupon")
 # instruction 03c B.1: (flag field, flag value, field set to 0, status); where the bond sits and where its coupon is
 # charged are separate questions
 AT1_RULES = [("at1_in_equity", 0.0, "at1_instruments", "at1_liability"),

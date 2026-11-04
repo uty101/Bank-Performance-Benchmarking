@@ -45,7 +45,7 @@ fields:
   - {field: nsfr, kind: ratio, period: bs, meaning: "as reported in KM1 (p3 and report families only)"}
   # instruction 03 B.1: report family, entered from annual and half year reports (Section 3)
   - {field: minority_interests, kind: amount, period: bs, meaning: "non controlling interests in equity, as printed on the balance sheet"}
-  - {field: at1_coupons, kind: amount, period: pl, meaning: "the AT1 coupons charged directly to equity or reserves in the period, year to date, entered positive; statement of changes in equity or the EPS note (instruction 03c B.1); 0 where at1_coupon_in_pl is 1"}
+  - {field: at1_coupons, kind: amount, period: pl, meaning: "the AT1 coupons charged directly to equity or reserves in the period, year to date, entered positive; statement of changes in equity or the EPS note (instruction 03c B.1); 0 where at1_coupon_in_pl is 1; 0 with status no_at1_coupon where the bank had no AT1 in equity in the period or the coupon line is a dash or nil (instruction 04 A.1)"}
   - {field: shares_out, kind: count, period: bs, meaning: "ordinary shares in issue net of treasury shares at the reference date; the share capital note or the EPS note (the period end number, not the weighted average)"}
   - {field: fte, kind: count, period: bs, meaning: "full time equivalent employees at the reference date; key figures or the notes"}
   - {field: customers, kind: count, period: bs, meaning: "customers at the reference date; key figures, entered only where printed"}
