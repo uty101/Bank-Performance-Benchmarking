@@ -15,6 +15,7 @@ def build(root: Path = ROOT) -> None:
     import yaml
 
     from bpb import valuation as val
+    from bpb.answers import answers
     from bpb.benchmark import benchmark
     from bpb.checks import one_off_provenance, run_checks
     from bpb.config import load_config
@@ -110,7 +111,8 @@ def build(root: Path = ROOT) -> None:
               tables / "lineage.csv")
     write_csv(derived_table(kpi, tree, gaps, drivers, valuation, facts, universe), tables / "lineage_derived.csv")
     publish(root, latest)
-    print("profiles and league tables written", flush=True)
+    write_csv(answers(root), tables / "answers.csv")
+    print("profiles, league tables and answers written", flush=True)
 
 
 def main(argv: list[str] | None = None) -> int:
