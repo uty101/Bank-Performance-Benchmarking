@@ -1,0 +1,32 @@
+rank,bank_id,name,value,verdict,inside_noise,status
+1,BBVA,BBVA,0.0425990172,leading,False,family_switch
+2,SAN,Banco Santander,0.02941174498,leading,False,family_switch
+3,BPE,BPER Banca,0.02685952657,leading,False,family_switch
+4,ISP,Intesa Sanpaolo,0.02594386239,leading,False,family_switch
+5,NWG,NatWest Group,0.02260316152,in_line,True,ok
+6,BMPS,Banca Monte dei Paschi di Siena,0.02207866923,in_line,True,family_switch
+7,BAMI,Banco BPM,0.02093031409,in_line,True,family_switch
+8,LLOY,Lloyds Banking Group,0.02092916006,in_line,True,ok
+9,RABO,Rabobank,0.02028078985,in_line,True,family_switch
+10,CABK,CaixaBank,0.01967379066,in_line,True,family_switch
+11,KBC,KBC Group,0.01915459015,in_line,True,family_switch
+12,SWED,Swedbank,0.01829324677,in_line,False,family_switch
+13,UNI,Unicaja Banco,0.01716005835,lagging,False,short_history
+14,DBK,Deutsche Bank,0.01714835892,lagging,False,family_switch
+15,SANUK,Santander UK Group Holdings,0.01601699194,lagging,False,ok
+16,BNP,BNP Paribas,0.01591931166,lagging,False,family_switch
+17,HSBA,HSBC Holdings,0.01584903017,lagging,False,ok
+18,NDA,Nordea Bank,0.01552698631,lagging,False,family_switch
+19,ABN,ABN AMRO Bank,0.01538519313,lagging,False,family_switch
+20,INGA,ING Groep,0.01503948733,lagging,False,family_switch
+21,SEB,Skandinaviska Enskilda Banken,0.0147409644,lagging,False,family_switch
+22,DANSKE,Danske Bank,0.01422808813,lagging,False,family_switch
+23,GLE,Société Générale,0.01375178732,lagging,False,family_switch
+24,SAB,Banco Sabadell,0.01359364587,lagging,False,family_switch
+25,BARC,Barclays,0.01332287125,lagging,False,ok
+26,CAG,Crédit Agricole Group,0.01314933716,lagging,False,family_switch
+,BKT,Bankinter,,,,mixed_family;short_history
+,CBK,Commerzbank,,,,missing_input:debt_securities;short_history
+,DNB,DNB Bank,,,,missing_input:debt_securities;family_switch
+,SHB,Svenska Handelsbanken,,,,missing_input:debt_securities;family_switch
+,UCG,UniCredit,,,,missing_input:debt_securities;family_switch

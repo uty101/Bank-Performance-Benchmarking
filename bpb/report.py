@@ -1,11 +1,13 @@
-"""Bank profiles (kickoff Section 5.9, instructions 04 B.5 and 05 B.3): 1 A4 page per bank, reportlab with Helvetica.
+"""Bank profiles (kickoff Section 5.9, instructions 04 B.5 and 05 B.3): 1 A4 page per bank, reportlab with Helvetica;
+league tables (instruction 06 B.1).
 
-Reads only outputs/tables. Charts are drawn in memory (amendment 5). `invariant=1` and a PNG with no metadata keep the PDF
+`root` holds outputs/tables, the only results read; the universe and KPI specs come from the repo. Charts are drawn in memory (amendment 5). `invariant=1` and a PNG with no metadata keep the PDF
 byte identical from run to run (rule 9).
 """
 
 from __future__ import annotations
 
+import html
 import io
 from pathlib import Path
 
@@ -23,7 +25,9 @@ from reportlab.pdfgen import canvas
 from reportlab.platypus import Table, TableStyle
 
 from bpb.drivers import DRIVERS, rote_tree
+from bpb.ingest import ROOT
 from bpb.peers import cluster_year
+from bpb.tables import write_csv
 from bpb.valuation import UPLIFT_YEAR
 
 GROUP, BASIS = "cluster", "underlying"  # B.5
@@ -49,6 +53,13 @@ LABELS = {"rote": "RoTE", "roa": "RoA", "ppp_assets": "PPP / assets", "nim": "NI
           "npl_ratio": "NPL ratio", "npl_coverage": "NPL coverage", "cet1_ratio": "CET1 ratio",
           "leverage_ratio": "Leverage ratio", "lcr": "LCR", "nsfr": "NSFR", "income_fte": "Income / FTE",
           "cost_fte": "Cost / FTE", "cost_customer": "Cost / customer"}
+LEAGUE_COLUMNS = ["rank", "bank_id", "name", "value", "verdict", "inside_noise", "status"]
+LEAGUE_DATES = 2  # instruction 06 B.1: the 2 latest dates
+LEAGUE_GROUPS = ["cluster", "market", "universe"]
+LEAGUE_PAGE_GROUPS = ["cluster", "universe"]  # instruction 06 B.1
+PAGE_STYLE = ("body{font-family:Helvetica,Arial,sans-serif;margin:24px;color:#222}table{border-collapse:collapse;"
+              "margin:0 0 24px}th,td{padding:3px 10px;border-bottom:1px solid #ccc;text-align:left;font-size:14px}"
+              "td.n{text-align:right}h2{font-size:17px;margin-bottom:6px}")
 
 
 def _fmt(value: float, unit: str) -> str:
@@ -64,15 +75,18 @@ def _fmt(value: float, unit: str) -> str:
     return f"{value:,.0f}"
 
 
+def ranked_kpis() -> list[dict]:
+    with open(ROOT / "config" / "kpis.yaml", encoding="utf-8") as f:
+        return [k for k in yaml.safe_load(f)["kpis"] if k["direction"] != "context"]
+
+
 def _load(root: Path) -> dict:
     tables = root / "outputs" / "tables"
-    with open(root / "config" / "kpis.yaml", encoding="utf-8") as f:
-        kpis = [k for k in yaml.safe_load(f)["kpis"] if k["direction"] != "context"]
-    return {"kpis": kpis, "bench": pd.read_csv(tables / "bench.csv"), "kpi": pd.read_csv(tables / "kpi.csv"),
+    return {"kpis": ranked_kpis(), "bench": pd.read_csv(tables / "bench.csv"), "kpi": pd.read_csv(tables / "kpi.csv"),
             "peers": pd.read_csv(tables / "peers.csv"), "gaps": pd.read_csv(tables / "gaps.csv"),
             "range": pd.read_csv(tables / "gaps_range.csv"), "drivers": pd.read_csv(tables / "drivers.csv"),
             "fits": pd.read_csv(tables / "valuation_fits.csv"), "valuation": pd.read_csv(tables / "valuation.csv"),
-            "universe": pd.read_csv(root / "data" / "manual" / "universe.csv", dtype=str, keep_default_na=False)}
+            "universe": pd.read_csv(ROOT / "data" / "manual" / "universe.csv", dtype=str, keep_default_na=False)}
 
 
 def _quartile_position(x: np.ndarray, peers: np.ndarray, sign: float) -> np.ndarray:
@@ -119,13 +133,13 @@ def strip_chart(t: dict, bank: str, d: str, width_pt: float, height_pt: float) -
     return buf.getvalue()
 
 
-def waterfall_steps(t: dict, bank: str, d: str) -> tuple[list[tuple[str, float]], float, float, str]:
+def waterfall_steps(t: dict, bank: str, d: str, basis: str = BASIS) -> tuple[list[tuple[str, float]], float, float, str]:
     """(steps, reference RoTE, bank RoTE, status) in points, from the median run (B.3). The reference is every driver and
     OTH/A at the peer median. The steps close on the KPI rote: the Shapley values reach the tree with the bank's OTH/A,
     other_below_line is the move from the reference's OTH/A to the bank's, and minorities_and_at1 takes the tree to the
     KPI."""
     x = t["drivers"]
-    x = x[(x["date"] == d) & (x["bank_id"] == bank) & (x["basis"] == BASIS) & (x["reference"] == REFERENCE)]
+    x = x[(x["date"] == d) & (x["bank_id"] == bank) & (x["basis"] == basis) & (x["reference"] == REFERENCE)]
     x = x.set_index("driver")
     status = str(x["status"].iloc[0])
     if x["shapley_pts"].isna().all() or "rote_blank" in status:
@@ -137,11 +151,11 @@ def waterfall_steps(t: dict, bank: str, d: str) -> tuple[list[tuple[str, float]]
     return steps, start, start + sum(v for _, v in steps), status
 
 
-def waterfall_date(t: dict, bank: str, d: str) -> str | None:
+def waterfall_date(t: dict, bank: str, d: str, basis: str = BASIS) -> str | None:
     """Instruction 06 A.1 item 5: the latest date, up to d, at which the bank has a decomposition."""
     x = t["drivers"]
-    x = x[(x["bank_id"] == bank) & (x["basis"] == BASIS) & (x["reference"] == REFERENCE) & (x["date"] <= d)]
-    return next((on for on in sorted(x["date"].unique(), reverse=True) if waterfall_steps(t, bank, on)[0]), None)
+    x = x[(x["bank_id"] == bank) & (x["basis"] == basis) & (x["reference"] == REFERENCE) & (x["date"] <= d)]
+    return next((on for on in sorted(x["date"].unique(), reverse=True) if waterfall_steps(t, bank, on, basis)[0]), None)
 
 
 def waterfall_chart(steps: list[tuple[str, float]], start: float, end: float, width_pt: float, height_pt: float) -> bytes:
@@ -176,7 +190,7 @@ def waterfall_chart(steps: list[tuple[str, float]], start: float, end: float, wi
     return buf.getvalue()
 
 
-def _blank_words(status: str) -> str:
+def blank_words(status: str) -> str:
     return next((BLANK_WORDS[s] for s in BLANK_WORDS if s in status), f"blank, status {status}.")
 
 
@@ -197,7 +211,7 @@ def _waterfall_panel(c, t: dict, bank: str, d: str, on: str | None, x: float, to
         c.drawString(x + 6, top - 25, f"Points of RoTE against the peer median at {on}, Shapley values")
     else:
         status = waterfall_steps(t, bank, d)[3]
-        _write_lines(c, [f"Not available at any date. At {d}: {_blank_words(status)}"], x + 6, top - 30, w - 12)
+        _write_lines(c, [f"Not available at any date. At {d}: {blank_words(status)}"], x + 6, top - 30, w - 12)
 
 
 def _valuation_panel(c, t: dict, bank: str, x: float, top: float, w: float) -> None:
@@ -213,7 +227,7 @@ def _valuation_panel(c, t: dict, bank: str, x: float, top: float, w: float) -> N
                      f"{r['rote_gap_pts']:.2f} points.")
         lines.append(f"90% interval: {r['uplift_lo']:+.2f}x to {r['uplift_hi']:+.2f}x.")
     else:
-        lines.append(f"Not available: {_blank_words(r.iloc[0]['status'])}")
+        lines.append(f"Not available: {blank_words(r.iloc[0]['status'])}")
     _write_lines(c, lines, x + 6, top - 30, w - 12)
 
 
@@ -237,11 +251,20 @@ def _statuses(t: dict, rows: pd.DataFrame, bank: str, d: str, peer_row: pd.Serie
     return sorted(found - {"ok", "", "not_sized"})
 
 
+def profile_date(t: dict, bank: str, d: str) -> str:
+    """Instruction 06 B.1: d, or the bank's latest date with a ranked KPI value if it has none at d."""
+    k = t["kpi"]
+    names = [s["kpi"] for s in t["kpis"]]
+    held = k[(k["bank_id"] == bank) & k["kpi"].isin(names) & k["value"].notna() & (k["date"] <= d)]["date"]
+    return d if held.empty or held.max() == d else held.max()
+
+
 def build_profile(bank_id: str, date, root: Path, out: Path) -> Path:
     """1 A4 page for a bank at a date (B.5), written to `out`/{bank_id}_{date}.pdf (amendment 5)."""
-    d = str(date)
+    wanted = str(date)
     root = Path(root)
     t = _load(root)
+    d = profile_date(t, bank_id, wanted)
     u = t["universe"].set_index("bank_id").loc[bank_id]
     peer_row = t["peers"][(t["peers"]["year"] == cluster_year(d)) & (t["peers"]["bank_id"] == bank_id)].iloc[0]
     b = t["bench"]
@@ -260,6 +283,9 @@ def build_profile(bank_id: str, date, root: Path, out: Path) -> Path:
     stab = "stability not computed" if pd.isna(peer_row["stability"]) else f"stability {peer_row['stability']:.2f}"
     c.drawString(MARGIN, y, f"Market {u['market']}  |  cluster {int(peer_row['cluster'])} of {int(peer_row['k'])}  |  "
                             f"{stab}  |  as at {d}  |  cluster group, underlying basis")
+    if d != wanted:
+        y -= 11
+        c.drawString(MARGIN, y, f"No KPIs at {wanted}, so this page uses the bank's latest date, {d}.")
     y -= 10
     table_w = 312.0
     data = [["KPI", "Value", "Peer median", "Target", "Pctl", "Verdict"]]
@@ -320,6 +346,64 @@ def build_profile(bank_id: str, date, root: Path, out: Path) -> Path:
     c.showPage()
     c.save()
     return path
+
+
+def league_table(bench: pd.DataFrame, universe: pd.DataFrame, spec: dict, group: str, d: str) -> pd.DataFrame:
+    """Every bank on 1 ranked KPI at a date, best first, with each verdict against the bank's own peers in the group.
+    A blank value keeps its row (Convention 4.9), after the ranked banks and with no rank."""
+    b = bench[(bench["kpi"] == spec["kpi"]) & (bench["group"] == group) & (bench["date"] == d)
+              & (bench["basis"] == BASIS)]
+    b = b.merge(universe[["bank_id", "name"]], on="bank_id", how="left", validate="one_to_one")
+    b = b.sort_values(["value", "bank_id"], ascending=[spec["direction"] != "higher", True], na_position="last")
+    held = int(b["value"].notna().sum())
+    b = b.assign(rank=pd.array(list(range(1, held + 1)) + [pd.NA] * (len(b) - held), dtype="Int64"))
+    return b[LEAGUE_COLUMNS].reset_index(drop=True)
+
+
+def _league_html(spec: dict, tables: list[tuple[str, str, pd.DataFrame]]) -> str:
+    label = html.escape(LABELS[spec["kpi"]])
+    head = (f"<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>{label} league table</title>"
+            f"<style>{PAGE_STYLE}</style></head><body><h1>{label} league table</h1>"
+            "<p>Underlying basis, best first. Each verdict is against the bank's own peers in the group, so a cluster "
+            "table holds banks from every cluster.</p>")
+    parts = [head]
+    for group, d, table in tables:
+        parts.append(f"<h2>{group.capitalize()} group at {d}</h2><table><tr><th>Rank</th><th>Bank</th><th>Value</th>"
+                     "<th>Verdict</th><th>Inside noise</th><th>Status</th></tr>")
+        for r in table.itertuples(index=False):
+            cells = ["" if pd.isna(r.rank) else str(r.rank), html.escape(r.name), _fmt(r.value, spec["unit"]),
+                     "" if pd.isna(r.verdict) else r.verdict, "" if pd.isna(r.inside_noise) else str(r.inside_noise),
+                     "" if pd.isna(r.status) else html.escape(str(r.status))]
+            parts.append(f"<tr><td class=\"n\">{cells[0]}</td><td>{cells[1]}</td><td class=\"n\">{cells[2]}</td>"
+                         + "".join(f"<td>{c}</td>" for c in cells[3:]) + "</tr>")
+        parts.append("</table>")
+    parts.append("</body></html>\n")
+    return "".join(parts)
+
+
+def league_tables(root: Path) -> None:
+    """Instruction 06 B.1: the CSVs of every ranked KPI, group and latest date, and 1 static HTML page per KPI."""
+    t = _load(Path(root))
+    out = Path(root) / "outputs" / "tables"
+    dates = sorted(t["bench"]["date"].unique())[-LEAGUE_DATES:]
+    for spec in t["kpis"]:
+        pages = []
+        for group in LEAGUE_GROUPS:
+            for d in dates:
+                table = league_table(t["bench"], t["universe"], spec, group, d)
+                write_csv(table, out / f"league_{spec['kpi']}_{group}_{d}.csv")
+                if group in LEAGUE_PAGE_GROUPS:
+                    pages.append((group, d, table))
+        (out / f"league_{spec['kpi']}.html").write_bytes(_league_html(spec, pages).encode("utf-8"))
+
+
+def publish(root: Path, latest: str) -> None:
+    """Instruction 06 B.1: a PDF and a PNG for every bank, then the league tables."""
+    root = Path(root)
+    for bank in pd.read_csv(ROOT / "data" / "manual" / "universe.csv", dtype=str)["bank_id"]:
+        pdf = build_profile(bank, latest, root, root / "outputs" / "reports")
+        render_png(pdf, root / "outputs" / "figures" / f"{pdf.stem}.png")
+    league_tables(root)
 
 
 def render_png(pdf: Path, png: Path) -> Path:

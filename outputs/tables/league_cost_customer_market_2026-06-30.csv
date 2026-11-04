@@ -1,0 +1,32 @@
+rank,bank_id,name,value,verdict,inside_noise,status
+1,SAN,Banco Santander,136.3486914,,,too_few_peers;short_history
+2,BBVA,BBVA,187.7415459,,,too_few_peers;short_history
+3,CABK,CaixaBank,313.7320574,,,too_few_peers;short_history
+4,RABO,Rabobank,991.4285714,,,too_few_peers;short_history
+,ABN,ABN AMRO Bank,,,,too_few_peers;short_history
+,BAMI,Banco BPM,,,,too_few_peers;short_history
+,BARC,Barclays,,,,too_few_peers;short_history
+,BKT,Bankinter,,,,too_few_peers;short_history
+,BMPS,Banca Monte dei Paschi di Siena,,,,too_few_peers;short_history
+,BNP,BNP Paribas,,,,too_few_peers;short_history
+,BPE,BPER Banca,,,,too_few_peers;short_history
+,CAG,Crédit Agricole Group,,,,too_few_peers;short_history
+,CBK,Commerzbank,,,,too_few_peers;short_history
+,DANSKE,Danske Bank,,,,too_few_peers;short_history
+,DBK,Deutsche Bank,,,,too_few_peers;short_history
+,DNB,DNB Bank,,,,too_few_peers;short_history
+,GLE,Société Générale,,,,too_few_peers;short_history
+,HSBA,HSBC Holdings,,,,too_few_peers;short_history
+,INGA,ING Groep,,,,too_few_peers;short_history
+,ISP,Intesa Sanpaolo,,,,too_few_peers;short_history
+,KBC,KBC Group,,,,too_few_peers;short_history
+,LLOY,Lloyds Banking Group,,,,too_few_peers;short_history
+,NDA,Nordea Bank,,,,too_few_peers;short_history
+,NWG,NatWest Group,,,,too_few_peers;short_history
+,SAB,Banco Sabadell,,,,too_few_peers;short_history
+,SANUK,Santander UK Group Holdings,,,,too_few_peers;short_history
+,SEB,Skandinaviska Enskilda Banken,,,,too_few_peers;short_history
+,SHB,Svenska Handelsbanken,,,,too_few_peers;short_history
+,SWED,Swedbank,,,,too_few_peers;short_history
+,UCG,UniCredit,,,,too_few_peers;short_history
+,UNI,Unicaja Banco,,,,too_few_peers;short_history

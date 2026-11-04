@@ -1,0 +1,32 @@
+rank,bank_id,name,value,verdict,inside_noise,status
+1,UNI,Unicaja Banco,2.92,leading,False,short_history
+2,CABK,CaixaBank,2.003,leading,False,short_history
+3,BKT,Bankinter,1.9736,leading,False,short_history
+4,SHB,Svenska Handelsbanken,1.907,leading,False,short_history
+5,SAB,Banco Sabadell,1.74,in_line,True,short_history
+6,RABO,Rabobank,1.7354,in_line,True,short_history
+7,BARC,Barclays,1.7,in_line,True,ok
+8,DANSKE,Danske Bank,1.7,in_line,True,short_history
+9,BPE,BPER Banca,1.69547,in_line,True,short_history
+10,SANUK,Santander UK Group Holdings,1.66,in_line,True,ok
+11,SWED,Swedbank,1.6514,in_line,True,short_history
+12,BMPS,Banca Monte dei Paschi di Siena,1.596805,in_line,False,short_history
+13,KBC,KBC Group,1.592957196,in_line,False,short_history
+14,NDA,Nordea Bank,1.58,in_line,False,short_history
+15,ABN,ABN AMRO Bank,1.53,in_line,False,short_history
+16,SEB,Skandinaviska Enskilda Banken,1.5,lagging,False,short_history
+17,GLE,Société Générale,1.4826,lagging,False,short_history
+18,NWG,NatWest Group,1.47,lagging,False,ok
+19,SAN,Banco Santander,1.47,lagging,False,short_history
+20,BAMI,Banco BPM,1.4625,lagging,False,short_history
+21,LLOY,Lloyds Banking Group,1.45,lagging,False,ok
+22,CBK,Commerzbank,1.428,lagging,False,short_history
+23,UCG,UniCredit,1.42,lagging,False,short_history
+24,BBVA,BBVA,1.4008,lagging,False,short_history
+25,INGA,ING Groep,1.4,lagging,False,short_history
+26,ISP,Intesa Sanpaolo,1.396,lagging,False,short_history
+27,DBK,Deutsche Bank,1.3722,lagging,False,short_history
+28,HSBA,HSBC Holdings,1.37,lagging,False,ok
+29,CAG,Crédit Agricole Group,1.358,lagging,False,short_history
+30,DNB,DNB Bank,1.350658,lagging,False,short_history
+31,BNP,BNP Paribas,1.3453,lagging,False,short_history

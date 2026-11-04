@@ -1,0 +1,32 @@
+rank,bank_id,name,value,verdict,inside_noise,status
+1,BBVA,BBVA,113256.1539,leading,False,short_history
+2,SAN,Banco Santander,121982.6437,leading,False,short_history
+3,SAB,Banco Sabadell,122035.5153,leading,False,short_history
+4,KBC,KBC Group,124031.0078,leading,False,short_history
+5,CABK,CaixaBank,137758.4985,in_line,True,short_history
+6,BMPS,Banca Monte dei Paschi di Siena,139793.3825,in_line,True,short_history
+7,HSBA,HSBC Holdings,141013.8527,in_line,True,ok
+8,ISP,Intesa Sanpaolo,141781.6745,in_line,True,short_history
+9,SWED,Swedbank,144094.9245,in_line,True,short_history
+10,CAG,Crédit Agricole Group,148266.4284,in_line,True,short_history
+11,NWG,NatWest Group,160213.5032,in_line,False,ok
+12,BKT,Bankinter,164852.3877,in_line,False,short_history
+13,BAMI,Banco BPM,168619.5703,in_line,False,short_history
+14,BNP,BNP Paribas,171468.6889,lagging,False,short_history
+15,UCG,UniCredit,172347.2669,lagging,False,short_history
+16,DANSKE,Danske Bank,173416.6178,lagging,False,short_history
+17,SANUK,Santander UK Group Holdings,174302.8211,lagging,False,ok
+18,BPE,BPER Banca,175556.2525,lagging,False,short_history
+19,CBK,Commerzbank,175903.2785,lagging,False,short_history
+20,RABO,Rabobank,182551.2444,lagging,False,short_history
+21,NDA,Nordea Bank,182768.0655,lagging,False,short_history
+22,INGA,ING Groep,196275.3845,lagging,False,short_history
+23,SHB,Svenska Handelsbanken,200314.8898,lagging,False,short_history
+24,BARC,Barclays,217779.0287,lagging,False,ok
+25,DBK,Deutsche Bank,226140.1087,lagging,False,short_history
+26,LLOY,Lloyds Banking Group,227753.2502,lagging,False,ok
+27,ABN,ABN AMRO Bank,245044.5657,lagging,False,short_history
+28,DNB,DNB Bank,274564.555,lagging,False,short_history
+,GLE,Société Générale,,,,missing_input:fte;short_history
+,SEB,Skandinaviska Enskilda Banken,,,,missing_input:fte;short_history
+,UNI,Unicaja Banco,,,,missing_input:fte;short_history

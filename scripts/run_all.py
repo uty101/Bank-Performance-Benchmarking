@@ -3,9 +3,9 @@
 Section 3: data/processed/facts.parquet (eba, report and p3 rows), outputs/tables/kpi.csv (every bank, 2021-12-31 to
 2026-06-30, reported and underlying) and outputs/tables/checks.csv (checks 1 to 9; check 9 on EBA rows; check 1 also
 on one_offs.csv rows, whose failures are left out of the underlying basis). Section 4: outputs/tables/peers.csv,
-bench.csv, gaps.csv, gaps_joint.csv, gaps_range.csv, and the profiles of the hand check banks. Section 5:
+bench.csv, gaps.csv, gaps_joint.csv, gaps_range.csv. Section 5:
 outputs/tables/drivers.csv, yoy.csv, valuation_fits.csv, valuation_stability.csv, valuation.csv, the valuation figures,
-and spec_log.csv, rewritten with 1 row per fit.
+and spec_log.csv, rewritten with 1 row per fit. Section 6: every profile and the league tables.
 usage: python scripts/run_all.py
 """
 
@@ -29,7 +29,7 @@ from bpb.ingest import build_facts, read_manifest, read_universe, report_p3_fact
 from bpb.kpi import compute_kpis
 from bpb.market import load_prices
 from bpb.peers import peer_groups
-from bpb.report import build_profile, render_png
+from bpb.report import publish
 from bpb.tables import write_csv
 from bpb.valuation import (
     FITS_COLUMNS,
@@ -105,9 +105,7 @@ def main() -> int:
     joint = pd.read_csv(root / "outputs" / "tables" / "gaps_joint.csv")
     write_csv(uplift(joint, fits_table, pooled, prices), root / "outputs" / "tables" / "valuation.csv")
     print(f"valuation {len(frame)} rows")
-    for bank in cfg.gaps.hand_check_banks:  # instruction 04 step 4.4: the first profiles
-        pdf = build_profile(bank, KPI_LAST, root, root / "outputs" / "reports")
-        render_png(pdf, root / "outputs" / "figures" / f"{pdf.stem}.png")
+    publish(root, KPI_LAST)
     return 0
 
 

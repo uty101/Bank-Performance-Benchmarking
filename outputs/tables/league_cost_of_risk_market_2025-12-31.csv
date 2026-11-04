@@ -1,0 +1,32 @@
+rank,bank_id,name,value,verdict,inside_noise,status
+1,SHB,Svenska Handelsbanken,-0.0001369881899,leading,False,family_switch
+2,SWED,Swedbank,-1.828048392e-05,in_line,True,family_switch
+3,NDA,Nordea Bank,6.170662906e-05,in_line,True,family_switch
+4,ABN,ABN AMRO Bank,7.080172331e-05,,,too_few_peers;family_switch
+5,DANSKE,Danske Bank,0.000143026509,in_line,True,family_switch
+6,SEB,Skandinaviska Enskilda Banken,0.0007642065026,lagging,False,family_switch
+7,SANUK,Santander UK Group Holdings,0.0008897514919,leading,False,ok
+8,UCG,UniCredit,0.001159570706,leading,False,family_switch
+9,DNB,DNB Bank,0.001186322291,lagging,False,family_switch
+10,KBC,KBC Group,0.001346750709,,,too_few_peers;family_switch
+11,LLOY,Lloyds Banking Group,0.001536935756,in_line,True,ok
+12,RABO,Rabobank,0.001603489058,,,too_few_peers;family_switch
+13,NWG,NatWest Group,0.00161595825,in_line,True,ok
+14,INGA,ING Groep,0.001728883491,,,too_few_peers;family_switch
+15,DBK,Deutsche Bank,0.002494760564,,,too_few_peers;family_switch
+16,CABK,CaixaBank,0.002526344231,leading,False,family_switch
+17,UNI,Unicaja Banco,0.002528830799,leading,False,family_switch
+18,CAG,Crédit Agricole Group,0.002835513908,,,too_few_peers;family_switch
+19,GLE,Société Générale,0.003082394041,,,too_few_peers;family_switch
+20,HSBA,HSBC Holdings,0.003215568362,lagging,False,ok
+21,SAB,Banco Sabadell,0.003412256333,in_line,True,family_switch
+22,BAMI,Banco BPM,0.003551138223,in_line,True,family_switch
+23,BNP,BNP Paribas,0.003607653179,,,too_few_peers;family_switch
+24,BARC,Barclays,0.00377899433,lagging,False,ok
+25,BPE,BPER Banca,0.004167226507,in_line,True,family_switch
+26,ISP,Intesa Sanpaolo,0.004333289444,in_line,True,family_switch
+27,BMPS,Banca Monte dei Paschi di Siena,0.007294874636,lagging,False,family_switch
+28,SAN,Banco Santander,0.01158602062,lagging,False,family_switch
+29,BBVA,BBVA,0.01352990648,lagging,False,family_switch
+,BKT,Bankinter,,,,missing_input:loans_customers_gross;short_history
+,CBK,Commerzbank,,,,too_few_peers;short_history

@@ -1,0 +1,32 @@
+rank,bank_id,name,value,verdict,inside_noise,status
+1,UNI,Unicaja Banco,1.521009118,leading,False,short_history
+2,BKT,Bankinter,1.4911,leading,False,short_history
+3,CABK,CaixaBank,1.43406,leading,False,short_history
+4,HSBA,HSBC Holdings,1.4,leading,False,ok
+5,ABN,ABN AMRO Bank,1.38,in_line,True,short_history
+6,SANUK,Santander UK Group Holdings,1.37,in_line,True,ok
+7,BARC,Barclays,1.358,in_line,True,ok
+8,KBC,KBC Group,1.328586033,in_line,True,short_history
+9,BPE,BPER Banca,1.32218,in_line,True,short_history
+10,NWG,NatWest Group,1.32,in_line,True,ok
+11,SAB,Banco Sabadell,1.3104,in_line,True,short_history
+12,RABO,Rabobank,1.3023,in_line,True,short_history
+13,INGA,ING Groep,1.28,in_line,False,short_history
+14,BBVA,BBVA,1.25,lagging,False,short_history
+15,SAN,Banco Santander,1.24,lagging,False,short_history
+16,BAMI,Banco BPM,1.2338,lagging,False,short_history
+17,LLOY,Lloyds Banking Group,1.23,lagging,False,ok
+18,BMPS,Banca Monte dei Paschi di Siena,1.222978,lagging,False,short_history
+19,SHB,Svenska Handelsbanken,1.22,lagging,False,short_history
+20,DANSKE,Danske Bank,1.216756,lagging,False,short_history
+21,SWED,Swedbank,1.216,lagging,False,short_history
+22,NDA,Nordea Bank,1.206,lagging,False,short_history
+23,ISP,Intesa Sanpaolo,1.198,lagging,False,short_history
+24,CAG,Crédit Agricole Group,1.197,lagging,False,short_history
+25,DBK,Deutsche Bank,1.1805,lagging,False,short_history
+26,DNB,DNB Bank,1.16,lagging,False,short_history
+27,GLE,Société Générale,1.1494,lagging,False,short_history
+28,SEB,Skandinaviska Enskilda Banken,1.0998,lagging,False,short_history
+29,BNP,BNP Paribas,1.0863,lagging,False,short_history
+,CBK,Commerzbank,,,,missing_input:nsfr;short_history
+,UCG,UniCredit,,,,missing_input:nsfr;short_history

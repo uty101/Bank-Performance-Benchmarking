@@ -1,0 +1,32 @@
+rank,bank_id,name,value,verdict,inside_noise,status
+1,BBVA,BBVA,122954.3855,leading,False,short_history
+2,SAB,Banco Sabadell,123076.9184,leading,False,short_history
+3,SAN,Banco Santander,127728.0556,leading,False,short_history
+4,CABK,CaixaBank,139164.2082,in_line,True,short_history
+5,HSBA,HSBC Holdings,140818.859,,,too_few_peers;short_history
+6,ISP,Intesa Sanpaolo,146472.1216,in_line,True,short_history
+7,SWED,Swedbank,155920.9275,in_line,True,short_history
+8,NWG,NatWest Group,159027.5345,in_line,True,short_history
+9,BAMI,Banco BPM,162103.0771,in_line,False,short_history
+10,BKT,Bankinter,167418.6081,lagging,False,short_history
+11,SEB,Skandinaviska Enskilda Banken,170364.7102,lagging,False,short_history
+12,UCG,UniCredit,174097.4127,lagging,False,short_history
+13,DANSKE,Danske Bank,176163.3501,lagging,False,short_history
+14,RABO,Rabobank,186176.0852,lagging,False,short_history
+15,NDA,Nordea Bank,187311.1782,lagging,False,short_history
+16,BMPS,Banca Monte dei Paschi di Siena,188198.2315,lagging,False,short_history
+17,BPE,BPER Banca,197228.4219,lagging,False,short_history
+18,DBK,Deutsche Bank,230308.9837,,,too_few_peers;short_history
+19,ABN,ABN AMRO Bank,244870.8585,lagging,False,short_history
+,BARC,Barclays,,,,too_few_peers;short_history
+,BNP,BNP Paribas,,,,too_few_peers;short_history
+,CAG,Crédit Agricole Group,,,,missing_input:fte;short_history
+,CBK,Commerzbank,,,,missing_input:fte;short_history
+,DNB,DNB Bank,,,,missing_input:fte;short_history
+,GLE,Société Générale,,,,too_few_peers;short_history
+,INGA,ING Groep,,,,missing_input:fte;short_history
+,KBC,KBC Group,,,,missing_input:fte;short_history
+,LLOY,Lloyds Banking Group,,,,missing_input:fte;short_history
+,SANUK,Santander UK Group Holdings,,,,missing_input:fte;short_history
+,SHB,Svenska Handelsbanken,,,,missing_input:fte;short_history
+,UNI,Unicaja Banco,,,,missing_input:fte;short_history

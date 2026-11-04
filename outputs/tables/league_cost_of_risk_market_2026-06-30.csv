@@ -1,0 +1,32 @@
+rank,bank_id,name,value,verdict,inside_noise,status
+1,NDA,Nordea Bank,-2.295292212e-05,,,too_few_peers;family_switch
+2,DANSKE,Danske Bank,0.0001400599426,,,too_few_peers;family_switch
+3,SWED,Swedbank,0.0002289963155,,,too_few_peers;family_switch
+4,ABN,ABN AMRO Bank,0.0003712444645,,,too_few_peers;family_switch
+5,SEB,Skandinaviska Enskilda Banken,0.0007036310438,,,too_few_peers;family_switch
+6,SANUK,Santander UK Group Holdings,0.001560288525,leading,False,ok
+7,KBC,KBC Group,0.00162481554,,,too_few_peers;family_switch
+8,NWG,NatWest Group,0.001645158682,in_line,True,ok
+9,INGA,ING Groep,0.001662582979,,,too_few_peers;family_switch
+10,LLOY,Lloyds Banking Group,0.001840850933,in_line,True,ok
+11,UNI,Unicaja Banco,0.002121885278,leading,False,family_switch
+12,RABO,Rabobank,0.002418886012,,,too_few_peers;family_switch
+13,CABK,CaixaBank,0.002442498361,in_line,True,family_switch
+14,DBK,Deutsche Bank,0.002519171429,,,too_few_peers;family_switch
+15,CAG,Crédit Agricole Group,0.00299177928,,,too_few_peers;family_switch
+16,GLE,Société Générale,0.003168619227,,,too_few_peers;family_switch
+17,HSBA,HSBC Holdings,0.003362789964,lagging,False,ok
+18,BAMI,Banco BPM,0.003430202929,,,too_few_peers;family_switch
+19,SAB,Banco Sabadell,0.003565857205,in_line,True,family_switch
+20,BNP,BNP Paribas,0.00378086044,,,too_few_peers;family_switch
+21,BARC,Barclays,0.003839724128,lagging,False,ok
+22,ISP,Intesa Sanpaolo,0.004078325298,,,too_few_peers;family_switch
+23,BPE,BPER Banca,0.004189109199,,,too_few_peers;family_switch
+24,BMPS,Banca Monte dei Paschi di Siena,0.008262319825,,,too_few_peers;family_switch
+25,SAN,Banco Santander,0.01183537615,lagging,False,family_switch
+26,BBVA,BBVA,0.01415280624,lagging,False,family_switch
+,BKT,Bankinter,,,,mixed_family;short_history
+,CBK,Commerzbank,,,,too_few_peers;short_history
+,DNB,DNB Bank,,,,missing_input:loans_customers_gross;family_switch
+,SHB,Svenska Handelsbanken,,,,missing_input:loans_customers_gross;family_switch
+,UCG,UniCredit,,,,missing_input:loans_customers_gross;family_switch

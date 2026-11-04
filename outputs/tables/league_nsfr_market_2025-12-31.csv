@@ -1,0 +1,32 @@
+rank,bank_id,name,value,verdict,inside_noise,status
+1,UNI,Unicaja Banco,1.6,leading,False,short_history
+2,BKT,Bankinter,1.5294,in_line,True,short_history
+3,CABK,CaixaBank,1.4567,in_line,True,short_history
+4,HSBA,HSBC Holdings,1.43,leading,False,ok
+5,ABN,ABN AMRO Bank,1.41,,,too_few_peers;short_history
+6,SAB,Banco Sabadell,1.39,in_line,True,short_history
+7,KBC,KBC Group,1.375414617,,,too_few_peers;short_history
+8,BARC,Barclays,1.352,in_line,True,ok
+9,NWG,NatWest Group,1.35,in_line,True,ok
+10,SANUK,Santander UK Group Holdings,1.35,in_line,True,ok
+11,RABO,Rabobank,1.3498,,,too_few_peers;short_history
+12,BPE,BPER Banca,1.34424,leading,False,short_history
+13,INGA,ING Groep,1.28,,,too_few_peers;short_history
+14,BAMI,Banco BPM,1.2702,in_line,True,short_history
+15,BBVA,BBVA,1.2637,lagging,False,short_history
+16,SAN,Banco Santander,1.26,lagging,False,short_history
+17,UCG,UniCredit,1.25,in_line,True,short_history
+18,LLOY,Lloyds Banking Group,1.24,lagging,False,ok
+19,SWED,Swedbank,1.2395,leading,False,short_history
+20,NDA,Nordea Bank,1.237,leading,False,short_history
+21,ISP,Intesa Sanpaolo,1.22,lagging,False,short_history
+22,BMPS,Banca Monte dei Paschi di Siena,1.207723,lagging,False,short_history
+23,DANSKE,Danske Bank,1.20505,in_line,True,short_history
+24,SHB,Svenska Handelsbanken,1.191,in_line,True,short_history
+25,CAG,Crédit Agricole Group,1.1909,,,too_few_peers;short_history
+26,DBK,Deutsche Bank,1.1909,,,too_few_peers;short_history
+27,GLE,Société Générale,1.1633,,,too_few_peers;short_history
+28,SEB,Skandinaviska Enskilda Banken,1.13,lagging,False,short_history
+29,DNB,DNB Bank,1.12677512,lagging,False,short_history
+30,BNP,BNP Paribas,1.0829,,,too_few_peers;short_history
+,CBK,Commerzbank,,,,too_few_peers;short_history

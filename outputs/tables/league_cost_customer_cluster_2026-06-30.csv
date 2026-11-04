@@ -1,0 +1,32 @@
+rank,bank_id,name,value,verdict,inside_noise,status
+1,SAN,Banco Santander,136.3486914,,,too_few_peers;short_history
+2,BBVA,BBVA,187.7415459,,,too_few_peers;short_history
+3,CABK,CaixaBank,313.7320574,,,too_few_peers;short_history
+4,RABO,Rabobank,991.4285714,,,too_few_peers;short_history
+,ABN,ABN AMRO Bank,,,,missing_input:customers;short_history
+,BAMI,Banco BPM,,,,missing_input:customers;short_history
+,BARC,Barclays,,,,too_few_peers;short_history
+,BKT,Bankinter,,,,missing_input:customers;short_history
+,BMPS,Banca Monte dei Paschi di Siena,,,,missing_input:customers;short_history
+,BNP,BNP Paribas,,,,too_few_peers;short_history
+,BPE,BPER Banca,,,,missing_input:customers;short_history
+,CAG,Crédit Agricole Group,,,,missing_input:customers;short_history
+,CBK,Commerzbank,,,,missing_input:customers;short_history
+,DANSKE,Danske Bank,,,,missing_input:customers;short_history
+,DBK,Deutsche Bank,,,,too_few_peers;short_history
+,DNB,DNB Bank,,,,missing_input:customers;short_history
+,GLE,Société Générale,,,,too_few_peers;short_history
+,HSBA,HSBC Holdings,,,,too_few_peers;short_history
+,INGA,ING Groep,,,,missing_input:customers;short_history
+,ISP,Intesa Sanpaolo,,,,missing_input:customers;short_history
+,KBC,KBC Group,,,,missing_input:customers;short_history
+,LLOY,Lloyds Banking Group,,,,missing_input:customers;short_history
+,NDA,Nordea Bank,,,,missing_input:customers;short_history
+,NWG,NatWest Group,,,,missing_input:customers;short_history
+,SAB,Banco Sabadell,,,,missing_input:customers;short_history
+,SANUK,Santander UK Group Holdings,,,,missing_input:customers;short_history
+,SEB,Skandinaviska Enskilda Banken,,,,missing_input:customers;short_history
+,SHB,Svenska Handelsbanken,,,,missing_input:customers;short_history
+,SWED,Swedbank,,,,missing_input:customers;short_history
+,UCG,UniCredit,,,,missing_input:customers;short_history
+,UNI,Unicaja Banco,,,,missing_input:customers;short_history

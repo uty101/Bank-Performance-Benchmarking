@@ -1,0 +1,32 @@
+rank,bank_id,name,value,verdict,inside_noise,status
+1,BBVA,BBVA,0.04109412321,,,too_few_peers;family_switch
+2,SAN,Banco Santander,0.02869437154,,,too_few_peers;family_switch
+3,ISP,Intesa Sanpaolo,0.02666422257,leading,False,family_switch
+4,BPE,BPER Banca,0.0242252867,in_line,True,family_switch
+5,NWG,NatWest Group,0.02218091912,leading,False,ok
+6,BAMI,Banco BPM,0.02141049959,in_line,True,family_switch
+7,DNB,DNB Bank,0.02123436344,leading,False,family_switch
+8,LLOY,Lloyds Banking Group,0.02058388133,in_line,True,ok
+9,UCG,UniCredit,0.02045819877,lagging,False,family_switch
+10,CABK,CaixaBank,0.02041271132,,,too_few_peers;family_switch
+11,RABO,Rabobank,0.01986197081,,,too_few_peers;family_switch
+12,SWED,Swedbank,0.01882342473,in_line,True,family_switch
+13,KBC,KBC Group,0.01824133727,,,too_few_peers;family_switch
+14,SAB,Banco Sabadell,0.0174667064,,,too_few_peers;family_switch
+15,BMPS,Banca Monte dei Paschi di Siena,0.01696057743,lagging,False,family_switch
+16,SANUK,Santander UK Group Holdings,0.01674351345,in_line,True,ok
+17,SEB,Skandinaviska Enskilda Banken,0.01657207591,in_line,True,family_switch
+18,DBK,Deutsche Bank,0.01629762193,,,too_few_peers;family_switch
+19,NDA,Nordea Bank,0.01620210241,in_line,True,family_switch
+20,HSBA,HSBC Holdings,0.01617824056,lagging,False,ok
+21,ABN,ABN AMRO Bank,0.01608102185,,,too_few_peers;family_switch
+22,BNP,BNP Paribas,0.01542447496,,,too_few_peers;family_switch
+23,INGA,ING Groep,0.01527187654,,,too_few_peers;family_switch
+24,SHB,Svenska Handelsbanken,0.01416916367,lagging,False,family_switch
+25,DANSKE,Danske Bank,0.01416693738,lagging,False,family_switch
+26,BARC,Barclays,0.01398467193,lagging,False,ok
+27,GLE,Société Générale,0.01331084234,,,too_few_peers;family_switch
+28,CAG,Crédit Agricole Group,0.01237590207,,,too_few_peers;family_switch
+,BKT,Bankinter,,,,missing_input:debt_securities;short_history
+,CBK,Commerzbank,,,,too_few_peers;short_history
+,UNI,Unicaja Banco,,,,mixed_family;short_history
