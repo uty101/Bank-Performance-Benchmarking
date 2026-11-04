@@ -380,16 +380,16 @@ def report_p3_facts(cfg) -> tuple[pd.DataFrame, pd.DataFrame]:
     return entries_facts(e, man), prov
 
 
-def build_facts(cfg) -> pd.DataFrame:
-    """Loads every source, applies the source map and writes data/processed/facts.parquet: eba rows, and the report
-    and p3 rows of data/manual/report_entries.csv after provenance (Section 2). The scope adjusted gate is
-    informational (instruction 03 A.1 item 1) and blocks no bank."""
+def build_facts(cfg, out_root: Path | None = None) -> pd.DataFrame:
+    """Loads every source, applies the source map and writes data/processed/facts.parquet under `out_root` (the repo by
+    default): eba rows, and the report and p3 rows of data/manual/report_entries.csv after provenance (Section 2). The
+    scope adjusted gate is informational (instruction 03 A.1 item 1) and blocks no bank."""
     kept, _ = eba_facts(cfg)
     rp, _ = report_p3_facts(cfg)
     rp_kept, _ = apply_source_map(rp, read_source_map(cfg.root))
     kept = pd.concat([kept, rp_kept], ignore_index=True) if len(rp_kept) else kept
     kept = kept.sort_values(["bank_id", "ref_date", "field", "family"]).reset_index(drop=True)
-    out = cfg.root / "data" / "processed" / "facts.parquet"
+    out = Path(out_root or cfg.root) / "data" / "processed" / "facts.parquet"
     out.parent.mkdir(parents=True, exist_ok=True)
     kept.to_parquet(out, index=False)
     return kept
