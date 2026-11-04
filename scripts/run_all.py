@@ -2,7 +2,7 @@
 
 Section 3: data/processed/facts.parquet (eba, report and p3 rows), outputs/tables/kpi.csv (every bank, 2021-12-31 to
 2026-06-30, reported and underlying) and outputs/tables/checks.csv (checks 1 to 9; check 9 on EBA rows; check 1 also
-on one_offs.csv rows, whose failures are left out of the underlying basis).
+on one_offs.csv rows, whose failures are left out of the underlying basis). Section 4: outputs/tables/peers.csv.
 usage: python scripts/run_all.py
 """
 
@@ -21,6 +21,7 @@ from bpb.config import load_config
 from bpb.fx import ecb_rates
 from bpb.ingest import build_facts, read_manifest, report_p3_facts
 from bpb.kpi import compute_kpis
+from bpb.peers import peer_groups
 from bpb.tables import write_csv
 
 KPI_LAST = "2026-06-30"  # instruction 02 step 2.5: kpi.csv now runs to 2026-06-30
@@ -46,6 +47,9 @@ def main() -> int:
     checks = run_checks(facts, cfg, pd.concat([prov, oprov], ignore_index=True))
     write_csv(checks, root / "outputs" / "tables" / "checks.csv")
     print(f"facts {len(facts)} rows, kpi {len(kpi)} rows, checks {len(checks)} rows")
+    peers = peer_groups(kpi, facts, cfg)
+    write_csv(peers, root / "outputs" / "tables" / "peers.csv")
+    print(f"peers {len(peers)} rows")
     return 0
 
 

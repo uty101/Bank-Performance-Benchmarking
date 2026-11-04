@@ -20,9 +20,10 @@ from bpb.ingest import read_source_map
 FEATURES = ["ln_assets", "loans_assets", "fee_share", "household_share", "trading_assets", "loan_deposit"]
 PEERS_COLUMNS = ["year", "bank_id", "cluster", "k", "silhouette", "stability", "borderline", "override_reason",
                  "status"]
-FEATURE_BASIS = "reported"  # OPEN-37: the features' KPIs are read on the reported basis
+FEATURE_BASIS = "reported"  # instruction 04b B.2: features describe business mix, not performance
 FIRST_CLUSTER_DATE = "2023-12-31"  # B.1: every date before this uses the 2023 clusters
 LAST_YEARS = 3  # B.1: the 3 fiscal year ends up to and including the year
+MIN_YEARS = 2  # instruction 04b B.2: a feature needs at least 2 of the 3 year ends
 
 
 class StopSection(RuntimeError):
@@ -68,16 +69,31 @@ def _features_at(kpi: pd.DataFrame, facts: pd.DataFrame, d: str, rates: pd.DataF
         "trading_assets": col("trading_assets") / col("total_assets"), "loan_deposit": level["loan_deposit"]})
 
 
+def _year_frames(kpi, facts, year, rates, cfg) -> list[pd.DataFrame]:
+    return [_features_at(kpi, facts, f"{y}-12-31", rates, cfg) for y in range(year - LAST_YEARS + 1, year + 1)]
+
+
+def _config(cfg):
+    if cfg is not None:
+        return cfg
+    from bpb.config import load_config
+    from bpb.ingest import ROOT
+    return load_config(ROOT / "config.toml")
+
+
 def features(kpi: pd.DataFrame, facts: pd.DataFrame, year: int, rates: pd.DataFrame, cfg=None) -> pd.DataFrame:
-    """The 6 features at 31 Dec of `year`, index bank_id. Each is the mean of the bank's values at the 3 fiscal year
-    ends up to and including that year; a value missing at any of the 3 leaves the feature missing (Convention 4.9,
-    OPEN-37)."""
-    if cfg is None:
-        from bpb.config import load_config
-        from bpb.ingest import ROOT
-        cfg = load_config(ROOT / "config.toml")
-    frames = [_features_at(kpi, facts, f"{y}-12-31", rates, cfg) for y in range(year - LAST_YEARS + 1, year + 1)]
-    return (sum(frames) / LAST_YEARS)[FEATURES]
+    """The 6 features at 31 Dec of `year`, index bank_id. Each is the mean of the values present at the 3 fiscal year
+    ends up to and including that year, if at least 2 are present; otherwise it is missing (instruction 04b B.2)."""
+    frames = _year_frames(kpi, facts, year, rates, _config(cfg))
+    present = sum(f.notna().astype(int) for f in frames)
+    mean = sum(f.fillna(0.0) for f in frames) / present.where(present > 0)
+    return mean.where(present >= MIN_YEARS)[FEATURES]
+
+
+def two_of_three(kpi: pd.DataFrame, facts: pd.DataFrame, year: int, rates: pd.DataFrame, cfg=None) -> pd.Series:
+    """True for a bank with a feature built from only 2 of its 3 year ends (status `two_of_three`)."""
+    frames = _year_frames(kpi, facts, year, rates, _config(cfg))
+    return (sum(f.notna().astype(int) for f in frames) == MIN_YEARS).any(axis=1)
 
 
 def _standardise(x: pd.DataFrame) -> pd.DataFrame:
@@ -153,8 +169,8 @@ def _overrides(cfg) -> list[dict]:
         return yaml.safe_load(f) or []
 
 
-def year_groups(feats: pd.DataFrame, year: int, cfg) -> pd.DataFrame:
-    """PEERS rows of one year from its feature table."""
+def year_groups(feats: pd.DataFrame, year: int, cfg, partial: pd.Series | None = None) -> pd.DataFrame:
+    """PEERS rows of one year from its feature table; `partial` marks the banks with status `two_of_three`."""
     full = feats.dropna()
     labels, k, sil = cluster(full, cfg)
     stab = stability(full, k, cfg)
@@ -169,6 +185,8 @@ def year_groups(feats: pd.DataFrame, year: int, cfg) -> pd.DataFrame:
             row.update(cluster=assign_nearest(r, full, labels), status="assigned_nearest")
         else:
             row["status"] = "no_features"
+        if partial is not None and partial.get(bank, False):
+            row["status"] = "two_of_three" if row["status"] == "ok" else f"{row['status']};two_of_three"
         rows.append(row)
     return pd.DataFrame(rows, columns=PEERS_COLUMNS)
 
@@ -178,7 +196,7 @@ def peer_groups(kpi: pd.DataFrame, facts: pd.DataFrame, cfg) -> pd.DataFrame:
     clustering (kickoff Section 5.4)."""
     rates = fx.ecb_rates(cfg.root / "data" / "raw")
     last = max(int(d[:4]) for d in kpi["date"].unique() if d[5:] == "12-31")
-    out = pd.concat([year_groups(features(kpi, facts, y, rates, cfg), y, cfg)
+    out = pd.concat([year_groups(features(kpi, facts, y, rates, cfg), y, cfg, two_of_three(kpi, facts, y, rates, cfg))
                      for y in range(cfg.peers.first_year, last + 1)], ignore_index=True)
     for o in _overrides(cfg):
         hit = (out["year"] == o["year"]) & (out["bank_id"] == o["bank_id"])
