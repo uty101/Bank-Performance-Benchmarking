@@ -137,6 +137,13 @@ def waterfall_steps(t: dict, bank: str, d: str) -> tuple[list[tuple[str, float]]
     return steps, start, start + sum(v for _, v in steps), status
 
 
+def waterfall_date(t: dict, bank: str, d: str) -> str | None:
+    """Instruction 06 A.1 item 5: the latest date, up to d, at which the bank has a decomposition."""
+    x = t["drivers"]
+    x = x[(x["bank_id"] == bank) & (x["basis"] == BASIS) & (x["reference"] == REFERENCE) & (x["date"] <= d)]
+    return next((on for on in sorted(x["date"].unique(), reverse=True) if waterfall_steps(t, bank, on)[0]), None)
+
+
 def waterfall_chart(steps: list[tuple[str, float]], start: float, end: float, width_pt: float, height_pt: float) -> bytes:
     """Horizontal waterfall from the reference RoTE to the bank's; PNG bytes, nothing saved (amendment 5)."""
     labels = ["Reference RoTE", *[s[0] for s in steps], "Bank RoTE"]
@@ -181,15 +188,16 @@ def _write_lines(c, lines: list[str], x: float, y: float, width: float, size: fl
             y -= size + 3
 
 
-def _waterfall_panel(c, t: dict, bank: str, d: str, x: float, top: float, w: float, h: float) -> None:
-    steps, start, end, status = waterfall_steps(t, bank, d)
-    if steps:
+def _waterfall_panel(c, t: dict, bank: str, d: str, on: str | None, x: float, top: float, w: float, h: float) -> None:
+    if on is not None:
+        steps, start, end, _ = waterfall_steps(t, bank, on)
         png = waterfall_chart(steps, start, end, w - 12, h - 34)
         c.drawImage(ImageReader(io.BytesIO(png)), x + 6, top - h + 6, w - 12, h - 34)
         c.setFont(FONT, 6.5)
-        c.drawString(x + 6, top - 25, f"Points of RoTE against the peer median at {d}, Shapley values")
+        c.drawString(x + 6, top - 25, f"Points of RoTE against the peer median at {on}, Shapley values")
     else:
-        _write_lines(c, [f"Not available: {_blank_words(status)}"], x + 6, top - 30, w - 12)
+        status = waterfall_steps(t, bank, d)[3]
+        _write_lines(c, [f"Not available at any date. At {d}: {_blank_words(status)}"], x + 6, top - 30, w - 12)
 
 
 def _valuation_panel(c, t: dict, bank: str, x: float, top: float, w: float) -> None:
@@ -292,13 +300,15 @@ def build_profile(bank_id: str, date, root: Path, out: Path) -> Path:
     y -= 22
     box_w = (w - 2 * MARGIN - 10) / 2
     box_h = BOX_H
-    for i, title in enumerate(("Profitability waterfall", "Valuation uplift")):
+    on = waterfall_date(t, bank_id, d)
+    waterfall_title = "Profitability waterfall" if on is None else f"Profitability waterfall at {on}"
+    for i, title in enumerate((waterfall_title, "Valuation uplift")):
         x = MARGIN + i * (box_w + 10)
         c.setStrokeColor(GRID)
         c.rect(x, y - box_h, box_w, box_h)
         c.setFont(BOLD, 9)
         c.drawString(x + 6, y - 14, title)
-    _waterfall_panel(c, t, bank_id, d, MARGIN, y, box_w, box_h)
+    _waterfall_panel(c, t, bank_id, d, on, MARGIN, y, box_w, box_h)
     _valuation_panel(c, t, bank_id, MARGIN + box_w + 10, y, box_w)
     y -= box_h + 16
     notes = _statuses(t, rows, bank_id, d, peer_row)

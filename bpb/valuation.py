@@ -8,8 +8,7 @@ from __future__ import annotations
 
 import io
 import json
-from datetime import UTC, datetime
-from pathlib import Path
+import subprocess
 
 import matplotlib
 
@@ -28,8 +27,11 @@ from bpb.kpi import compute_kpis
 FITS_COLUMNS = ["year", "n", "alpha", "beta", "beta_se", "gamma", "gamma_se", "r2", "coe_implied", "huber_beta",
                 "cooks_named", "status"]
 VALUATION_COLUMNS = ["date", "bank_id", "price", "price_ccy", "tbvps", "ptbv", "rote_gap_pts", "uplift_ptbv",
-                     "uplift_lo", "uplift_hi", "status"]
-SPEC_COLUMNS = ["run_utc", "spec_id", "description", "params_json", "result_json"]
+                     "uplift_lo", "uplift_hi", "status", "uplift_pooled_ptbv"]
+STABILITY_COLUMNS = ["n", "n_banks", "f_stat", "df_num", "df_denom", "p_value"]
+SPEC_COLUMNS = ["run_utc", "spec_id", "description", "params_json", "result_json", "status"]
+# instruction 06b B.2: run_utc is the committer date of the last commit that touched any of these
+BUILD_INPUTS = ["data/raw", "data/manual", "config", "config.toml", "bpb", "scripts"]
 YEARS = range(2021, 2026)  # B.2: each 31 Dec from 2021 to 2025
 UPLIFT_YEAR = 2025  # B.2: the uplift is computed at 2025-12-31 only
 Z_90 = 1.645  # B.2: lo and hi from beta -/+ 1.645 x beta_se
@@ -113,14 +115,15 @@ def fit_year(df: pd.DataFrame) -> dict:
     res = sm.OLS(s["ptbv"], x).fit(cov_type="HC3")
     n = len(s)
     cooks = dict(zip(s["bank_id"], res.get_influence().cooks_distance[0], strict=True))
-    beta = float(res.params["rote"])
+    beta, se = float(res.params["rote"]), float(res.bse["rote"])
+    not_significant = beta - Z_90 * se <= 0 <= beta + Z_90 * se  # instruction 06 A.1 item 2
     return {"year": int(s["year"].iloc[0]) if "year" in s else np.nan, "n": n, "alpha": float(res.params["const"]),
-            "beta": beta, "beta_se": float(res.bse["rote"]), "gamma": float(res.params["spread"]),
+            "beta": beta, "beta_se": se, "gamma": float(res.params["spread"]),
             "gamma_se": float(res.bse["spread"]), "r2": float(res.rsquared),
-            "coe_implied": cfg.growth + 1 / beta if beta > 0 else np.nan,
+            "coe_implied": cfg.growth + 1 / beta if beta > 0 and not not_significant else np.nan,
             "huber_beta": float(sm.RLM(s["ptbv"], x, M=sm.robust.norms.HuberT()).fit().params["rote"]),
             "cooks_named": ";".join(b for b, c in cooks.items() if c > cfg.cooks_factor / n),
-            "status": "ok" if beta > 0 else "beta_not_positive", "cooks": cooks}
+            "status": "beta_ns_year" if not_significant else "ok" if beta > 0 else "beta_not_positive", "cooks": cooks}
 
 
 def fit_pooled(df: pd.DataFrame) -> dict:
@@ -139,6 +142,23 @@ def fit_pooled(df: pd.DataFrame) -> dict:
             "contains_zero": bool(lo <= 0 <= hi)}
 
 
+def fit_stability(df: pd.DataFrame) -> dict:
+    """Instruction 06 A.1 item 3: the pooled fit with year dummies and rote x year interactions, standard errors
+    clustered by bank, and the Wald F test that the year slopes are equal, so that every interaction is 0."""
+    s = _sample(df)
+    dummies = pd.get_dummies(s["year"], prefix="y", drop_first=True, dtype=float)
+    slopes = dummies.mul(s["rote"], axis=0).add_prefix("rote_")
+    x = sm.add_constant(pd.concat([s[REGRESSORS], dummies, slopes], axis=1))
+    groups = s["bank_id"].astype("category").cat.codes.to_numpy()
+    res = sm.OLS(s["ptbv"], x).fit(cov_type="cluster", cov_kwds={"groups": groups})
+    restrict = np.zeros((slopes.shape[1], x.shape[1]))
+    for i, name in enumerate(slopes.columns):
+        restrict[i, x.columns.get_loc(name)] = 1.0
+    test = res.wald_test(restrict, use_f=True, scalar=True)
+    return {"n": len(s), "n_banks": int(s["bank_id"].nunique()), "f_stat": float(test.statistic),
+            "df_num": int(test.df_num), "df_denom": int(test.df_denom), "p_value": float(test.pvalue)}
+
+
 def uplift(gaps_joint: pd.DataFrame, fits: pd.DataFrame, pooled: dict, ptbv: pd.DataFrame) -> pd.DataFrame:
     """VALUATION: every `ptbv` row; the uplift columns are filled at 2025-12-31 only, from that year's fit and the joint
     RoTE gap of the cluster group on the underlying basis (B.2)."""
@@ -150,7 +170,7 @@ def uplift(gaps_joint: pd.DataFrame, fits: pd.DataFrame, pooled: dict, ptbv: pd.
     for r in ptbv.itertuples(index=False):
         row = {"date": r.date, "bank_id": r.bank_id, "price": r.price, "price_ccy": r.price_ccy, "tbvps": r.tbvps,
                "ptbv": r.ptbv, "rote_gap_pts": np.nan, "uplift_ptbv": np.nan, "uplift_lo": np.nan, "uplift_hi": np.nan,
-               "status": "uplift_2025_only"}
+               "status": "uplift_2025_only", "uplift_pooled_ptbv": np.nan}
         if r.date == date:
             pts = gap.get(r.bank_id, np.nan)
             row["rote_gap_pts"] = pts
@@ -161,19 +181,32 @@ def uplift(gaps_joint: pd.DataFrame, fits: pd.DataFrame, pooled: dict, ptbv: pd.
             else:
                 row.update(uplift_ptbv=fit["beta"] * pts / PCT,
                            uplift_lo=(fit["beta"] - Z_90 * fit["beta_se"]) * pts / PCT,
-                           uplift_hi=(fit["beta"] + Z_90 * fit["beta_se"]) * pts / PCT, status="ok")
+                           uplift_hi=(fit["beta"] + Z_90 * fit["beta_se"]) * pts / PCT, status="ok",
+                           uplift_pooled_ptbv=pooled["beta"] * pts / PCT)
         rows.append(row)
     return pd.DataFrame(rows, columns=VALUATION_COLUMNS)
 
 
-def append_spec_log(path: Path, spec_id: str, description: str, params: dict, result: dict) -> None:
-    """B.2: 1 row per fit, added to outputs/tables/spec_log.csv."""
-    row = pd.DataFrame([{"run_utc": datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"), "spec_id": spec_id,
-                         "description": description, "params_json": json.dumps(params, sort_keys=True),
-                         "result_json": json.dumps(result, sort_keys=True, default=float)}], columns=SPEC_COLUMNS)
-    text = row.to_csv(index=False, header=not Path(path).exists(), lineterminator="\n")
-    with open(path, "ab") as f:
-        f.write(text.encode("utf-8"))
+def inputs_commit_date() -> tuple[str, str]:
+    """(run_utc, status) of a build (instruction 06b B.2): blank with status `no_git` where git cannot answer."""
+    try:
+        done = subprocess.run(["git", "log", "-1", "--format=%cI", "--", *BUILD_INPUTS], cwd=ROOT, capture_output=True,
+                              text=True, check=False)
+    except OSError:
+        return "", "no_git"
+    stamp = done.stdout.strip()
+    return (stamp, "ok") if done.returncode == 0 and stamp else ("", "no_git")
+
+
+def spec_row(spec_id: str, description: str, params: dict, result: dict) -> dict:
+    return {"spec_id": spec_id, "description": description, "params_json": json.dumps(params, sort_keys=True),
+            "result_json": json.dumps(result, sort_keys=True, default=float)}
+
+
+def spec_log(rows: list[dict]) -> pd.DataFrame:
+    """Instruction 06 A.1 item 10: 1 row per fit specification run in this build; the file is rewritten, not added to."""
+    run_utc, status = inputs_commit_date()
+    return pd.DataFrame([{**r, "run_utc": run_utc, "status": status} for r in rows], columns=SPEC_COLUMNS)
 
 
 def _place_labels(ax, xy: np.ndarray, names: list[str]) -> None:

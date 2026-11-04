@@ -5,7 +5,7 @@ import pandas as pd
 
 from bpb.ingest import ROOT, read_universe
 from bpb.market import in_price_ccy
-from bpb.valuation import fit_year, ptbv
+from bpb.valuation import fit_stability, fit_year, ptbv
 
 
 def test_ols_matches_lstsq():
@@ -50,3 +50,28 @@ def test_gbp_pence_in_ptbv():
     row = out[out["date"] == date].iloc[0]
     assert (row["price"], row["price_ccy"], row["tbvps"]) == (5.0, "GBP", 4.0)
     assert abs(row["ptbv"] - 1.25) <= 1e-12
+
+
+def _frame(slopes: dict, seed: int) -> pd.DataFrame:
+    rng = np.random.default_rng(seed)
+    frames = []
+    for year, slope in slopes.items():
+        rote = rng.uniform(0.05, 0.20, 30)
+        spread = rng.normal(0, 0.01, 30)
+        frames.append(pd.DataFrame({"bank_id": [f"B{i:02d}" for i in range(30)], "year": year, "rote": rote,
+                                    "spread": spread, "ptbv": 0.2 + slope * rote + rng.normal(0, 0.05, 30)}))
+    return pd.concat(frames, ignore_index=True)
+
+
+def test_year_not_significant():
+    df = _frame({2021: 0.0}, 5)
+    fit = fit_year(df)
+    assert fit["beta"] - 1.645 * fit["beta_se"] <= 0 <= fit["beta"] + 1.645 * fit["beta_se"]
+    assert fit["status"] == "beta_ns_year" and np.isnan(fit["coe_implied"])
+
+
+def test_stability_separates_slopes():
+    equal = fit_stability(_frame({2021: 5.0, 2022: 5.0, 2023: 5.0}, 6))
+    apart = fit_stability(_frame({2021: 2.0, 2022: 6.0, 2023: 12.0}, 6))
+    assert equal["df_num"] == 2 and equal["n_banks"] == 30
+    assert apart["p_value"] < 0.001 < equal["p_value"]

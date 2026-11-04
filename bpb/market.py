@@ -20,7 +20,18 @@ def in_price_ccy(prices: pd.DataFrame, currency: pd.DataFrame) -> pd.DataFrame:
     return out
 
 
+def unsplit(prices: pd.DataFrame, splits: pd.DataFrame) -> pd.DataFrame:
+    """prices (date, ticker, close) back on the shares of their own date (instruction 06 A.1 item 1): yfinance's Close is
+    adjusted for splits, so the unadjusted close at t is Close(t) x the product of every ratio in `splits` (ticker, date,
+    ratio) dated after t. A consolidation has a ratio below 1."""
+    out = prices.copy()
+    for s in splits.itertuples(index=False):
+        before = (out["ticker"] == s.ticker) & (out["date"] < s.date)
+        out.loc[before, "close"] = out.loc[before, "close"] * s.ratio
+    return out
+
+
 def load_prices(raw_root: Path) -> pd.DataFrame:
     raw = Path(raw_root) / "market"
-    return in_price_ccy(pd.read_parquet(raw / "prices.parquet"),
+    return in_price_ccy(unsplit(pd.read_parquet(raw / "prices.parquet"), pd.read_csv(raw / "splits.csv")),
                         pd.read_csv(raw / "currency.csv", dtype=str, keep_default_na=False))

@@ -521,7 +521,7 @@
       "first_date": null,
       "last_date": null,
       "path": "data/raw/market/currency.csv",
-      "pulled_utc": "2026-11-03T17:19:08Z",
+      "pulled_utc": "2026-11-04T17:52:01Z",
       "rows": 28,
       "sha256": "ecb9dc6cc0f3898116afb1f4bb74bf91ff378647d509c37718b17dbc2fdea31c",
       "url": "yfinance Ticker(t).fast_info['currency']"
@@ -532,10 +532,22 @@
       "first_date": "2020-12-01",
       "last_date": "2026-07-31",
       "path": "data/raw/market/prices.parquet",
-      "pulled_utc": "2026-11-03T17:19:08Z",
+      "pulled_utc": "2026-11-04T17:52:01Z",
       "rows": 40266,
       "sha256": "c6e7b60895836f3f25aa7f0323baf71844b1d5215187e0af89efe1fc26bfb308",
-      "url": "yfinance Ticker(t).history(start=2020-12-01, end=2026-08-01, auto_adjust=False)"
+      "url": "yfinance Ticker(t).history(start=2020-12-01, end=2026-08-01, auto_adjust=False, actions=True)"
+    },
+    {
+      "bytes": 78,
+      "committed": true,
+      "encoding": "utf-8",
+      "first_date": null,
+      "last_date": null,
+      "path": "data/raw/market/splits.csv",
+      "pulled_utc": "2026-11-04T17:52:01Z",
+      "rows": 2,
+      "sha256": "4739b5eb30b328d0b185a45c3aa4fc4959ac4a4e50c12a9239f43ea2dd84763f",
+      "url": "yfinance Ticker(t).history(start=2020-12-01, end=2026-08-01, auto_adjust=False, actions=True)['Stock Splits']"
     },
     {
       "bytes": 3836,

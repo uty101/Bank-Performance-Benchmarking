@@ -306,19 +306,20 @@ MARKET_START, MARKET_END = "2020-12-01", "2026-08-01"  # instruction 03 B.5: to 
 
 def stage_market(cfg: dict) -> None:
     """yfinance daily Close (auto_adjust=False) for every listed ticker to data/raw/market/prices.parquet (date,
-    ticker, close), and each ticker's quote currency (fast_info, else info) to data/raw/market/currency.csv, so the
-    GBp rule (Convention 4.12) is applied from data (instruction 03 B.5)."""
+    ticker, close), each ticker's quote currency (fast_info, else info) to data/raw/market/currency.csv, so the GBp
+    rule (Convention 4.12) is applied from data (instruction 03 B.5), and every non zero `Stock Splits` row to
+    data/raw/market/splits.csv (ticker, date, ratio), since Close is adjusted for them (instruction 06 A.1 item 1)."""
     import pandas as pd
     import yfinance as yf
 
     with open(ROOT / "data" / "manual" / "universe.csv", encoding="utf-8") as f:
         tickers = [r["ticker"] for r in csv.DictReader(f) if r["listed"] == "1" and r["ticker"]]
-    frames, ccys = [], []
+    frames, ccys, splits = [], [], []
     pulled = now_utc()
     for t in tickers:
         print(f"market {t}")
         tk = yf.Ticker(t)
-        h = tk.history(start=MARKET_START, end=MARKET_END, auto_adjust=False)
+        h = tk.history(start=MARKET_START, end=MARKET_END, auto_adjust=False, actions=True)
         if h.empty:
             raise SystemExit(f"data pull failed: no prices for {t}")
         try:
@@ -330,6 +331,8 @@ def stage_market(cfg: dict) -> None:
         dates = pd.DatetimeIndex(h.index).tz_localize(None).normalize().strftime("%Y-%m-%d")
         frames.append(pd.DataFrame({"date": dates, "ticker": t, "close": h["Close"].astype(float).to_numpy()}))
         ccys.append({"ticker": t, "currency": ccy})
+        split = h["Stock Splits"].to_numpy()
+        splits += [{"ticker": t, "date": d, "ratio": repr(float(r))} for d, r in zip(dates, split, strict=True) if r != 0]
     prices = pd.concat(frames, ignore_index=True).sort_values(["ticker", "date"]).reset_index(drop=True)
     dest = RAW / "market" / "prices.parquet"
     dest.parent.mkdir(parents=True, exist_ok=True)
@@ -340,13 +343,23 @@ def stage_market(cfg: dict) -> None:
     w.writeheader()
     w.writerows(ccys)
     cdest.write_bytes(buf.getvalue().encode("utf-8"))
-    entries = [{"path": rel(dest), "committed": True, "url": "yfinance Ticker(t).history(start=" + MARKET_START
-                + ", end=" + MARKET_END + ", auto_adjust=False)", "pulled_utc": pulled, "sha256": sha256_file(dest),
+    sdest = RAW / "market" / "splits.csv"
+    buf = io.StringIO()
+    w = csv.DictWriter(buf, fieldnames=["ticker", "date", "ratio"], lineterminator="\n")
+    w.writeheader()
+    w.writerows(sorted(splits, key=lambda r: (r["ticker"], r["date"])))
+    sdest.write_bytes(buf.getvalue().encode("utf-8"))
+    history = ("yfinance Ticker(t).history(start=" + MARKET_START + ", end=" + MARKET_END
+               + ", auto_adjust=False, actions=True)")
+    entries = [{"path": rel(dest), "committed": True, "url": history, "pulled_utc": pulled, "sha256": sha256_file(dest),
                 "bytes": dest.stat().st_size, "rows": len(prices), "first_date": prices["date"].min(),
                 "last_date": prices["date"].max()},
                {"path": rel(cdest), "committed": True, "url": "yfinance Ticker(t).fast_info['currency']",
                 "pulled_utc": pulled, "sha256": sha256_file(cdest), "bytes": cdest.stat().st_size,
-                "rows": len(ccys), "first_date": None, "last_date": None, "encoding": "utf-8"}]
+                "rows": len(ccys), "first_date": None, "last_date": None, "encoding": "utf-8"},
+               {"path": rel(sdest), "committed": True, "url": history + "['Stock Splits']", "pulled_utc": pulled,
+                "sha256": sha256_file(sdest), "bytes": sdest.stat().st_size, "rows": len(splits), "first_date": None,
+                "last_date": None, "encoding": "utf-8"}]
     write_manifest(entries)
 
 
