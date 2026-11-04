@@ -409,3 +409,24 @@ Raised in session 5 (step 5.3). Instruction 05 B.2 has every fit append a row, a
 
 - (a) `spec_log.csv` is exempt from rule 9 and from the `git status` test of step 6.3, and stays committed.
 - (b) `spec_log.csv` stops being committed (`.gitignore`), so that a run leaves `git status` clean.
+
+## OPEN-42: `test_unsplit` contradicts the formula it tests (blocking, rule 5 stop)
+
+Raised in session 6 (step 6.0). Instruction 06 A.1 item 1 gives the formula: unadjusted price at t = Close(t) × the product of every split ratio dated after t, with a consolidation's ratio below 1. A 1:10 consolidation has ratio 0.1, so the formula puts pre consolidation prices at 1/10 of the adjusted ones. The test it specifies asserts 10 times the adjusted ones. Both cannot hold, and rule 5 forbids rewriting the test. The data support the formula: NWG.L closes at 270.20p on 2022-08-26 and 249.00p on 2022-08-30, the formula gives 250.90p before the consolidation, and the test's direction gives 290.98p. Under the formula NWG's 2021-12-31 price is 2.257. Evidence is in `review/section_6.md`, E1 to E4.
+
+- (a) Keep the formula and change the test to assert pre consolidation unadjusted prices at 1/10 of the adjusted ones.
+- (b) Keep the test as written and change the formula to divide by the ratio. This gives NWG 290.98p on 2022-08-26 and moves prices the wrong way, so it needs a reason the evidence above does not show.
+
+## OPEN-43: `run_utc` as HEAD's committer date cannot leave `git status` empty
+
+Raised in session 6, ahead of step 6.3. Instruction 06 A.1 item 10 sets `run_utc` to the committer date of `HEAD`, and B.3 requires `git status --porcelain` to be empty after `bpb build`. `spec_log.csv` is committed, so it holds the date of the commit before the one that contains it. The next build then writes a new date and the file differs. Every later commit (review, status) moves `HEAD` again, so the final `bpb build` and the PLAN 6.5 comparison on the clone also differ. `test_build_twice_identical` is not affected, because both of its builds share a `HEAD`.
+
+- (a) `run_utc` holds the committer date of the last commit touching the build's inputs: `git log -1 --format=%cI -- bpb config config.toml data/raw data/manual`. Commits of outputs, reviews and status files then leave it unchanged.
+- (b) Keep `HEAD`'s committer date, and exempt `spec_log.csv` from the B.3 `git status` check and the PLAN 6.5 comparison.
+
+## OPEN-44: `test_trace_sample` and the `component` note in snippets
+
+Raised in session 6, ahead of step 6.2. Instruction 06 B.2 asserts that every report locator resolves to a cached page whose text contains the snippet. Amendment 12 puts a `component n/m:` note at the start of the snippet of each summed field's row, and that note is not on the page. Measured over `report_entries.csv`: 6,184 of 10,967 snippets are on their cited page verbatim, 4,783 are not, and all 4,783 are `component` rows that match once the note is dropped and whitespace is normalised. A sample of 20 KPI rows will almost certainly draw some of them.
+
+- (a) The test drops a leading `component n/m:` note and normalises whitespace before the comparison.
+- (b) The test checks `value_as_printed` against the page, as provenance does, not the snippet.
