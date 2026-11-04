@@ -628,318 +628,33 @@ The fresh clone run below is the full suite with sockets disabled.
 
 Clone path `C:/bpbs6c`. The first line below is the commit. Commands: `git clone`, `uv venv --python 3.12`, `uv pip install -r requirements-lock.txt`, `uv pip install -e . --no-deps`, `ruff check .`, `pytest -p socket --disable-socket -q`, `bpb build`, `git status --porcelain`.
 
+**Run 1** (clone, ruff, suite, build, git status). The suite gave 7 errors, all from the shared build fixture: `pandas.errors.ParserError: out of memory`. It ran while my own build in `C:/bpbs6b` and another project's run were using the machine, with 2.4 GB of 15.7 GB free soon after. The build and the empty `git status` at the end of this run are valid. Failure lines only:
+
 ```
 77c368f step 6.5: drop my dashboard test, which needs a socket under rule 7
 All checks passed!
 ruff exit 0
-.....E.........................................EEEE...EE......           [100%]
-=================================== ERRORS ====================================
-________________ ERROR at setup of test_build_twice_identical _________________
+All checks passed!
+ruff exit 0
+ERROR tests/test_build.py::test_build_twice_identical - pandas.errors.ParserE...
+ERROR tests/test_readme.py::test_tables_match - pandas.errors.ParserError: Er...
+ERROR tests/test_readme.py::test_no_dashes - pandas.errors.ParserError: Error...
+ERROR tests/test_readme.py::test_no_banned_words - pandas.errors.ParserError:...
+ERROR tests/test_readme.py::test_answers_cover_every_question - pandas.errors...
+ERROR tests/test_trace.py::test_trace_sample - pandas.errors.ParserError: Err...
+ERROR tests/test_trace.py::test_trace_command - pandas.errors.ParserError: Er...
+55 passed, 130 warnings, 7 errors in 2150.39s (0:35:50)
+pytest exit 1
+build exit 0
+git status after build:
+end of git status
+```
 
-tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000001D5699ADFA0>, _basetemp=WindowsPath('C:/Users/astha/AppData/Local/Temp/pytest-of-astha/pytest-1165'), _retention_count=3, _retention_policy='all')
+**Run 2**, the same clone with nothing else of mine running, full output:
 
-    @pytest.fixture(scope="session")
-    def built(tmp_path_factory):
-        root = tmp_path_factory.mktemp("build")
->       build(root)
-
-tests\conftest.py:11: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-bpb\cli.py:104: in build
-    joint = pd.read_csv(tables / "gaps_joint.csv")
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:1866: in read_csv
-    return _read(filepath_or_buffer, kwds)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:423: in _read
-    parser = TextFileReader(filepath_or_buffer, **kwds)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:2721: in __init__
-    self._engine = self._make_engine(f, self.engine)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:3006: in _make_engine
-    return mapping[engine](f, **self.options)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\c_parser_wrapper.py:107: in __init__
-    self._reader = parsers.TextReader(src, **kwds)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-pandas/_libs/parsers.pyx:724: in pandas._libs.parsers.TextReader.__cinit__
-    ???
-pandas/_libs/parsers.pyx:879: in pandas._libs.parsers.TextReader._get_header
-    ???
-pandas/_libs/parsers.pyx:1149: in pandas._libs.parsers.TextReader._tokenize_rows
-    ???
-pandas/_libs/parsers.pyx:1170: in pandas._libs.parsers.TextReader._check_tokenize_status
-    ???
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
->   ???
-E   pandas.errors.ParserError: Error tokenizing data. C error: out of memory
-
-pandas/_libs/parsers.pyx:4400: ParserError
----------------------------- Captured stdout setup ----------------------------
-facts 27488 rows, kpi 11780 rows, checks 40742 rows
-peers 93 rows, bench 31620 rows
-gaps 5580 rows
-drivers 9920 rows, yoy 992 rows
-_____________________ ERROR at setup of test_tables_match _____________________
-
-tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000001D5699ADFA0>, _basetemp=WindowsPath('C:/Users/astha/AppData/Local/Temp/pytest-of-astha/pytest-1165'), _retention_count=3, _retention_policy='all')
-
-    @pytest.fixture(scope="session")
-    def built(tmp_path_factory):
-        root = tmp_path_factory.mktemp("build")
->       build(root)
-
-tests\conftest.py:11: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-bpb\cli.py:104: in build
-    joint = pd.read_csv(tables / "gaps_joint.csv")
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:1866: in read_csv
-    return _read(filepath_or_buffer, kwds)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:423: in _read
-    parser = TextFileReader(filepath_or_buffer, **kwds)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:2721: in __init__
-    self._engine = self._make_engine(f, self.engine)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:3006: in _make_engine
-    return mapping[engine](f, **self.options)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\c_parser_wrapper.py:107: in __init__
-    self._reader = parsers.TextReader(src, **kwds)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-pandas/_libs/parsers.pyx:724: in pandas._libs.parsers.TextReader.__cinit__
-    ???
-pandas/_libs/parsers.pyx:879: in pandas._libs.parsers.TextReader._get_header
-    ???
-pandas/_libs/parsers.pyx:1149: in pandas._libs.parsers.TextReader._tokenize_rows
-    ???
-pandas/_libs/parsers.pyx:1170: in pandas._libs.parsers.TextReader._check_tokenize_status
-    ???
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
->   ???
-E   pandas.errors.ParserError: Error tokenizing data. C error: out of memory
-
-pandas/_libs/parsers.pyx:4400: ParserError
-______________________ ERROR at setup of test_no_dashes _______________________
-
-tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000001D5699ADFA0>, _basetemp=WindowsPath('C:/Users/astha/AppData/Local/Temp/pytest-of-astha/pytest-1165'), _retention_count=3, _retention_policy='all')
-
-    @pytest.fixture(scope="session")
-    def built(tmp_path_factory):
-        root = tmp_path_factory.mktemp("build")
->       build(root)
-
-tests\conftest.py:11: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-bpb\cli.py:104: in build
-    joint = pd.read_csv(tables / "gaps_joint.csv")
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:1866: in read_csv
-    return _read(filepath_or_buffer, kwds)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:423: in _read
-    parser = TextFileReader(filepath_or_buffer, **kwds)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:2721: in __init__
-    self._engine = self._make_engine(f, self.engine)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:3006: in _make_engine
-    return mapping[engine](f, **self.options)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\c_parser_wrapper.py:107: in __init__
-    self._reader = parsers.TextReader(src, **kwds)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-pandas/_libs/parsers.pyx:724: in pandas._libs.parsers.TextReader.__cinit__
-    ???
-pandas/_libs/parsers.pyx:879: in pandas._libs.parsers.TextReader._get_header
-    ???
-pandas/_libs/parsers.pyx:1149: in pandas._libs.parsers.TextReader._tokenize_rows
-    ???
-pandas/_libs/parsers.pyx:1170: in pandas._libs.parsers.TextReader._check_tokenize_status
-    ???
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
->   ???
-E   pandas.errors.ParserError: Error tokenizing data. C error: out of memory
-
-pandas/_libs/parsers.pyx:4400: ParserError
-___________________ ERROR at setup of test_no_banned_words ____________________
-
-tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000001D5699ADFA0>, _basetemp=WindowsPath('C:/Users/astha/AppData/Local/Temp/pytest-of-astha/pytest-1165'), _retention_count=3, _retention_policy='all')
-
-    @pytest.fixture(scope="session")
-    def built(tmp_path_factory):
-        root = tmp_path_factory.mktemp("build")
->       build(root)
-
-tests\conftest.py:11: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-bpb\cli.py:104: in build
-    joint = pd.read_csv(tables / "gaps_joint.csv")
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:1866: in read_csv
-    return _read(filepath_or_buffer, kwds)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:423: in _read
-    parser = TextFileReader(filepath_or_buffer, **kwds)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:2721: in __init__
-    self._engine = self._make_engine(f, self.engine)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:3006: in _make_engine
-    return mapping[engine](f, **self.options)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\c_parser_wrapper.py:107: in __init__
-    self._reader = parsers.TextReader(src, **kwds)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-pandas/_libs/parsers.pyx:724: in pandas._libs.parsers.TextReader.__cinit__
-    ???
-pandas/_libs/parsers.pyx:879: in pandas._libs.parsers.TextReader._get_header
-    ???
-pandas/_libs/parsers.pyx:1149: in pandas._libs.parsers.TextReader._tokenize_rows
-    ???
-pandas/_libs/parsers.pyx:1170: in pandas._libs.parsers.TextReader._check_tokenize_status
-    ???
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
->   ???
-E   pandas.errors.ParserError: Error tokenizing data. C error: out of memory
-
-pandas/_libs/parsers.pyx:4400: ParserError
-_____________ ERROR at setup of test_answers_cover_every_question _____________
-
-tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000001D5699ADFA0>, _basetemp=WindowsPath('C:/Users/astha/AppData/Local/Temp/pytest-of-astha/pytest-1165'), _retention_count=3, _retention_policy='all')
-
-    @pytest.fixture(scope="session")
-    def built(tmp_path_factory):
-        root = tmp_path_factory.mktemp("build")
->       build(root)
-
-tests\conftest.py:11: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-bpb\cli.py:104: in build
-    joint = pd.read_csv(tables / "gaps_joint.csv")
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:1866: in read_csv
-    return _read(filepath_or_buffer, kwds)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:423: in _read
-    parser = TextFileReader(filepath_or_buffer, **kwds)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:2721: in __init__
-    self._engine = self._make_engine(f, self.engine)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:3006: in _make_engine
-    return mapping[engine](f, **self.options)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\c_parser_wrapper.py:107: in __init__
-    self._reader = parsers.TextReader(src, **kwds)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-pandas/_libs/parsers.pyx:724: in pandas._libs.parsers.TextReader.__cinit__
-    ???
-pandas/_libs/parsers.pyx:879: in pandas._libs.parsers.TextReader._get_header
-    ???
-pandas/_libs/parsers.pyx:1149: in pandas._libs.parsers.TextReader._tokenize_rows
-    ???
-pandas/_libs/parsers.pyx:1170: in pandas._libs.parsers.TextReader._check_tokenize_status
-    ???
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
->   ???
-E   pandas.errors.ParserError: Error tokenizing data. C error: out of memory
-
-pandas/_libs/parsers.pyx:4400: ParserError
-_____________________ ERROR at setup of test_trace_sample _____________________
-
-tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000001D5699ADFA0>, _basetemp=WindowsPath('C:/Users/astha/AppData/Local/Temp/pytest-of-astha/pytest-1165'), _retention_count=3, _retention_policy='all')
-
-    @pytest.fixture(scope="session")
-    def built(tmp_path_factory):
-        root = tmp_path_factory.mktemp("build")
->       build(root)
-
-tests\conftest.py:11: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-bpb\cli.py:104: in build
-    joint = pd.read_csv(tables / "gaps_joint.csv")
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:1866: in read_csv
-    return _read(filepath_or_buffer, kwds)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:423: in _read
-    parser = TextFileReader(filepath_or_buffer, **kwds)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:2721: in __init__
-    self._engine = self._make_engine(f, self.engine)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:3006: in _make_engine
-    return mapping[engine](f, **self.options)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\c_parser_wrapper.py:107: in __init__
-    self._reader = parsers.TextReader(src, **kwds)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-pandas/_libs/parsers.pyx:724: in pandas._libs.parsers.TextReader.__cinit__
-    ???
-pandas/_libs/parsers.pyx:879: in pandas._libs.parsers.TextReader._get_header
-    ???
-pandas/_libs/parsers.pyx:1149: in pandas._libs.parsers.TextReader._tokenize_rows
-    ???
-pandas/_libs/parsers.pyx:1170: in pandas._libs.parsers.TextReader._check_tokenize_status
-    ???
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
->   ???
-E   pandas.errors.ParserError: Error tokenizing data. C error: out of memory
-
-pandas/_libs/parsers.pyx:4400: ParserError
-____________________ ERROR at setup of test_trace_command _____________________
-
-tmp_path_factory = TempPathFactory(_given_basetemp=None, _trace=<pluggy._tracing.TagTracerSub object at 0x000001D5699ADFA0>, _basetemp=WindowsPath('C:/Users/astha/AppData/Local/Temp/pytest-of-astha/pytest-1165'), _retention_count=3, _retention_policy='all')
-
-    @pytest.fixture(scope="session")
-    def built(tmp_path_factory):
-        root = tmp_path_factory.mktemp("build")
->       build(root)
-
-tests\conftest.py:11: 
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-bpb\cli.py:104: in build
-    joint = pd.read_csv(tables / "gaps_joint.csv")
-            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:1866: in read_csv
-    return _read(filepath_or_buffer, kwds)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:423: in _read
-    parser = TextFileReader(filepath_or_buffer, **kwds)
-             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:2721: in __init__
-    self._engine = self._make_engine(f, self.engine)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\readers.py:3006: in _make_engine
-    return mapping[engine](f, **self.options)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.venv\Lib\site-packages\pandas\io\parsers\c_parser_wrapper.py:107: in __init__
-    self._reader = parsers.TextReader(src, **kwds)
-                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-pandas/_libs/parsers.pyx:724: in pandas._libs.parsers.TextReader.__cinit__
-    ???
-pandas/_libs/parsers.pyx:879: in pandas._libs.parsers.TextReader._get_header
-    ???
-pandas/_libs/parsers.pyx:1149: in pandas._libs.parsers.TextReader._tokenize_rows
-    ???
-pandas/_libs/parsers.pyx:1170: in pandas._libs.parsers.TextReader._check_tokenize_status
-    ???
-_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
-
->   ???
-E   pandas.errors.ParserError: Error tokenizing data. C error: out of memory
-
-pandas/_libs/parsers.pyx:4400: ParserError
+```
+77c368f step 6.5: drop my dashboard test, which needs a socket under rule 7
+..............................................................           [100%]
 ============================== warnings summary ===============================
 .venv\Lib\site-packages\_pytest\config\__init__.py:894
   C:\bpbs6c\.venv\Lib\site-packages\_pytest\config\__init__.py:894: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; socket
@@ -954,36 +669,19 @@ tests/test_gaps.py: 64 warnings
     return Constant(*args, **kwargs)
 
 -- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
-=========================== short test summary info ===========================
-ERROR tests/test_build.py::test_build_twice_identical - pandas.errors.ParserE...
-ERROR tests/test_readme.py::test_tables_match - pandas.errors.ParserError: Er...
-ERROR tests/test_readme.py::test_no_dashes - pandas.errors.ParserError: Error...
-ERROR tests/test_readme.py::test_no_banned_words - pandas.errors.ParserError:...
-ERROR tests/test_readme.py::test_answers_cover_every_question - pandas.errors...
-ERROR tests/test_trace.py::test_trace_sample - pandas.errors.ParserError: Err...
-ERROR tests/test_trace.py::test_trace_command - pandas.errors.ParserError: Er...
-55 passed, 130 warnings, 7 errors in 2150.39s (0:35:50)
-pytest exit 1
-facts 27488 rows, kpi 11780 rows, checks 40742 rows
-peers 93 rows, bench 31620 rows
-gaps 5580 rows
-drivers 9920 rows, yoy 992 rows
-valuation 140 rows
-profiles, league tables and answers written
-build exit 0
-git status after build:
-end of git status
+62 passed, 130 warnings in 948.83s (0:15:48)
+pytest exit 0
 ```
 
 ## Runtime per step
 
 - `bpb build`: 6 min 16 s on a quiet machine, 14 min 33 s with another project's run sharing it.
-- Full suite: 8 min 46 s on CI. The local time is in the fresh clone output above.
+- Full suite: 8 min 46 s on CI, 15 min 49 s in the fresh clone.
 
 ## Deviations from PLAN.md
 
 1. **I added `tests/test_dashboard.py` and removed it.** It was not specified. Streamlit's `AppTest` needs an event loop socket, so it failed under `--disable-socket` locally and on CI. Exempting it would have got round rule 7, so the check is now the smoke run in E6.2b, and no test covers the dashboard.
-2. **I committed step 6.3 before reading its test result, and that run had failed.** Its 4 fixture errors were `OSError: [Errno 22]`, and I had by mistake started 2 copies of the same pytest run at once. The commit was not pushed. Every later single run passed, so concurrency is the likely cause, but I did not find the cause.
+2. **I committed step 6.3 before reading its test result, and that run had failed.** Its 4 fixture errors were `OSError: [Errno 22]`, and I had by mistake started 2 copies of the same pytest run at once. The commit was not pushed. A later clone run hit `out of memory` the same way under load (see the fresh clone check). So memory pressure is the likely cause of both, but `Errno 22` was not reproduced.
 3. **`spec_log.csv` gains a trailing `status` column.** 06b B.2 asks for status `no_git`, and the schema has no status column. Please confirm.
 4. **League tables, 3 readings.** They use the underlying basis, as B.1 names no basis. A cluster file holds all 31 banks ranked together, with each verdict against the bank's own cluster, since the fixed columns have no cluster label. A blank value keeps its row at the end, with no rank.
 5. **README readings.** Q2's "10 largest by joint" is read as the 10 banks with the largest joint gap, so the table has more than 10 rows. Q3's "largest RoTE gaps to the median" is read in either direction, among banks with a decomposition at 2026-06-30.
@@ -1001,6 +699,7 @@ end of git status
 - **BMPS's earlier prices.** The rights issue adjustment is suspected, not checked. The README caveat says "may".
 - **Byte identity across machines.** Builds are identical on Windows. The README tables match a Linux build on CI, but the Linux outputs were not compared byte for byte.
 - **The cause of `Errno 22`** (Deviation 2).
+- **Peak memory of a build.** It was not measured. A build can fail on a machine short of memory, though not on CI or on this one when it is otherwise quiet.
 
 ## Open questions
 
@@ -1011,7 +710,7 @@ No blockers. `decisions/OPEN.md` has no undecided item: OPEN-42 to OPEN-44 are d
 
 ## Files changed
 
-215 files, of which those outside `outputs/` are:
+218 files, of which those outside `outputs/` are:
 
 ```
 CLAUDE.md
@@ -1030,7 +729,10 @@ data/raw/market/splits.csv
 decisions/section_5_review.md
 docs/METHODS.md
 instructions/06b_section_6_continue.md
+instructions/06b_section_6_continue.status.md
 project_outline/Bank_Performance_Benchmarking.md
+review/figures/section_6_contact.png
+review/section_6.md
 scripts/pull_data.py
 scripts/run_all.py
 scripts/write_readme_tables.py
@@ -1055,6 +757,8 @@ Under `outputs/`: every table, 31 PDFs and 31 PNGs, the valuation figures, 102 l
 ## Commits this session
 
 ```
+31f34ae section 6: status of instruction 06b (completed)
+a61681d section 6: review of the whole section
 77c368f step 6.5: drop my dashboard test, which needs a socket under rule 7
 0dcaffd step 6.5: MIT licence, project_outline rename, final spec_log stamp
 43c346c step 6.4: README, METHODS, generated tables and answers.csv
