@@ -1,6 +1,9 @@
-"""Driver decomposition (kickoff Section 5.7, instruction 05 B.1).
+"""Driver decomposition and year on year changes (kickoff Section 5.7, instruction 05 B.1).
 
 The tree's ratios come from `compute_kpis` with their own KPI specs, so they follow the KPI family rule at every date.
+Year on year pairs read every family instead: FY2024 against FY2025 is report against report (amendment 17), although
+the KPI at 2024-12-31 is eba. Amounts are in the currency of their rows, as in `bpb/gaps.py`: EUR for eba rows
+(amendment 7), the reporting currency otherwise.
 """
 
 from __future__ import annotations
@@ -14,23 +17,37 @@ import pandas as pd
 
 from bpb import fx
 from bpb.benchmark import target
-from bpb.gaps import PCT, _ccy, average_te
+from bpb.gaps import PCT, _ccy, average_te, pl_to_eur
 from bpb.ingest import read_source_map, read_universe
-from bpb.kpi import compute_kpis
+from bpb.kpi import (
+    FAMILY_ORDER,
+    _piece_status,
+    _pieces,
+    averages,
+    compute_kpis,
+    derived,
+    rolling_12m,
+    underlying_facts,
+)
 from bpb.peers import cluster_year
 
 DRIVERS_COLUMNS = ["date", "bank_id", "basis", "reference", "driver", "bank_value", "ref_value", "shapley_pts",
                    "other_below_line_pts", "minorities_and_at1_pts", "status"]
+YOY_COLUMNS = ["date", "bank_id", "basis", "kind", "cost_effect_pts", "income_effect_pts", "volume_lc", "rate_lc",
+               "cross_lc", "volume_eur", "rate_eur", "cross_eur", "status"]
 OTH = "OTH/A"
 DRIVERS = ["NII/A", "F/A", "O/A", "C/A", "LLP/A", "t", "A/TE"]  # the 7 Shapley drivers, B.1
 HIGHER = {"NII/A", "F/A", "O/A", "A/TE"}  # B.1; every other driver, OTH/A included (PLAN 5.1), lowers RoTE
 # B.1: the Harrell Davis level of each run, for drivers that raise RoTE and drivers that lower it
 RUNS = {"median": (0.5, 0.5), "target": (0.75, 0.25)}
+BASES = ["reported", "underlying"]
 # the amounts of the tree, each over average total_assets
 TREE = {"nii": "nii", "fees": "net_fees", "other": "other_income", "cost": "opex", "llp": "impairments_fin",
         "income": "total_operating_income", "pbt": "pbt", "tax": "tax"}
 TREE_SPEC = {"kpis": [{"kpi": k, "numerator": f, "denominator": "total_assets", "average": True, "unit": "",
                        "direction": "context"} for k, f in TREE.items()]}
+YOY_PL = ["opex", "total_operating_income", "nii"]
+YOY_AVG = "iea"
 
 
 def rote_tree(drivers: dict) -> float:
@@ -179,3 +196,83 @@ def decompose(kpi: pd.DataFrame, facts: pd.DataFrame, peers: pd.DataFrame, cfg) 
             else:
                 rows += _decomposed(key, run, b, ref, rote.get(key, np.nan))
     return pd.DataFrame(rows, columns=DRIVERS_COLUMNS)
+
+
+def ci_change(c0, i0, c1, i1) -> dict:
+    """B.1: the 2 factor Shapley of CI = C / I, in percentage points."""
+    return {"cost_effect_pts": ((c1 / i0 - c0 / i0) + (c1 / i1 - c0 / i1)) / 2 * PCT,
+            "income_effect_pts": ((c0 / i1 - c0 / i0) + (c1 / i1 - c1 / i0)) / 2 * PCT}
+
+
+def nii_change(nim0, iea0, nim1, iea1) -> dict:
+    """B.1: volume, rate and cross, which sum to the change in NII."""
+    return {"volume": nim0 * (iea1 - iea0), "rate": (nim1 - nim0) * iea0, "cross": (nim1 - nim0) * (iea1 - iea0)}
+
+
+def _yoy_index(facts: pd.DataFrame, rates: pd.DataFrame) -> dict:
+    """{(bank, quantity, date): {family: value}} for every family: P&L at 31 Dec and rolling at 30 Jun, average iea."""
+    q = pd.concat([facts, derived(facts, rates)], ignore_index=True)
+    pl = q[q["field"].isin(YOY_PL)]
+    roll = rolling_12m(pl).rename(columns={"date": "ref_date", "inputs_lineage": "lineage_id"})
+    avg = averages(q[q["field"] == YOY_AVG]).rename(columns={"date": "ref_date", "inputs_lineage": "lineage_id"})
+    frames = [pl[pl["ref_date"].str[5:] == "12-31"], roll, avg]
+    out: dict = {}
+    for frame in frames:
+        for key, by_family in _pieces(frame).items():
+            good = {f: float(r.value) for f, r in by_family.items() if pd.notna(r.value) and _piece_status(r) == "ok"}
+            if good:
+                out.setdefault(key, {}).update(good)
+    return out
+
+
+def _pair(index: dict, bank: str, names: list[str], d0: str, d1: str) -> tuple[str | None, str]:
+    """(family, "ok") where every quantity at both dates shares a family, else (None, status): `missing_input` if one
+    has no value at all, `family_switch` if each has a value but no family holds them all (amendment 17)."""
+    got = [index.get((bank, n, d), {}) for n in names for d in (d0, d1)]
+    if not all(got):
+        return None, "missing_input"
+    common = set.intersection(*(set(g) for g in got))
+    if not common:
+        return None, "family_switch"
+    return min(common, key=lambda f: FAMILY_ORDER.index(f) if f in FAMILY_ORDER else len(FAMILY_ORDER)), "ok"
+
+
+def _yoy_row(date, bank, basis, kind, status, **values) -> dict:
+    return {**dict.fromkeys(YOY_COLUMNS, np.nan), "date": date, "bank_id": bank, "basis": basis, "kind": kind,
+            "status": status, **values}
+
+
+def _span(d0: str, d1: str, completions: list[str]) -> bool:
+    return any(d0 < c <= d1 for c in completions)
+
+
+def year_on_year(kpi: pd.DataFrame, facts: pd.DataFrame, cfg) -> pd.DataFrame:
+    """outputs/tables/yoy.csv (B.1): consecutive 31 Dec and consecutive 30 Jun KPI dates, on both bases."""
+    rates = fx.ecb_rates(cfg.root / "data" / "raw")
+    one_offs = pd.read_csv(cfg.root / "data" / "manual" / "one_offs.csv", dtype={"page": str})
+    report_ccy = dict(zip(*(read_universe(cfg.root)[c] for c in ("bank_id", "report_ccy")), strict=True))
+    breaks = merger_breaks(facts, rates, cfg)
+    index = {"reported": _yoy_index(facts, rates),
+             "underlying": _yoy_index(underlying_facts(facts, one_offs, rates), rates)}
+    dates = sorted(kpi["date"].unique())
+    pairs = [(f"{int(d[:4]) - 1}{d[4:]}", d) for d in dates if f"{int(d[:4]) - 1}{d[4:]}" in dates]
+    rows = []
+    for (d0, d1), bank, basis in product(pairs, sorted(kpi["bank_id"].unique()), BASES):
+        idx = index[basis]
+        for kind, names in (("ci", ["opex", "total_operating_income"]), ("nii", ["nii", YOY_AVG])):
+            fam, status = _pair(idx, bank, names, d0, d1)
+            if status == "ok" and _span(d0, d1, breaks.get(bank, [])):
+                fam, status = None, "merger_break"
+            if fam is None:
+                rows.append(_yoy_row(d1, bank, basis, kind, status))
+                continue
+            a0, b0, a1, b1 = (idx[(bank, n, d)][fam] for d, n in product((d0, d1), names))
+            if kind == "ci":
+                rows.append(_yoy_row(d1, bank, basis, kind, "ok", **ci_change(a0, b0, a1, b1)))
+            else:
+                split = nii_change(a0 / b0, b0, a1 / b1, b1)
+                ccy = _ccy(fam, report_ccy[bank])
+                rows.append(_yoy_row(d1, bank, basis, kind, "ok", **{f"{k}_lc": v for k, v in split.items()},
+                                     **{f"{k}_eur": pl_to_eur(v, ccy, d1, rates) for k, v in split.items()}))
+    out = pd.DataFrame(rows, columns=YOY_COLUMNS)
+    return out.sort_values(["date", "bank_id", "basis", "kind"]).reset_index(drop=True)

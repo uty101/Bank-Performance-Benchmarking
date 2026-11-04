@@ -4,7 +4,7 @@ Section 3: data/processed/facts.parquet (eba, report and p3 rows), outputs/table
 2026-06-30, reported and underlying) and outputs/tables/checks.csv (checks 1 to 9; check 9 on EBA rows; check 1 also
 on one_offs.csv rows, whose failures are left out of the underlying basis). Section 4: outputs/tables/peers.csv,
 bench.csv, gaps.csv, gaps_joint.csv, gaps_range.csv, and the profiles of the hand check banks. Section 5:
-outputs/tables/drivers.csv.
+outputs/tables/drivers.csv and yoy.csv.
 usage: python scripts/run_all.py
 """
 
@@ -21,7 +21,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from bpb.benchmark import benchmark
 from bpb.checks import one_off_provenance, run_checks
 from bpb.config import load_config
-from bpb.drivers import decompose
+from bpb.drivers import decompose, year_on_year
 from bpb.fx import ecb_rates
 from bpb.gaps import gaps_range, joint_table, size_gaps
 from bpb.ingest import build_facts, read_manifest, read_universe, report_p3_facts
@@ -65,7 +65,9 @@ def main() -> int:
     print(f"gaps {len(gaps)} rows")
     drivers = decompose(kpi, facts, peers, cfg)
     write_csv(drivers, root / "outputs" / "tables" / "drivers.csv")
-    print(f"drivers {len(drivers)} rows")
+    yoy = year_on_year(kpi, facts, cfg)
+    write_csv(yoy, root / "outputs" / "tables" / "yoy.csv")
+    print(f"drivers {len(drivers)} rows, yoy {len(yoy)} rows")
     for bank in cfg.gaps.hand_check_banks:  # instruction 04 step 4.4: the first profiles
         pdf = build_profile(bank, KPI_LAST, root, root / "outputs" / "reports")
         render_png(pdf, root / "outputs" / "figures" / f"{pdf.stem}.png")
