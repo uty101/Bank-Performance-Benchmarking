@@ -402,3 +402,10 @@ Raised in session 5 (step 5.1). Instruction 05 B.1 builds DRIVERS "on both bases
 
 - (a) Add `basis` after `bank_id`, the position `yoy.csv` gives it in B.1.
 - (b) Keep the schema, and write the reported basis to a second file.
+
+## OPEN-41: spec_log.csv cannot meet rule 9
+
+Raised in session 5 (step 5.3). Instruction 05 B.2 has every fit append a row, and kickoff 6.2 gives the log a `run_utc` column, so the file grows and differs on every run. Rule 9, and `PLAN.md` step 6.3 ("Running it twice leaves `git status` clean"), want byte-identical CSV outputs. Step 5.3 follows the instruction, which has precedence (rule 13), and leaves `spec_log.csv` out of the byte comparison. It holds 18 rows, from the 3 full runs of this session. Step 6.3 needs this settled.
+
+- (a) `spec_log.csv` is exempt from rule 9 and from the `git status` test of step 6.3, and stays committed.
+- (b) `spec_log.csv` stops being committed (`.gitignore`), so that a run leaves `git status` clean.

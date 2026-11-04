@@ -4,7 +4,8 @@ Section 3: data/processed/facts.parquet (eba, report and p3 rows), outputs/table
 2026-06-30, reported and underlying) and outputs/tables/checks.csv (checks 1 to 9; check 9 on EBA rows; check 1 also
 on one_offs.csv rows, whose failures are left out of the underlying basis). Section 4: outputs/tables/peers.csv,
 bench.csv, gaps.csv, gaps_joint.csv, gaps_range.csv, and the profiles of the hand check banks. Section 5:
-outputs/tables/drivers.csv and yoy.csv.
+outputs/tables/drivers.csv, yoy.csv, valuation_fits.csv, valuation.csv, the valuation figures, and 1 row per fit added
+to spec_log.csv, which alone differs from run to run.
 usage: python scripts/run_all.py
 """
 
@@ -26,9 +27,21 @@ from bpb.fx import ecb_rates
 from bpb.gaps import gaps_range, joint_table, size_gaps
 from bpb.ingest import build_facts, read_manifest, read_universe, report_p3_facts
 from bpb.kpi import compute_kpis
+from bpb.market import load_prices
 from bpb.peers import peer_groups
 from bpb.report import build_profile, render_png
 from bpb.tables import write_csv
+from bpb.valuation import (
+    FITS_COLUMNS,
+    YEARS,
+    append_spec_log,
+    figure,
+    fit_frame,
+    fit_pooled,
+    fit_year,
+    ptbv,
+    uplift,
+)
 
 KPI_LAST = "2026-06-30"  # instruction 02 step 2.5: kpi.csv now runs to 2026-06-30
 
@@ -68,6 +81,24 @@ def main() -> int:
     yoy = year_on_year(kpi, facts, cfg)
     write_csv(yoy, root / "outputs" / "tables" / "yoy.csv")
     print(f"drivers {len(drivers)} rows, yoy {len(yoy)} rows")
+    universe = read_universe(root)
+    prices = ptbv(facts, load_prices(root / "data" / "raw"), rates, universe)
+    frame = fit_frame(prices, kpi, universe, cfg)
+    log = root / "outputs" / "tables" / "spec_log.csv"
+    params = {"dependent": "ptbv", "regressors": ["rote", "spread"], "growth": cfg.valuation.growth}
+    fits = []
+    for year in YEARS:
+        fit = fit_year(frame[frame["year"] == year])
+        fits.append(fit)
+        append_spec_log(log, f"fit_year_{year}", "yearly OLS, HC3", {**params, "year": year}, fit)
+        (root / "outputs" / "figures" / f"valuation_{year}.png").write_bytes(figure(frame[frame["year"] == year], fit))
+    pooled = fit_pooled(frame)
+    append_spec_log(log, "fit_pooled", "pooled OLS, year dummies, clustered by bank", params, pooled)
+    fits_table = pd.DataFrame(fits)[FITS_COLUMNS]
+    write_csv(fits_table, root / "outputs" / "tables" / "valuation_fits.csv")
+    joint = pd.read_csv(root / "outputs" / "tables" / "gaps_joint.csv")
+    write_csv(uplift(joint, fits_table, pooled, prices), root / "outputs" / "tables" / "valuation.csv")
+    print(f"valuation {len(frame)} rows")
     for bank in cfg.gaps.hand_check_banks:  # instruction 04 step 4.4: the first profiles
         pdf = build_profile(bank, KPI_LAST, root, root / "outputs" / "reports")
         render_png(pdf, root / "outputs" / "figures" / f"{pdf.stem}.png")
