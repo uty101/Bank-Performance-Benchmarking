@@ -58,7 +58,7 @@ def main() -> int:
     print(f"peers {len(peers)} rows, bench {len(bench)} rows")
     gaps = size_gaps(bench, kpi, facts, rates, cfg)
     write_csv(gaps, root / "outputs" / "tables" / "gaps.csv")
-    write_csv(joint_table(gaps, bench, kpi, rates, cfg), root / "outputs" / "tables" / "gaps_joint.csv")
+    write_csv(joint_table(gaps, bench, kpi, facts, rates, cfg), root / "outputs" / "tables" / "gaps_joint.csv")
     write_csv(gaps_range(gaps), root / "outputs" / "tables" / "gaps_range.csv")
     print(f"gaps {len(gaps)} rows")
     for bank in cfg.gaps.hand_check_banks:  # instruction 04 step 4.4: the first profiles

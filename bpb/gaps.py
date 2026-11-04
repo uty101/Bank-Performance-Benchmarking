@@ -12,7 +12,7 @@ import pandas as pd
 from bpb import fx
 from bpb.benchmark import _directions, better
 from bpb.ingest import read_source_map, read_universe
-from bpb.kpi import _join, rolling_12m, underlying_facts
+from bpb.kpi import _join, compute_kpis, rolling_12m, underlying_facts
 
 GAPS_COLUMNS = ["date", "bank_id", "group", "basis", "gap", "delta_pi_lc", "delta_pi_eur", "delta_rote_pts", "tax_rate",
                 "tax_status", "status"]
@@ -23,6 +23,10 @@ TAX_BOUNDS = (0.0, 0.6)  # Convention 4.11
 TAX_YEARS = 3  # Convention 4.11
 PCT = 100.0  # B.3: delta_rote_pts is in points
 HEADLINE = ("cluster", "underlying")  # kickoff Section 5.6
+# instruction 05 A.1 item 4: T-bar is the averaged tangible_equity itself, under the KPI family rule. Its numerator is
+# the closing balance, so it does not depend on rote's numerator, and no one off touches it, so 1 basis serves both.
+TE_SPEC = {"kpis": [{"kpi": "te", "numerator": "tangible_equity", "denominator": "tangible_equity", "average": True,
+                     "unit": "", "direction": "context"}]}
 
 
 def _rolling(d: str) -> bool:
@@ -38,11 +42,18 @@ def pl_to_eur(value: float, ccy: str, d: str, rates: pd.DataFrame) -> float:
     return fx.to_eur(value, ccy, d, "pl", rates, fx.period_start(d, rolling=_rolling(d)))
 
 
-def bank_inputs(kpi: pd.DataFrame, universe: pd.DataFrame) -> dict:
-    """{(date, bank, basis): inputs}: I, F, O, C, LLP, L, IEA, NII, TE from the KPI rows, O = I - NII - F (instruction
-    04b B.3), and the currency and lineage of each KPI used."""
+def average_te(facts: pd.DataFrame, rates: pd.DataFrame) -> pd.DataFrame:
+    """T-bar at every bank and date: bank_id, date, denominator, family, inputs_lineage, status."""
+    te = compute_kpis(facts, TE_SPEC, None, rates)
+    return te[te["basis"] == "reported"][["bank_id", "date", "denominator", "family", "inputs_lineage", "status"]]
+
+
+def bank_inputs(kpi: pd.DataFrame, universe: pd.DataFrame, te: pd.DataFrame) -> dict:
+    """{(date, bank, basis): inputs}: I, F, O, C, LLP, L, IEA, NII from the KPI rows, O = I - NII - F (instruction 04b
+    B.3), TE from `average_te`, and the currency and lineage of each input used."""
     report_ccy = dict(zip(universe["bank_id"], universe["report_ccy"], strict=True))
-    want = kpi[kpi["kpi"].isin(["cost_income", "fee_share", "cost_of_risk", "nim", "rote", "cet1_ratio"])]
+    want = kpi[kpi["kpi"].isin(["cost_income", "fee_share", "cost_of_risk", "nim", "cet1_ratio"])]
+    te_of = {(r.date, r.bank_id): r for r in te.itertuples(index=False)}
     out: dict = {}
     for r in want.itertuples(index=False):
         d = out.setdefault((r.date, r.bank_id, r.basis), {"lineage": {}, "ccy": {}})
@@ -57,11 +68,13 @@ def bank_inputs(kpi: pd.DataFrame, universe: pd.DataFrame) -> dict:
             d["LLP"], d["L"] = r.numerator, r.denominator
         elif r.kpi == "nim":
             d["NII"], d["IEA"] = r.numerator, r.denominator
-        elif r.kpi == "rote":
-            d["TE"], d["TE_status"] = r.denominator, r.status
         elif r.kpi == "cet1_ratio":
             d["RWA"] = r.denominator
-    for d in out.values():
+    for (date, bank, _), d in out.items():
+        t = te_of[(date, bank)]
+        d["TE"], d["TE_status"], d["lineage"]["te"] = t.denominator, t.status, t.inputs_lineage
+        if pd.notna(t.denominator):
+            d["ccy"]["te"] = _ccy(t.family, report_ccy[bank])
         i = d.get("I", np.nan)
         d["I"] = d.get("I_fee", np.nan) if pd.isna(i) else i
         d["O"] = d["I"] - d.get("NII", np.nan) - d.get("F", np.nan)
@@ -138,7 +151,8 @@ class TaxRates:
         return pbt[0], pbt[0] - pat[0], _ccy(fam, self.report_ccy[bank]), _join([pbt[1], pat[1]])
 
     def get(self, bank: str, d: str, basis: str) -> tuple[float, str, str]:
-        """(rate, status, lineage). Fewer than 3 years gives a blank rate, status `short_history`."""
+        """(rate, status, lineage). Fewer than 3 years gives the country rate, status `tax_fallback` (instruction 05
+        A.1 item 3)."""
         key = (bank, d, basis)
         if key not in self.memo:
             self.memo[key] = self._compute(bank, d, basis)
@@ -148,7 +162,7 @@ class TaxRates:
         ends = [f"{int(d[:4]) - i}{d[4:]}" for i in range(TAX_YEARS)]
         years = [self._year(bank, e, basis) for e in ends]
         if any(y is None for y in years):
-            return np.nan, "short_history", ""
+            return getattr(self.cfg.tax_fallback, self.country[bank]), "tax_fallback", _join(y[3] for y in years if y)
         mixed = len({y[2] for y in years}) > 1
         conv = (lambda v, c, e: pl_to_eur(v, c, e, self.rates)) if mixed else (lambda v, c, e: v)
         pbt = sum(conv(y[0], y[2], e) for y, e in zip(years, ends, strict=True))
@@ -171,7 +185,7 @@ def size_gaps(bench: pd.DataFrame, kpi: pd.DataFrame, facts: pd.DataFrame, rates
     """GAPS: a row per date, bank, group, basis and gap of `[gaps] sized`; status `not_sized` and blank values for a
     gap that is not sized (B.3)."""
     universe = read_universe(cfg.root)
-    inputs = bank_inputs(kpi, universe)
+    inputs = bank_inputs(kpi, universe, average_te(facts, rates))
     tax = TaxRates(facts, rates, cfg)
     directions = _directions(cfg)
     rows = []
@@ -194,22 +208,21 @@ def _sized(r, b: dict, tax: TaxRates, rates: pd.DataFrame) -> dict:
     status = "ok"
     pts = np.nan
     if pd.isna(te):
-        status = b.get("TE_status", "missing_input:tangible_equity")  # T-bar comes from the rote row, so its blank is rote's
-    elif b["ccy"].get("rote") != ccy:
+        status = b["TE_status"]
+    elif b["ccy"]["te"] != ccy:
         status = "mixed_family"
-    elif pd.isna(t):
-        status = "short_history"
     else:
         pts = lc * (1 - t) / te * PCT
     return {"delta_pi_lc": lc, "delta_pi_eur": pl_to_eur(lc, ccy, r.date, rates), "delta_rote_pts": pts, "tax_rate": t,
             "tax_status": tax_status, "status": status}
 
 
-def joint_table(gaps: pd.DataFrame, bench: pd.DataFrame, kpi: pd.DataFrame, rates: pd.DataFrame, cfg) -> pd.DataFrame:
+def joint_table(gaps: pd.DataFrame, bench: pd.DataFrame, kpi: pd.DataFrame, facts: pd.DataFrame, rates: pd.DataFrame,
+                cfg) -> pd.DataFrame:
     """GAPS_JOINT: a row per date, bank, group and basis. Joint values are blank where no gap is sized; excess capital
     is max(0, cet1_ratio - peer median) x rwa, reported separately at the date's rate."""
     universe = read_universe(cfg.root)
-    inputs = bank_inputs(kpi, universe)
+    inputs = bank_inputs(kpi, universe, average_te(facts, rates))
     keys = ["date", "bank_id", "group", "basis"]
     target_of = {(r.date, r.bank_id, r.group, r.basis, r.kpi): r.target for r in
                  bench[bench["kpi"].isin(cfg.gaps.sized)].itertuples(index=False)}
@@ -230,8 +243,8 @@ def joint_table(gaps: pd.DataFrame, bench: pd.DataFrame, kpi: pd.DataFrame, rate
             row["joint_eur"] = pl_to_eur(joint_lc, ccy, date, rates)
             row["overlap_eur"] = row["sum_standalone_eur"] - row["joint_eur"]
             t = sized["tax_rate"].iloc[0]
-            if b["ccy"].get("rote") == ccy:
-                row["joint_rote_pts"] = joint_lc * (1 - t) / b.get("TE", np.nan) * PCT
+            if b["ccy"].get("te") == ccy:
+                row["joint_rote_pts"] = joint_lc * (1 - t) / b["TE"] * PCT
         value, median = cet1.get(key[:4], (np.nan, np.nan))
         row["excess_capital_eur"] = np.nan
         if pd.notna(value) and pd.notna(median) and "cet1_ratio" in b["ccy"]:

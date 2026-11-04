@@ -18,7 +18,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 from bpb.benchmark import benchmark
 from bpb.config import load_config
 from bpb.fx import ecb_rates, period_start, rate
-from bpb.gaps import TaxRates, bank_inputs, joint_table, size_gaps
+from bpb.gaps import TaxRates, average_te, bank_inputs, joint_table, size_gaps
 from bpb.ingest import build_facts, read_universe
 from bpb.kpi import _join, compute_kpis
 from bpb.lineage import lineage_id
@@ -46,7 +46,7 @@ def tables(cfg) -> dict:
     bench = benchmark(kpi[kpi["date"] == DATE], peers, universe, cfg)
     gaps = size_gaps(bench, kpi, facts, rates, cfg)
     return {"facts": facts, "rates": rates, "kpi": kpi, "peers": peers, "universe": universe, "bench": bench,
-            "gaps": gaps, "joint": joint_table(gaps, bench, kpi, rates, cfg)}
+            "gaps": gaps, "joint": joint_table(gaps, bench, kpi, facts, rates, cfg)}
 
 
 def scope_group(gaps: pd.DataFrame, bank: str) -> str:
@@ -67,7 +67,7 @@ def _target_lineage(t: dict, bank: str, name: str, group: str) -> str:
 def write_sheet(wb: Workbook, bank: str, t: dict, cfg) -> None:
     ws = wb.create_sheet(bank)
     group = scope_group(t["gaps"], bank)
-    b = bank_inputs(t["kpi"], t["universe"])[(DATE, bank, BASIS)]
+    b = bank_inputs(t["kpi"], t["universe"], average_te(t["facts"], t["rates"]))[(DATE, bank, BASIS)]
     bench = t["bench"]
     rows = bench[(bench["bank_id"] == bank) & (bench["group"] == group) & (bench["basis"] == BASIS)].set_index("kpi")
     cell = t["gaps"][(t["gaps"]["bank_id"] == bank) & (t["gaps"]["group"] == group) & (t["gaps"]["basis"] == BASIS)]
@@ -96,7 +96,7 @@ def write_sheet(wb: Workbook, bank: str, t: dict, cfg) -> None:
     add("LLP", float(b["LLP"]), lin["cost_of_risk"])
     add("L", float(b["L"]), lin["cost_of_risk"])
     add("IEA", float(b["IEA"]), lin["nim"])
-    add("TE", float(b["TE"]), lin["rote"])
+    add("TE", float(b["TE"]), lin["te"])
     add("t", float(tax_rate), tax_lineage)
     for name in cfg.gaps.sized:
         add(f"target_{name}", float(rows.loc[name, "target"]), _target_lineage(t, bank, name, group))
@@ -110,22 +110,19 @@ def write_sheet(wb: Workbook, bank: str, t: dict, cfg) -> None:
     add("cost_income", f"={a['C']}/{a['I']}")
     add("cost_of_risk", f"={a['LLP']}/{a['L']}")
     add("nim", f"={a['NII']}/{a['IEA']}")
-    add("fee_share", f"={a['F']}/{a['I']}")
     pi = {"cost_income": "=({v}-{s})*{I}".format(v=a["cost_income"], s=a["target_cost_income"], I=a["I"]),
           "cost_of_risk": "=({v}-{s})*{L}".format(v=a["cost_of_risk"], s=a["target_cost_of_risk"], L=a["L"]),
-          "nim": "=({s}-{v})*{E}".format(v=a["nim"], s=a["target_nim"], E=a["IEA"]),
-          "fee_share": "={s}*({I}-{F})/(1-{s})-{F}".format(s=a["target_fee_share"], I=a["I"], F=a["F"])}
+          "nim": "=({s}-{v})*{E}".format(v=a["nim"], s=a["target_nim"], E=a["IEA"])}
     fx_div = f"/{a['fx_period_mean']}" if ccy != "EUR" else ""
     for name in cfg.gaps.sized:
         if name in sized:
             add(f"delta_pi_lc|{name}", pi[name], "sized")
             add(f"delta_pi_eur|{name}", f"={a[f'delta_pi_lc|{name}']}{fx_div}", "sized")
             add(f"delta_rote_pts|{name}", f"={a[f'delta_pi_lc|{name}']}*(1-{a['t']})/{a['TE']}*100", "sized")
-    # kickoff Section 5.6 with O = other_income, and the level rule of instruction 04b B.3 for drivers not sized
+    # kickoff Section 5.6 with O = other_income, the level rule of instruction 04b B.3 for drivers not sized, and F' = F
+    # always (instruction 05 A.1 item 1)
     add("NII_prime", f"={a['target_nim']}*{a['IEA']}" if "nim" in sized else f"={a['NII']}")
-    add("F_prime", (f"={a['target_fee_share']}*({a['NII_prime']}+{a['O']})/(1-{a['target_fee_share']})"
-                    if "fee_share" in sized else f"={a['F']}"))
-    add("I_prime", f"={a['NII_prime']}+{a['F_prime']}+{a['O']}")
+    add("I_prime", f"={a['NII_prime']}+{a['F']}+{a['O']}")
     add("C_prime", f"={a['target_cost_income']}*{a['I_prime']}" if "cost_income" in sized else f"={a['C']}")
     add("LLP_prime", f"={a['target_cost_of_risk']}*{a['L']}" if "cost_of_risk" in sized else f"={a['LLP']}")
     add("joint_delta_pi_lc", f"=({a['I_prime']}-{a['C_prime']}-{a['LLP_prime']})-({a['I']}-{a['C']}-{a['LLP']})")

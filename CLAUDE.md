@@ -315,3 +315,9 @@ Per EU bank, in `report_urls.csv`:
     - If any year still has no qualifying k, stop and print the sizes.
 35. **O in gap sizing (OPEN-38, B.3).** O = other_income. other_income is the residual and already holds dividends, so I = NII + F + O holds by construction. This corrects kickoff 5.6.
 36. **Drivers not sized keep the bank's own value, in levels (B.3).** If the fee gap is not sized, F′ = F. If the cost to income gap is not sized, C′ = C. If the cost of risk gap is not sized, LLP′ = LLP. If the NIM gap is not sized, NII′ = NII.
+
+### Amendments from instructions/05_section_5.md (step 4.5; decisions in `decisions/section_4_review.md`)
+
+37. **fee_share is no longer sized (A.1 item 1).** `[gaps] sized` = `["cost_income", "cost_of_risk", "nim"]` (a reviewer change to `config.toml`). fee_share is one of the 6 features that define the peer groups, so a gap in it measures business mix, not performance. It stays benchmarked, keeps its verdict and stays in the KPI table. The joint gap uses F′ = F always. The hand check workbook has no fee lines.
+38. **Convention 4.11, fewer than 3 fiscal years (A.1 item 3).** t̄ uses the `[tax_fallback]` country rate with status `tax_fallback`, not a blank. t̄ at 30 Jun uses 3 rolling periods.
+39. **T̄E (A.1 item 4).** T̄E comes from the averaged tangible_equity directly, not from the rote row. ΔRoTE is filled wherever tangible equity exists, even when rote's numerator is missing.

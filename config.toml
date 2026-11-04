@@ -45,7 +45,7 @@ bench_seed = 20261104
 ci = 0.90
 
 [gaps]
-sized = ["cost_income", "cost_of_risk", "nim", "fee_share"]
+sized = ["cost_income", "cost_of_risk", "nim"]
 hand_check_banks = ["LLOY", "ISP", "SWED"]
 hand_check_tol_eur = 100000
 
