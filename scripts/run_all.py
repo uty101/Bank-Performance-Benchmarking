@@ -3,7 +3,7 @@
 Section 3: data/processed/facts.parquet (eba, report and p3 rows), outputs/tables/kpi.csv (every bank, 2021-12-31 to
 2026-06-30, reported and underlying) and outputs/tables/checks.csv (checks 1 to 9; check 9 on EBA rows; check 1 also
 on one_offs.csv rows, whose failures are left out of the underlying basis). Section 4: outputs/tables/peers.csv,
-bench.csv.
+bench.csv, gaps.csv, gaps_joint.csv and gaps_range.csv.
 usage: python scripts/run_all.py
 """
 
@@ -21,6 +21,7 @@ from bpb.benchmark import benchmark
 from bpb.checks import one_off_provenance, run_checks
 from bpb.config import load_config
 from bpb.fx import ecb_rates
+from bpb.gaps import gaps_range, joint_table, size_gaps
 from bpb.ingest import build_facts, read_manifest, read_universe, report_p3_facts
 from bpb.kpi import compute_kpis
 from bpb.peers import peer_groups
@@ -54,6 +55,11 @@ def main() -> int:
     bench = benchmark(kpi, peers, read_universe(root), cfg)
     write_csv(bench, root / "outputs" / "tables" / "bench.csv")
     print(f"peers {len(peers)} rows, bench {len(bench)} rows")
+    gaps = size_gaps(bench, kpi, facts, rates, cfg)
+    write_csv(gaps, root / "outputs" / "tables" / "gaps.csv")
+    write_csv(joint_table(gaps, bench, kpi, rates, cfg), root / "outputs" / "tables" / "gaps_joint.csv")
+    write_csv(gaps_range(gaps), root / "outputs" / "tables" / "gaps_range.csv")
+    print(f"gaps {len(gaps)} rows")
     return 0
 
 

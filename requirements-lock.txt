@@ -88,8 +88,10 @@ narwhals==2.28.0
     #   altair
     #   formulaic
     #   scikit-learn
-networkx==3.7
-    # via pymupdf
+networkx==2.6.3
+    # via
+    #   pycel
+    #   pymupdf
 numpy==2.5.4
     # via
     #   bpb (pyproject.toml)
@@ -99,6 +101,7 @@ numpy==2.5.4
     #   onnxruntime
     #   pandas
     #   patsy
+    #   pycel
     #   pydeck
     #   pymupdf
     #   scikit-learn
@@ -109,7 +112,9 @@ numpy==2.5.4
 onnxruntime==1.31.1
     # via pymupdf
 openpyxl==3.1.5
-    # via bpb (pyproject.toml)
+    # via
+    #   bpb (pyproject.toml)
+    #   pycel
 packaging==26.3
     # via
     #   altair
@@ -155,6 +160,8 @@ pyarrow==26.0.0
     # via
     #   bpb (pyproject.toml)
     #   streamlit
+pycel==1.0b30
+    # via bpb (pyproject.toml)
 pycparser==3.12 ; implementation_name != 'PyPy'
     # via cffi
 pydeck==0.9.3
@@ -183,6 +190,7 @@ python-dateutil==4.0.0
     # via
     #   matplotlib
     #   pandas
+    #   pycel
 python-multipart==0.0.33
     # via streamlit
 pytz==2026.6
@@ -206,6 +214,8 @@ rpds-py==2026.9.1
     # via
     #   jsonschema
     #   referencing
+ruamel-yaml==0.19.1
+    # via pycel
 ruff==0.17.3
     # via bpb (pyproject.toml)
 scikit-learn==1.9.1
