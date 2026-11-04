@@ -33,13 +33,13 @@ merger_materiality = 0.10
 [peers]
 first_year = 2023
 k_range = [2, 3, 4, 5]
-min_cluster_size = 6
+min_cluster_size = 5
 stability_reps = 1000
 stability_flag = 0.6
 peer_seed = 20261103
 
 [bench]
-min_peers = 5
+min_peers = 4
 bench_reps = 2000
 bench_seed = 20261104
 ci = 0.90

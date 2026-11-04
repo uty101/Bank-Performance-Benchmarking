@@ -303,3 +303,15 @@ Per EU bank, in `report_urls.csv`:
     Coupons printed only net of tax are entered net, status `at1_net_of_tax`.
 31. **Comparative columns (OPEN-35).** A comparative column in a later document counts as a printed amount for its date, with status `from_comparative`. This applies to SANUK, DANSKE and ABN.
 32. **Dash-only lines (OPEN-35).** A balance sheet non controlling interests line printed only as dashes is 0 with status `no_nci_line`, the same as no line. This applies to BKT.
+
+### Amendments from instructions/04b_section_4_continue.md (step 4.0b; decisions in `decisions/section_4_stop_review.md`)
+
+33. **OPEN-36 (B.1).** `[peers] min_cluster_size` = 5 and `[bench] min_peers` = 4 (reviewer changes to `config.toml`). The 5 bank cluster then keeps its cluster benchmark, and the UK and Italy market groups produce benchmarks.
+34. **Peer features (OPEN-37, B.2).**
+    - A feature is the mean of the values present at the 3 year ends, if at least 2 are present; otherwise it is missing. Status `two_of_three` where only 2 are present.
+    - fee_share is read on the reported basis. Features describe business mix, not performance.
+    - **PEERS gains a trailing `status` column** (reviewer schema change): year, bank_id, cluster, k, silhouette, stability, borderline, override_reason, status.
+    - Each stability draw standardises again within the drawn banks, so the draw repeats the whole method.
+    - If any year still has no qualifying k, stop and print the sizes.
+35. **O in gap sizing (OPEN-38, B.3).** O = other_income. other_income is the residual and already holds dividends, so I = NII + F + O holds by construction. This corrects kickoff 5.6.
+36. **Drivers not sized keep the bank's own value, in levels (B.3).** If the fee gap is not sized, F′ = F. If the cost to income gap is not sized, C′ = C. If the cost of risk gap is not sized, LLP′ = LLP. If the NIM gap is not sized, NII′ = NII.
