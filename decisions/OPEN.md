@@ -388,3 +388,17 @@ Raised in session 4, read ahead of step 4.3, which is not built. Kickoff 5.6 has
 - (b) O = other_income + dividend_income as written, with a missing dividend_income taken as 0.
 
 A related reading for the reviewer to confirm: kickoff 5.6 recomputes F′ and C′ from shares even when those gaps are not sized, which also breaks `test_joint_single`. B.3 "drivers that are not sized keep the bank's own value" is read as F′ = F and C′ = C in that case.
+
+## OPEN-39: a driver reference with too few peers
+
+Raised in session 5 (step 5.1). The blanks table of instruction 05 B.1 does not say what happens when a driver has fewer than `[bench] min_peers` cluster peers with a value. It arises at 8 dates (2021-12-31 to 2025-06-30): GLE has no driver inputs there, so BARC, BNP, DBK and HSBA have 3 peers,. `bpb/drivers.py` currently applies the first option, the rule of kickoff Section 5.5 for a peer group. No review evidence and no profile depends on it: every bank has its full cluster at 2025-12-31 and 2026-06-30.
+
+- (a) Blank with status `too_few_peers`, as for a benchmark.
+- (b) Compute the reference from the peers present, however few, with a status saying so.
+
+## OPEN-40: DRIVERS has no basis column
+
+Raised in session 5 (step 5.1). Instruction 05 B.1 builds DRIVERS "on both bases", and step 5.1 asks for rows on the underlying basis, but the schema in kickoff 6.2 has no `basis` column, so the 2 bases cannot be told apart. `bpb/drivers.py` currently applies the first option.
+
+- (a) Add `basis` after `bank_id`, the position `yoy.csv` gives it in B.1.
+- (b) Keep the schema, and write the reported basis to a second file.
