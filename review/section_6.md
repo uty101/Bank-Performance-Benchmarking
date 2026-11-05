@@ -767,3 +767,278 @@ d4dcf83 step 6.2: lineage tables, bpb trace and the dashboard
 735090e step 6.1: 31 profiles, league CSVs and HTML pages
 37f943f step 6.0: section 5 review decisions
 ```
+
+---
+
+# Instruction 06c (stopped at step 6.6)
+
+Step 6.6 stopped under rules 4 and 5: `test_hand_check` fails, because ISP no longer has a sized gap (OPEN-46). Steps 6.7 and 6.8 were not run. Section 6 is not yet approved.
+
+## Steps completed
+
+6.6 section 6 review decisions, stopped (7e055ed). B.1 and B.5 are applied, everything is rebuilt, and the amendments, `decisions/section_6_review.md` and `docs/METHODS.md` are written. The README tables and `answers.csv` are regenerated from the new tables, as B.1 item 7 asks, in the old format, since B.2 belongs to step 6.7.
+
+## Evidence
+
+### E6.6a: risk_adj_nim, gaps, joint gaps and valuation, before and after
+
+The first table is the pipeline next to A.1: the largest difference is below 1e-6. SAN is `in_line` and BBVA `leading`, and neither has a margin gap, so the EUR 17.8bn is gone from Q2.
+
+```
+bank_id  rev_value  rev_target    value   target verdict  n_peers  d_value  d_target
+    SAN   0.020965    0.019887 0.020965 0.019887 in_line       20 0.000000  0.000000
+   BBVA   0.032541    0.019569 0.032541 0.019569 leading       20 0.000000  0.000000
+GAPS before: sized rows
+bank_id          gap         m  delta_rote_pts                              status
+    ABN  cost_income  1,776.47            5.59                                  ok
+    ABN          nim  3,360.80           10.57                                  ok
+   BAMI  cost_income    427.20            2.90                                  ok
+   BAMI cost_of_risk    250.96            1.70                                  ok
+   BARC cost_of_risk    780.89            0.97                                  ok
+   BARC          nim  4,277.90            5.33                                  ok
+   BBVA cost_of_risk  6,326.28            7.72                                  ok
+   BMPS  cost_income  1,124.78            5.15                                  ok
+   BMPS cost_of_risk    846.63            3.88                                  ok
+    BNP cost_of_risk    904.89            0.68                                  ok
+    BPE  cost_income    990.80            5.83                                  ok
+    BPE cost_of_risk    361.67            2.13                                  ok
+   CABK cost_of_risk    560.82            1.17                                  ok
+   CABK          nim  1,963.08            4.10                                  ok
+    CAG  cost_income  7,154.02             NaN       missing_input:at1_instruments
+    CAG cost_of_risk  2,458.41             NaN       missing_input:at1_instruments
+    CAG          nim 17,418.72             NaN       missing_input:at1_instruments
+    CBK  cost_income  1,801.11             NaN       missing_input:at1_instruments
+ DANSKE          nim  3,166.32           11.04                                  ok
+    DBK  cost_income  3,657.85            4.72                                  ok
+    GLE  cost_income  2,339.49            3.43                                  ok
+    GLE          nim  2,123.86            3.12                                  ok
+   INGA  cost_income  2,844.53            4.19                                  ok
+   INGA          nim  8,597.07           12.66                                  ok
+    ISP cost_of_risk  1,318.70            1.87                                  ok
+    KBC          nim  1,419.09            5.25                                  ok
+   LLOY  cost_income  4,189.06            7.62                                  ok
+   LLOY cost_of_risk    503.14            0.91                                  ok
+    NDA  cost_income    591.88            1.65                                  ok
+    NDA          nim  3,531.17            9.86                                  ok
+    NWG  cost_income  1,402.81            3.27                                  ok
+   RABO  cost_income  2,139.05            3.09                                  ok
+   RABO cost_of_risk    696.24            1.01                                  ok
+    SAB  cost_income    320.70            2.00                                  ok
+    SAB cost_of_risk    376.34            2.34                                  ok
+    SAB          nim  2,038.81           12.69                                  ok
+    SAN cost_of_risk 11,525.41            9.60                                  ok
+  SANUK  cost_income    683.33            3.61                                  ok
+  SANUK          nim  2,398.11           12.68                                  ok
+    SEB  cost_income    331.32            1.33                                  ok
+    SEB          nim  2,195.96            8.82                                  ok
+    SHB  cost_income    305.32             NaN missing_input:intangibles_deduction
+   SWED          nim  1,097.19             NaN    missing_input:minority_interests
+    UCG  cost_income  1,154.66             NaN       missing_input:at1_instruments
+    UNI  cost_income    102.40             NaN                        mixed_family
+    UNI cost_of_risk     57.19             NaN                        mixed_family
+    UNI          nim    537.02             NaN                        mixed_family
+GAPS after: sized rows
+bank_id          gap         m  delta_rote_pts                              status
+    ABN  cost_income  1,776.47            5.59                                  ok
+    ABN risk_adj_nim  2,260.29            7.11                                  ok
+   BAMI  cost_income    427.20            2.90                                  ok
+   BARC risk_adj_nim  4,722.65            5.88                                  ok
+   BMPS  cost_income  1,124.78            5.15                                  ok
+   BMPS risk_adj_nim    713.83            3.27                                  ok
+    BPE  cost_income    990.80            5.83                                  ok
+   CABK risk_adj_nim  1,358.00            2.84                                  ok
+    CAG  cost_income  7,154.02             NaN       missing_input:at1_instruments
+    CAG risk_adj_nim 16,221.28             NaN       missing_input:at1_instruments
+    CBK  cost_income  1,801.11             NaN       missing_input:at1_instruments
+ DANSKE risk_adj_nim  2,209.34            7.71                                  ok
+    DBK  cost_income  3,657.85            4.72                                  ok
+    GLE  cost_income  2,339.49            3.43                                  ok
+    GLE risk_adj_nim  2,213.95            3.25                                  ok
+   INGA  cost_income  2,844.53            4.19                                  ok
+   INGA risk_adj_nim  6,942.65           10.23                                  ok
+    KBC risk_adj_nim    782.56            2.90                                  ok
+   LLOY  cost_income  4,189.06            7.62                                  ok
+    NDA  cost_income    591.88            1.65                                  ok
+    NDA risk_adj_nim  2,225.86            6.22                                  ok
+    NWG  cost_income  1,402.81            3.27                                  ok
+   RABO  cost_income  2,139.05            3.09                                  ok
+    SAB  cost_income    320.70            2.00                                  ok
+    SAB risk_adj_nim  1,963.09           12.21                                  ok
+  SANUK  cost_income    683.33            3.61                                  ok
+  SANUK risk_adj_nim  1,878.77            9.94                                  ok
+    SEB  cost_income    331.32            1.33                                  ok
+    SEB risk_adj_nim  1,599.10            6.42                                  ok
+    SHB  cost_income    305.32             NaN missing_input:intangibles_deduction
+   SWED risk_adj_nim    506.75             NaN    missing_input:minority_interests
+    UCG  cost_income  1,154.66             NaN       missing_input:at1_instruments
+    UNI  cost_income    102.40             NaN                        mixed_family
+    UNI risk_adj_nim    395.70             NaN                        mixed_family
+rows not sized: before 46 after 28
+GAPS_JOINT, EUR m
+bank_id  joint_eur_before  joint_rote_pts_before  joint_eur_after  joint_rote_pts_after  overlap_eur
+    CAG         19,851.98                    NaN        16,689.66                   NaN     6,685.64
+   INGA          7,898.30                  11.63         6,925.75                 10.20     2,861.43
+   BARC          5,058.79                   6.30         4,722.65                  5.88         0.00
+   LLOY          4,692.20                   8.53         4,189.06                  7.62         0.00
+    DBK          3,657.85                   4.72         3,657.85                  4.72         0.00
+    GLE          3,367.65                   4.94         3,411.27                  5.01     1,142.17
+    ABN          3,752.10                  11.80         3,105.17                  9.77       931.58
+ DANSKE          3,166.32                  11.04         2,209.34                  7.71        -0.00
+   RABO          2,835.29                   4.10         2,139.05                  3.09         0.00
+    NDA          2,667.46                   7.45         1,900.21                  5.31       917.53
+    CBK          1,801.11                    NaN         1,801.11                   NaN         0.00
+  SANUK          2,093.05                  11.07         1,787.76                  9.45       774.34
+   BMPS          1,971.42                   9.03         1,544.41                  7.07       294.21
+    SAB          1,895.55                  11.79         1,474.70                  9.18       809.09
+    NWG          1,402.81                   3.27         1,402.81                  3.27         0.00
+   CABK          2,523.90                   5.28         1,358.00                  2.84         0.00
+    SEB          1,621.98                   6.52         1,271.18                  5.11       659.24
+    UCG          1,154.66                    NaN         1,154.66                   NaN        -0.00
+    BPE          1,352.47                   7.95           990.80                  5.83        -0.00
+    KBC          1,419.09                   5.25           782.56                  2.90        -0.00
+   SWED          1,097.19                    NaN           506.75                   NaN         0.00
+   BAMI            678.16                   4.60           427.20                  2.90         0.00
+    UNI            475.23                    NaN           334.98                   NaN       163.12
+    SHB            305.32                    NaN           305.32                   NaN        -0.00
+   BBVA          6,326.28                   7.72              NaN                   NaN          NaN
+    BKT               NaN                    NaN              NaN                   NaN          NaN
+    BNP            904.89                   0.68              NaN                   NaN          NaN
+    DNB               NaN                    NaN              NaN                   NaN          NaN
+   HSBA               NaN                    NaN              NaN                   NaN          NaN
+    ISP          1,318.70                   1.87              NaN                   NaN          NaN
+    SAN         11,525.41                   9.60              NaN                   NaN          NaN
+VALUATION at 2025-12-31
+bank_id  rote_gap_pts_b  uplift_ptbv_b  uplift_lo_b  uplift_hi_b     status_b  rote_gap_pts_a  uplift_ptbv_a  uplift_lo_a  uplift_hi_a  uplift_pooled_ptbv     status_a
+   LLOY            9.03           0.94         0.72         1.16           ok            8.06           0.84         0.64         1.04                0.28           ok
+    NWG            4.44           0.46         0.35         0.57           ok            3.37           0.35         0.27         0.43                0.12           ok
+   BARC            4.25           0.44         0.34         0.55           ok            3.89           0.41         0.31         0.50                0.13           ok
+   HSBA             NaN            NaN          NaN          NaN no_joint_gap             NaN            NaN          NaN          NaN                 NaN no_joint_gap
+    NDA            5.86           0.61         0.47         0.75           ok            4.43           0.46         0.35         0.57                0.15           ok
+    DNB             NaN            NaN          NaN          NaN no_joint_gap             NaN            NaN          NaN          NaN                 NaN no_joint_gap
+ DANSKE            6.42           0.67         0.51         0.83           ok            5.15           0.54         0.41         0.66                0.18           ok
+    SEB            4.19           0.44         0.33         0.54           ok            3.48           0.36         0.28         0.45                0.12           ok
+    SHB            6.50           0.68         0.52         0.84           ok            5.06           0.53         0.40         0.65                0.17           ok
+   SWED            3.12           0.33         0.25         0.40           ok            1.27           0.13         0.10         0.16                0.04           ok
+   INGA           11.32           1.18         0.90         1.46           ok            9.60           1.00         0.77         1.24                0.33           ok
+    ABN           10.69           1.12         0.85         1.38           ok            9.26           0.97         0.74         1.19                0.32           ok
+    KBC            5.61           0.58         0.45         0.72           ok            3.58           0.37         0.29         0.46                0.12           ok
+    BNP            0.60           0.06         0.05         0.08           ok             NaN            NaN          NaN          NaN                 NaN no_joint_gap
+    GLE            5.32           0.56         0.42         0.69           ok            5.38           0.56         0.43         0.69                0.19           ok
+    DBK            4.44           0.46         0.35         0.57           ok            4.44           0.46         0.35         0.57                0.15           ok
+    CBK             NaN            NaN          NaN          NaN no_joint_gap             NaN            NaN          NaN          NaN                 NaN no_joint_gap
+    SAN            9.89           1.03         0.79         1.27           ok             NaN            NaN          NaN          NaN                 NaN no_joint_gap
+   BBVA            7.22           0.75         0.58         0.93           ok             NaN            NaN          NaN          NaN                 NaN no_joint_gap
+   CABK            1.46           0.15         0.12         0.19           ok            1.77           0.18         0.14         0.23                0.06           ok
+    SAB            6.89           0.72         0.55         0.89           ok            4.92           0.51         0.39         0.63                0.17           ok
+    BKT             NaN            NaN          NaN          NaN no_joint_gap             NaN            NaN          NaN          NaN                 NaN no_joint_gap
+    UNI            1.96           0.20         0.16         0.25           ok            0.91           0.10         0.07         0.12                0.03           ok
+    UCG            2.02           0.21         0.16         0.26           ok            2.02           0.21         0.16         0.26                0.07           ok
+    ISP            2.34           0.24         0.19         0.30           ok             NaN            NaN          NaN          NaN                 NaN no_joint_gap
+   BAMI            5.34           0.56         0.43         0.69           ok            3.42           0.36         0.27         0.44                0.12           ok
+    BPE            9.00           0.94         0.72         1.16           ok            6.46           0.67         0.52         0.83                0.22           ok
+   BMPS            9.02           0.94         0.72         1.16           ok            7.09           0.74         0.57         0.91                0.24           ok
+```
+
+### E6.6b: CAG at1_instruments (B.5): every date left out
+
+CC1 is not printed in any of the 4 hashed Group documents, so no entry was made and CAG's joint RoTE gap stays blank. Each says the full tables are on the website, for example: "For clarity, the full tables of the composition of capital (EU CC1 and EU CC2) are available at https://www.credit-agricole.com/...".
+
+```
+date        document                      page with the statement
+2024-12-31  CAG_pillar3_2024-12-31.pdf    69
+2025-06-30  CAG_pillar3_2025-06-30.pdf    5
+2025-12-31  CAG_pillar3_2025-12-31.pdf    243
+2026-06-30  CAG_pillar3_2026-06-30.pdf    90
+```
+
+Those pages print "(-) AT1 instruments accounted as equity" at 7,218, 8,612, 8,143 and 8,020 (EUR m). That line is not CC1 row 30, so it was not entered (OPEN-45).
+
+### E6.6c: why ISP has no sized gap at 2025-12-31
+
+ISP is `leading` on risk_adj_nim in every group. On cost_income it is inside noise in the cluster and universe groups and `leading` in the market group. All 12 GAPS rows are `not_sized`.
+
+### E6.6d: the other hand check sheets, and the banks with both gaps
+
+`test_hand_check` stops at ISP, so LLOY and SWED were evaluated apart from it, with the same pycel calls. Both match. Each has 1 sized gap, so neither exercises the joint formula on 2 gaps. The second table lists the banks with both gaps at 2025-12-31, cluster group, underlying basis, EUR m.
+
+```
+bank   group         item  workbook_eur  pipeline_eur  workbook_pts  pipeline_pts
+LLOY cluster  cost_income  4.404501e+09  4404501377.0      8.055883      8.055883
+LLOY cluster        joint  4.404501e+09  4404501377.0           NaN           NaN
+SWED cluster risk_adj_nim  2.936684e+08   293668355.4      1.269417      1.269417
+SWED cluster        joint  2.936684e+08   293668355.4           NaN           NaN
+gap      cost_income  risk_adj_nim  te_ok
+bank_id                                  
+ABN           1906.2        1652.7   True
+BMPS           863.5        1311.8   True
+DANSKE         287.8        2142.9   True
+GLE           2653.5        2232.5   True
+INGA          2988.8        6081.7   True
+NDA            512.5        1808.0   True
+RABO          2134.3         989.4   True
+SAB            248.9        1048.2   True
+SANUK          579.2        1303.9   True
+SEB            326.1         966.3   True
+SHB            223.0        1619.3   True
+```
+
+### E6.6e: a trial of the B.4 test under `--disable-socket`
+
+A probe outside the repo ran the dashboard with `AppTest` on the 06c outputs, selecting LLOY, ISP and SWED, under `pytest -p socket --disable-socket`, with `@pytest.mark.allow_hosts(["127.0.0.1"])`. It passed, with no exception, and an external connect in the same test was refused. Without that marker `AppTest` fails, as `test_dashboard_runs` did in step 6.5, because its event loop needs a loopback socket.
+
+```
+external connect blocked by: SocketConnectBlockedError
+1 passed, 71 warnings in 36.37s
+```
+
+## Tests run
+
+The fresh clone run below. CI on 7e055ed, conclusion `failure`:
+
+```
+FAILED tests/test_gaps.py::test_hand_check - assert 0 > 0
+1 failed, 61 passed, 40 warnings in 756.78s (0:12:36)
+```
+
+## Fresh-clone check
+
+Clone path `C:/bpbs6d`, with the same commands as above, without `bpb build`. Pass and fail lines only:
+
+```
+7e055ed step 6.6: section 6 review decisions (stopped: ISP has no sized gap, OPEN-46)
+All checks passed!
+ruff exit 0
+E           assert 0 > 0
+E            +  where 0 = len(Empty DataFrame\nColumns: [date, bank_id, group, basis, delta_pi_lc, delta_pi_eur, delta_rote_pts, tax_rate, tax_status,
+FAILED tests/test_gaps.py::test_hand_check - assert 0 > 0
+1 failed, 61 passed, 40 warnings in 2050.90s (0:34:10)
+pytest exit 1
+```
+
+## Deviations from PLAN.md
+
+1. **`joint_gap` keeps its `nim` and `cost_of_risk` branches.** B.1 item 5 says `risk_adj_nim` replaces them, and step 6.7 says existing tests pass unchanged. `test_joint_single_synthetic` passes those keys, so they stay, and the pipeline never uses them, since it passes only what `[gaps] sized` names.
+2. **`bank_inputs` reads LLP as NII less the risk_adj_nim numerator,** where that numerator exists, so the margin and its parts agree.
+3. **`main` has a failing test.** Rule 4 asks for the push, so CI is red until OPEN-46 is decided.
+
+## Not verified
+
+- **Steps 6.7 and 6.8.** B.2, B.3 and B.4 are not applied. The README still leads with CAG, in the old format.
+- **The `spec_log.csv` stamp is stale** until step 6.8, since the build ran before the commit that changed its inputs.
+- **The E6.6e trial ran on Windows only.** On Linux the event loop may use a different socket type.
+
+## Open questions
+
+1. **OPEN-46 (blocking):** replace ISP in `hand_check_banks`, or change the test?
+2. **OPEN-45:** use the printed AT1 line for CAG, or fetch the website's CC1 tables? B.5 is met as written, so this is not blocking.
+3. **Rule 7 and B.4:** is `allow_hosts(["127.0.0.1"])` on `test_dashboard_runs` acceptable? It is needed for the test to run under `--disable-socket`, and it keeps external connections blocked.
+
+## Files changed
+
+`CLAUDE.md`, `README.md`, `bpb/gaps.py`, `bpb/report.py`, `config.toml`, `config/fields.yaml`, `config/kpis.yaml`, `decisions/OPEN.md`, `decisions/section_6_review.md`, `docs/METHODS.md`, `scripts/build_hand_check.py`, `tests/fixtures/hand_check.xlsx`, and the rebuilt `outputs/`.
+
+## Reviewer reads
+
+1. `instructions/06c_section_6_finish.status.md`
+2. `decisions/OPEN.md`, OPEN-45 and OPEN-46
+3. E6.6a, E6.6c and E6.6d
