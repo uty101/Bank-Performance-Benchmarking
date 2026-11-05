@@ -50,6 +50,7 @@ BLANK_WORDS = {"missing_input": "a driver input is missing at this date, so no d
                "no_joint_gap": "this bank has no joint RoTE gap at this date, so there is no uplift to show."}
 LABELS = {"rote": "RoTE", "roa": "RoA", "ppp_assets": "PPP / assets", "nim": "NIM", "fee_share": "Fee share",
           "cost_income": "Cost to income", "cost_assets": "Cost / assets", "cost_of_risk": "Cost of risk",
+          "risk_adj_nim": "Risk adjusted NIM",
           "npl_ratio": "NPL ratio", "npl_coverage": "NPL coverage", "cet1_ratio": "CET1 ratio",
           "leverage_ratio": "Leverage ratio", "lcr": "LCR", "nsfr": "NSFR", "income_fte": "Income / FTE",
           "cost_fte": "Cost / FTE", "cost_customer": "Cost / customer"}

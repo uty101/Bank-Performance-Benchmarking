@@ -50,9 +50,10 @@ def average_te(facts: pd.DataFrame, rates: pd.DataFrame) -> pd.DataFrame:
 
 def bank_inputs(kpi: pd.DataFrame, universe: pd.DataFrame, te: pd.DataFrame) -> dict:
     """{(date, bank, basis): inputs}: I, F, O, C, LLP, L, IEA, NII from the KPI rows, O = I - NII - F (instruction 04b
-    B.3), TE from `average_te`, and the currency and lineage of each input used."""
+    B.3), TE from `average_te`, and the currency and lineage of each input used. Where risk_adj_nim has a numerator,
+    LLP is read as NII less it, so the margin and its parts agree (instruction 06c B.1)."""
     report_ccy = dict(zip(universe["bank_id"], universe["report_ccy"], strict=True))
-    want = kpi[kpi["kpi"].isin(["cost_income", "fee_share", "cost_of_risk", "nim", "cet1_ratio"])]
+    want = kpi[kpi["kpi"].isin(["cost_income", "fee_share", "cost_of_risk", "nim", "risk_adj_nim", "cet1_ratio"])]
     te_of = {(r.date, r.bank_id): r for r in te.itertuples(index=False)}
     out: dict = {}
     for r in want.itertuples(index=False):
@@ -68,6 +69,8 @@ def bank_inputs(kpi: pd.DataFrame, universe: pd.DataFrame, te: pd.DataFrame) -> 
             d["LLP"], d["L"] = r.numerator, r.denominator
         elif r.kpi == "nim":
             d["NII"], d["IEA"] = r.numerator, r.denominator
+        elif r.kpi == "risk_adj_nim":
+            d["NII_LLP"] = r.numerator
         elif r.kpi == "cet1_ratio":
             d["RWA"] = r.denominator
     for (date, bank, _), d in out.items():
@@ -78,6 +81,8 @@ def bank_inputs(kpi: pd.DataFrame, universe: pd.DataFrame, te: pd.DataFrame) -> 
         i = d.get("I", np.nan)
         d["I"] = d.get("I_fee", np.nan) if pd.isna(i) else i
         d["O"] = d["I"] - d.get("NII", np.nan) - d.get("F", np.nan)
+        if pd.notna(d.get("NII_LLP", np.nan)):
+            d["LLP"] = d.get("NII", np.nan) - d["NII_LLP"]
     return out
 
 
@@ -87,7 +92,7 @@ def _standalone(gap: str, value: float, tgt: float, b: dict) -> float:
         return (value - tgt) * b.get("I", np.nan)
     if gap == "cost_of_risk":
         return (value - tgt) * b.get("L", np.nan)
-    if gap == "nim":
+    if gap in ("nim", "risk_adj_nim"):  # instruction 06c B.1 item 4
         return (tgt - value) * b.get("IEA", np.nan)
     if gap == "fee_share":
         i, f = b.get("I", np.nan), b.get("F", np.nan)
@@ -100,11 +105,18 @@ def joint_gap(bank: dict, targets: dict) -> float:
 
     `targets` holds only the sized gaps. A driver not sized keeps the bank's own level (NII' = NII, F' = F, C' = C,
     LLP' = LLP), so it adds nothing to the difference and needs no input. I' = NII' + F' + O is written as I plus the
-    income changes, which is the same thing because I = NII + F + O."""
+    income changes, which is the same thing because I = NII + F + O.
+
+    `risk_adj_nim` (instruction 06c B.1 item 5) closes the margin gap through NII at the bank's current credit cost:
+    d = target x IEA - (NII - LLP), NII' = NII + d, LLP' = LLP. The pipeline sizes it in place of `nim` and
+    `cost_of_risk`, whose branches stay for `[gaps] sized` values that name them."""
     d_nii = d_fee = d_cost = d_llp = 0.0
     nii = bank.get("NII", np.nan)
     if "nim" in targets:
         d_nii = targets["nim"] * bank["IEA"] - nii
+        nii = nii + d_nii
+    if "risk_adj_nim" in targets:
+        d_nii = targets["risk_adj_nim"] * bank["IEA"] - (nii - bank["LLP"])
         nii = nii + d_nii
     if "fee_share" in targets:
         s = targets["fee_share"]

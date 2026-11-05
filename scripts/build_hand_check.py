@@ -93,9 +93,8 @@ def write_sheet(wb: Workbook, bank: str, t: dict, cfg) -> None:
     add("F", float(b["F"]), lin["fee_share"])
     add("O", float(b["O"]), _join([lin["cost_income"], lin["fee_share"], lin["nim"]]))
     add("C", float(b["C"]), lin["cost_income"])
-    add("LLP", float(b["LLP"]), lin["cost_of_risk"])
-    add("L", float(b["L"]), lin["cost_of_risk"])
-    add("IEA", float(b["IEA"]), lin["nim"])
+    add("LLP", float(b["LLP"]), lin["risk_adj_nim"])
+    add("IEA", float(b["IEA"]), lin["risk_adj_nim"])
     add("TE", float(b["TE"]), lin["te"])
     add("t", float(tax_rate), tax_lineage)
     for name in cfg.gaps.sized:
@@ -108,11 +107,9 @@ def write_sheet(wb: Workbook, bank: str, t: dict, cfg) -> None:
     a = at
     add("NII", f"={a['I']}-{a['F']}-{a['O']}")
     add("cost_income", f"={a['C']}/{a['I']}")
-    add("cost_of_risk", f"={a['LLP']}/{a['L']}")
-    add("nim", f"={a['NII']}/{a['IEA']}")
+    add("risk_adj_nim", f"=({a['NII']}-{a['LLP']})/{a['IEA']}")
     pi = {"cost_income": "=({v}-{s})*{I}".format(v=a["cost_income"], s=a["target_cost_income"], I=a["I"]),
-          "cost_of_risk": "=({v}-{s})*{L}".format(v=a["cost_of_risk"], s=a["target_cost_of_risk"], L=a["L"]),
-          "nim": "=({s}-{v})*{E}".format(v=a["nim"], s=a["target_nim"], E=a["IEA"])}
+          "risk_adj_nim": "=({s}-{v})*{E}".format(v=a["risk_adj_nim"], s=a["target_risk_adj_nim"], E=a["IEA"])}
     fx_div = f"/{a['fx_period_mean']}" if ccy != "EUR" else ""
     for name in cfg.gaps.sized:
         if name in sized:
@@ -120,11 +117,12 @@ def write_sheet(wb: Workbook, bank: str, t: dict, cfg) -> None:
             add(f"delta_pi_eur|{name}", f"={a[f'delta_pi_lc|{name}']}{fx_div}", "sized")
             add(f"delta_rote_pts|{name}", f"={a[f'delta_pi_lc|{name}']}*(1-{a['t']})/{a['TE']}*100", "sized")
     # kickoff Section 5.6 with O = other_income, the level rule of instruction 04b B.3 for drivers not sized, and F' = F
-    # always (instruction 05 A.1 item 1)
-    add("NII_prime", f"={a['target_nim']}*{a['IEA']}" if "nim" in sized else f"={a['NII']}")
+    # always (instruction 05 A.1 item 1); the margin gap closes through NII, with LLP' = LLP (instruction 06c B.1 item 5)
+    d = f"{a['target_risk_adj_nim']}*{a['IEA']}-({a['NII']}-{a['LLP']})"
+    add("NII_prime", f"={a['NII']}+{d}" if "risk_adj_nim" in sized else f"={a['NII']}")
     add("I_prime", f"={a['NII_prime']}+{a['F']}+{a['O']}")
     add("C_prime", f"={a['target_cost_income']}*{a['I_prime']}" if "cost_income" in sized else f"={a['C']}")
-    add("LLP_prime", f"={a['target_cost_of_risk']}*{a['L']}" if "cost_of_risk" in sized else f"={a['LLP']}")
+    add("LLP_prime", f"={a['LLP']}")
     add("joint_delta_pi_lc", f"=({a['I_prime']}-{a['C_prime']}-{a['LLP_prime']})-({a['I']}-{a['C']}-{a['LLP']})")
     add("joint_delta_pi_eur", f"={a['joint_delta_pi_lc']}{fx_div}")
     ws.column_dimensions["A"].width = 26

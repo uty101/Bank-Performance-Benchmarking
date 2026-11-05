@@ -12,6 +12,7 @@ kpis:
   - {kpi: cost_income, numerator: opex, denominator: total_operating_income, average: false, unit: pct, direction: lower}
   - {kpi: cost_assets, numerator: opex, denominator: total_assets, average: true, unit: bps, direction: lower}
   - {kpi: cost_of_risk, numerator: impairments_fin, denominator: loans_customers_gross, average: true, unit: bps, direction: lower}
+  - {kpi: risk_adj_nim, numerator: nii_net_llp, denominator: iea, average: true, unit: bps, direction: higher}
   - {kpi: npl_ratio, numerator: npl_gross, denominator: loans_all, average: false, unit: pct, direction: lower}
   - {kpi: npl_coverage, numerator: npl_allowance, denominator: npl_gross, average: false, unit: pct, direction: higher}
   - {kpi: cet1_ratio, numerator: cet1, denominator: rwa, average: false, unit: pct, direction: higher}

@@ -430,3 +430,17 @@ Raised in session 6, ahead of step 6.2. Instruction 06 B.2 asserts that every re
 
 - (a) The test drops a leading `component n/m:` note and normalises whitespace before the comparison.
 - (b) The test checks `value_as_printed` against the page, as provenance does, not the snippet.
+
+## OPEN-45: CC1 is not printed in CAG's Pillar 3 reports
+
+Raised in session 6 (step 6.6). Instruction 06c B.5 asks for CAG's at1_instruments from CC1 row 30, and leaves out any date where the row is not printed. It is not printed at any of the 4 dates: each hashed document says the full EU CC1 and EU CC2 tables are on the bank's website (2024-12-31 page 69, 2025-06-30 page 5, 2025-12-31 page 243, 2026-06-30 page 90). So no entry was made, and CAG's joint RoTE gap stays blank. The same pages print a Group line in the simplified regulatory capital table, "(-) AT1 instruments accounted as equity": 7,218, 8,612, 8,143 and 8,020 (EUR m).
+
+- (a) Use that printed line for at1_instruments, as a stated exception to amendment 12.
+- (b) Download the website's CC1 tables as new hashed documents, and enter row 30 from them.
+
+## OPEN-46: ISP has no sized gap, so `test_hand_check` cannot pass (blocking, rule 4 stop)
+
+Raised in session 6 (step 6.6). Under instruction 06c B.1, ISP at 2025-12-31 is `leading` on risk_adj_nim and inside noise on cost_income in the cluster and universe groups, and `leading` on both in the market group, so it has no sized gap in any group on either basis. `test_hand_check` asserts `len(sized) > 0` on every sheet, so it fails at ISP. 06c B.1 item 6 says the test must still pass and step 6.7 says existing tests pass unchanged, rule 5 forbids rewriting it, and rule 6 fixes `hand_check_banks`. The LLOY and SWED sheets match the pipeline, but each has only 1 sized gap, so the joint formula is not exercised on 2 gaps. 11 banks have both gaps at that date with RoTE points filled: ABN, BMPS, DANSKE, GLE, INGA, NDA, RABO, SAB, SANUK, SEB and SHB.
+
+- (a) A reviewer change to `config.toml`: replace ISP in `[gaps] hand_check_banks` with a bank that has both gaps. The test stays as it is, and the sheet then exercises the joint formula.
+- (b) Keep ISP, and change the test so that a bank with no sized gap in any group asserts an empty sheet.

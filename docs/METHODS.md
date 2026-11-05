@@ -54,6 +54,7 @@ This is how the project works today, with every amendment folded in. Parameters 
 - tangible_equity = total_equity − minority_interests − at1_instruments − intangibles_deduction
 - tax = pbt − pat
 - profit_to_ordinary = profit_owners − at1_coupons
+- nii_net_llp = nii − impairments_fin, at the same bank, date, period and family, so a net release adds to it
 
 ## 3. KPIs
 
@@ -67,6 +68,7 @@ This is how the project works today, with every amendment folded in. Parameters 
 | cost_income | opex | total_operating_income | no | pct | lower |
 | cost_assets | opex | total_assets | yes | bps | lower |
 | cost_of_risk | impairments_fin | loans_customers_gross | yes | bps | lower |
+| risk_adj_nim | nii_net_llp | iea | yes | bps | higher |
 | npl_ratio | npl_gross | loans_all | no | pct | lower |
 | npl_coverage | npl_allowance | npl_gross | no | pct | higher |
 | cet1_ratio | cet1 | rwa | no | pct | higher |
@@ -117,16 +119,15 @@ Each check writes rows to `outputs/tables/checks.csv`.
 
 ## 7. Gap sizing
 
-Gaps are sized for cost_income, cost_of_risk and nim where the bank is worse than its target and outside noise. fee_share is benchmarked but never sized: it helps define the peer groups, so a gap in it measures business mix, not performance. cost_assets and cost_fte are never sized, since they measure the same cost base as cost_income.
+Gaps are sized for cost_income and risk_adj_nim where the bank is worse than its target and outside noise. nim and cost_of_risk stay benchmarked, with their verdicts, but are not sized apart: a high cost of risk is the price of a high margin, so sizing 1 side alone would count the price of lending in a high margin market as a gap. fee_share is benchmarked but never sized: it helps define the peer groups, so a gap in it measures business mix, not performance. cost_assets and cost_fte are never sized, since they measure the same cost base as cost_income.
 
-With I = total operating income, F = net fees, O = other income, C = opex, LLP = impairments, L̄ = average customer loans, ĪEA = average iea, T̄E = average tangible equity, and starred values the targets:
+With I = total operating income, F = net fees, O = other income, C = opex, LLP = impairments, RAM = risk_adj_nim, ĪEA = average iea, T̄E = average tangible equity, and starred values the targets:
 
 - Δπ_CI = (CI − CI\*) × I
-- Δπ_CoR = (CoR − CoR\*) × L̄
-- Δπ_NIM = (NIM\* − NIM) × ĪEA
+- Δπ_RAM = (RAM\* − RAM) × ĪEA
 - ΔRoTE = Δπ × (1 − t̄) / T̄E, where T̄E comes from the averaged tangible equity directly
 
-**Joint gap.** NII′ = NIM\* × ĪEA if the NIM gap is sized, else NII. F′ = F always. I′ = NII′ + F′ + O. C′ = CI\* × I′ if the cost gap is sized, else C. LLP′ = CoR\* × L̄ if the risk gap is sized, else LLP. Then Δπ_joint = (I′ − C′ − LLP′) − (I − C − LLP), and overlap is the sum of the standalone gaps less Δπ_joint.
+**Joint gap.** The margin gap closes through NII at the bank's current credit cost: d = RAM\* × ĪEA − (NII − LLP) if it is sized, else 0, with NII′ = NII + d and LLP′ = LLP. F′ = F always. I′ = NII′ + F′ + O. C′ = CI\* × I′ if the cost gap is sized, else C. Then Δπ_joint = (I′ − C′ − LLP′) − (I − C − LLP), and overlap is the sum of the standalone gaps less Δπ_joint.
 
 **Excess capital** is max(0, cet1_ratio − peer median) × rwa, reported separately.
 
@@ -165,12 +166,12 @@ Listed banks only, at each 31 Dec from FY2021.
 - **Slope stability:** the pooled fit with rote × year interactions, clustered by bank, and a Wald F test that the year slopes are equal, in `outputs/tables/valuation_stability.csv`.
 - **Uplift:** at 2025-12-31 only, β × the joint RoTE gap of the cluster group on the underlying basis, with an interval from β ± 1.645 × se. It uses the year's own fit, which is the market's pricing at that date. `uplift_pooled_ptbv` gives the same uplift on the pooled β.
 
-`outputs/tables/spec_log.csv` is rewritten on every build, with 1 row per fit specification. Its `run_utc` is the committer date of the last commit that touched a build input, and is blank with status `no_git` where git is not available.
+`outputs/tables/spec_log.csv` is rewritten on every build, with 1 row per fit specification. Its `run_utc` is the committer date of the last commit that touched a build input, and is blank with status `no_git` where git is not available, in a trailing `status` column.
 
 ## 10. Outputs
 
 - **Profiles:** 1 A4 PDF and PNG per bank at 2026-06-30, or at the bank's latest date if it has no KPIs there, which the header then says. The waterfall uses the latest date with a decomposition, named in its title, and otherwise says why there is none.
-- **League tables:** a CSV for every ranked KPI, group and the 2 latest dates, on the underlying basis, and 1 static HTML page per KPI. Banks are sorted by value, best first, and a blank value keeps its row at the end, with no rank.
+- **League tables:** a CSV for every ranked KPI, group and the 2 latest dates, on the underlying basis, and 1 static HTML page per KPI. Banks are sorted by value, best first, and a blank value keeps its row at the end, with no rank. A cluster file has a `cluster` column after `rank`, the rank restarts at 1 within each cluster, and the HTML page shows 1 table per cluster.
 - **Trace:** `outputs/tables/lineage.csv` holds every source row and `lineage_derived.csv` every derived row with its inputs. `bpb trace` walks from a row down to the EBA release and item, or the report URL, sha256, page and snippet. A sized gap or a driver stops at its own bank's inputs, since its target or reference comes from peers.
-- **Dashboard:** `bpb/dashboard.py` reads only `outputs/`.
+- **Dashboard:** `bpb/dashboard.py` reads only `outputs/`, under the path in `BPB_ROOT`, or the current directory if that is not set.
 - **Determinism:** every random draw uses a seed from `config.toml`. CSVs use `%.10g`, LF and UTF-8, and PDFs are written with `invariant=1`, so 2 builds of a commit are byte identical.

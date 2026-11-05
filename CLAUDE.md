@@ -331,3 +331,10 @@ Per EU bank, in `report_urls.csv`:
 44. **OPEN-39 (A.1 item 8).** A driver with fewer than `[bench] min_peers` cluster peers holding a value is blank with status `too_few_peers`.
 45. **OPEN-40 (A.1 item 9).** DRIVERS gains `basis` after `bank_id`.
 46. **spec_log.csv (A.1 item 10, OPEN-41, 06b B.2).** It is rewritten on every build, with 1 row per fit specification run in that build. Its `run_utc` is the committer date of the last commit that touched a build input (`git log -1 --format=%cI -- data/raw data/manual config config.toml bpb scripts`), so a commit of outputs alone leaves it unchanged. Without git the field is blank with status `no_git`. Rule 9 holds, with no exemption.
+
+### Amendments from instructions/06c_section_6_finish.md (step 6.6; decisions in `decisions/section_6_review.md`)
+
+47. **Risk adjusted margin (B.1).** Derived field `nii_net_llp` = nii − impairments_fin, at the same bank, date, period and family; a net release adds to it. New ranked KPI `risk_adj_nim`: numerator `nii_net_llp`, denominator `iea`, average true, unit bps, direction higher, not a peer feature. `[gaps] sized` = `["cost_income", "risk_adj_nim"]` (a reviewer change to `config.toml`). nim and cost_of_risk stay benchmarked but are not sized. Standalone: ΔΠ = (target − value) × ĪEA. Joint: d = target × IEA − (NII − LLP), NII′ = NII + d, LLP′ = LLP, and the cost to income term stays on I + d.
+48. **League tables by cluster (B.3).** A cluster group CSV has a `cluster` column after `rank`, and the rank restarts at 1 within each cluster. The league HTML shows 1 table per cluster. README Q1 ranks all banks, with a `Cluster` column on each side.
+49. **Dashboard (B.4).** `bpb/dashboard.py` reads `outputs/` under the path in `BPB_ROOT`, or the current directory if that is not set. `tests/test_dashboard.py::test_dashboard_runs` runs it on a build with `AppTest`.
+50. **spec_log.csv `status` (A.4 item 2).** spec_log.csv has a trailing `status` column (reviewer schema change): `ok`, or `no_git`.

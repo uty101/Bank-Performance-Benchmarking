@@ -4,14 +4,14 @@
 
 This project benchmarks 31 European banks against peers with a similar business model, sizes each gap in euros and RoTE points, and explains it with 7 drivers.
 <!-- table:headline start -->
-At 2026-06-30 the largest joint gap to the best quartile is CAG's, EUR 19,852m a year, and a point of RoTE added 0.104x of price to tangible book at the end of 2025, against 0.045x at the end of 2022.
+At 2026-06-30 the largest joint gap to the best quartile is CAG's, EUR 16,690m a year, and a point of RoTE added 0.104x of price to tangible book at the end of 2025, against 0.045x at the end of 2022.
 <!-- table:headline end -->
 
 See `outputs/reports/` for the 31 bank profiles, `outputs/tables/` for every table, and run `streamlit run bpb/dashboard.py` for the dashboard.
 
 ## What it does
 
-It joins EBA transparency data, used to 2025-06-30, to figures hand entered from each bank's own reports, with every figure checked against the cached page it came from. From those it computes 19 KPIs from FY2021 to H1 2026, forms peer groups by business model, and measures each bank against the best quartile of its peers. It then says which gaps are larger than the noise, what they are worth, which drivers explain RoTE, and how the market prices RoTE.
+It joins EBA transparency data, used to 2025-06-30, to figures hand entered from each bank's own reports, with every figure checked against the cached page it came from. From those it computes 20 KPIs from FY2021 to H1 2026, forms peer groups by business model, and measures each bank against the best quartile of its peers. It then says which gaps are larger than the noise, what they are worth, which drivers explain RoTE, and how the market prices RoTE.
 
 ## How to run it
 
@@ -73,27 +73,25 @@ NatWest Group leads on RoTE at 19.91% and Bankinter on cost to income at 35.30%.
 ### Q2: which gaps are larger than the noise, and what are they worth?
 
 <!-- table:q2 start -->
-10 banks have the largest joint gaps, led by CAG at EUR 19,852m. Min and max run over the 3 peer groups and 2 bases, and the joint figure closes every sized gap at once, so it can be less than the sum of the bank's rows. Amounts are EUR m of annual pre tax profit.
+10 banks have the largest joint gaps, led by CAG at EUR 16,690m. Min and max run over the 3 peer groups and 2 bases, and the joint figure closes every sized gap at once, so it can be less than the sum of the bank's rows. Amounts are EUR m of annual pre tax profit.
 
 | Bank | Gap | Headline | Min | Max | Joint |
 |---|---|---|---|---|---|
-| CAG | NIM | 17,419 | 15,076 | 17,419 | 19,852 |
-| CAG | Cost to income | 7,154 | 6,525 | 7,154 | 19,852 |
-| CAG | Cost of risk | 2,458 | 2,047 | 2,458 | 19,852 |
-| SAN | Cost of risk | 11,525 | 9,970 | 11,525 | 11,525 |
-| INGA | NIM | 8,597 | 7,175 | 8,597 | 7,898 |
-| INGA | Cost to income | 2,845 | 2,476 | 2,845 | 7,898 |
-| BBVA | Cost of risk | 6,326 | 5,632 | 6,326 | 6,326 |
-| BARC | NIM | 4,278 | 4,278 | 11,237 | 5,059 |
-| BARC | Cost of risk | 781 | 781 | 1,921 | 5,059 |
-| LLOY | Cost to income | 4,189 | 2,324 | 4,244 | 4,692 |
-| LLOY | Cost of risk | 503 | 503 | 503 | 4,692 |
-| ABN | NIM | 3,361 | 2,755 | 3,361 | 3,752 |
-| ABN | Cost to income | 1,776 | 1,653 | 1,778 | 3,752 |
+| CAG | Risk adjusted NIM | 16,221 | 14,536 | 16,221 | 16,690 |
+| CAG | Cost to income | 7,154 | 6,525 | 7,154 | 16,690 |
+| INGA | Risk adjusted NIM | 6,943 | 5,920 | 6,943 | 6,926 |
+| INGA | Cost to income | 2,845 | 2,476 | 2,845 | 6,926 |
+| BARC | Risk adjusted NIM | 4,723 | 4,723 | 11,782 | 4,723 |
+| LLOY | Cost to income | 4,189 | 2,324 | 4,244 | 4,189 |
 | DBK | Cost to income | 3,658 | 3,043 | 6,869 | 3,658 |
-| GLE | Cost to income | 2,339 | 1,882 | 5,093 | 3,368 |
-| GLE | NIM | 2,124 | 2,124 | 6,108 | 3,368 |
-| DANSKE | NIM | 3,166 | 2,690 | 3,166 | 3,166 |
+| GLE | Cost to income | 2,339 | 1,882 | 5,093 | 3,411 |
+| GLE | Risk adjusted NIM | 2,214 | 2,214 | 5,790 | 3,411 |
+| ABN | Risk adjusted NIM | 2,260 | 1,817 | 2,260 | 3,105 |
+| ABN | Cost to income | 1,776 | 1,653 | 1,778 | 3,105 |
+| DANSKE | Risk adjusted NIM | 2,209 | 1,866 | 2,209 | 2,209 |
+| RABO | Cost to income | 2,139 | 1,829 | 2,139 | 2,139 |
+| NDA | Risk adjusted NIM | 2,226 | 1,779 | 2,226 | 1,900 |
+| NDA | Cost to income | 592 | 437 | 760 | 1,900 |
 <!-- table:q2 end -->
 
 ### Q3: which drivers explain the RoTE gap?
@@ -115,7 +113,7 @@ Of the banks with a decomposition at 2026-06-30, RABO sits furthest from its pee
 ### Q4: what is a point of RoTE worth?
 
 <!-- table:q4 start -->
-The market paid more for each point of RoTE every year: β rises from 4.50 in 2022 to 10.43 in 2025, and the implied cost of equity falls from 24.2% to 11.6%. The cost of equity is blank in 2021, where the 90% interval of β contains 0. The test that the year slopes are equal is rejected: F(4, 26) = 10.00, p = 0.00005, over 120 bank years. So 1 pooled slope is the wrong model for anything but the significance gate, and the choice of slope matters: LLOY's uplift at the end of 2025 is +0.94x on that year's β and +0.31x on the pooled β. The figure below shows 2025, the tightest fit.
+The market paid more for each point of RoTE every year: β rises from 4.50 in 2022 to 10.43 in 2025, and the implied cost of equity falls from 24.2% to 11.6%. The cost of equity is blank in 2021, where the 90% interval of β contains 0. The test that the year slopes are equal is rejected: F(4, 26) = 10.00, p = 0.00005, over 120 bank years. So 1 pooled slope is the wrong model for anything but the significance gate, and the choice of slope matters: LLOY's uplift at the end of 2025 is +0.84x on that year's β and +0.28x on the pooled β. The figure below shows 2025, the tightest fit.
 
 | Year | β | R² | n | Implied CoE |
 |---|---|---|---|---|
@@ -194,7 +192,7 @@ The clustering splits the 31 banks into 5 and 26. The 5 are BARC, BNP, DBK, GLE,
 - **Headcount.** 9 banks publish only headcount, which stands in for FTE.
 <!-- table:headcount end -->
 <!-- table:coverage start -->
-- **Coverage.** 92 of 589 KPI cells are blank at 2026-06-30 on the underlying basis, because an input is not published or not comparable. The largest causes are customers (27), fte (24), mixed_family (7).
+- **Coverage.** 97 of 620 KPI cells are blank at 2026-06-30 on the underlying basis, because an input is not published or not comparable. The largest causes are customers (27), fte (24), mixed_family (8).
 <!-- table:coverage end -->
 
 ## What it does not do
