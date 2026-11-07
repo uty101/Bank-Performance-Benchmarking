@@ -28,5 +28,5 @@ rank,bank_id,name,value,verdict,inside_noise,status
 27,SANUK,Santander UK Group Holdings,0.08642359106,lagging,False,ok
 ,BKT,Bankinter,,,,missing_input:intangibles_deduction;short_history
 ,BPE,BPER Banca,,,,missing_input:at1_coupons;short_history
-,CAG,Crédit Agricole Group,,,,missing_input:at1_instruments;short_history
+,CAG,Crédit Agricole Group,,,,missing_input:intangibles_deduction;short_history
 ,CBK,Commerzbank,,,,missing_input:at1_instruments;short_history

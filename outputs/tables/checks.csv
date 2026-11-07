@@ -3108,6 +3108,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,CAG,2024-12-31,at1_coupon_in_pl,0,,,,,True,entry 7088; c93b1b9b37b9@12
 1_provenance,CAG,2024-12-31,at1_coupons,473,,,,,True,entry 7075; d5cef261fb79@849
 1_provenance,CAG,2024-12-31,at1_in_equity,1,,,,,True,entry 7086; c93b1b9b37b9@12
+1_provenance,CAG,2024-12-31,at1_instruments,7218,,,,,True,entry 10967; 977eda77a688@69
 1_provenance,CAG,2024-12-31,cash_cb,165815,,,,,True,entry 6910; d5cef261fb79@847
 1_provenance,CAG,2024-12-31,customers,54,,,,,True,entry 7085; 2a08fbb03a41@9
 1_provenance,CAG,2024-12-31,debt_securities,174075,,,,,True,entry 6997; 977eda77a688@96
@@ -3164,6 +3165,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,CAG,2025-06-30,at1_coupon_in_pl,0,,,,,True,entry 7090; d5cef261fb79@849
 1_provenance,CAG,2025-06-30,at1_coupons,260,,,,,True,entry 7076; c93b1b9b37b9@12
 1_provenance,CAG,2025-06-30,at1_in_equity,1,,,,,True,entry 7092; d5cef261fb79@975
+1_provenance,CAG,2025-06-30,at1_instruments,8612,,,,,True,entry 10968; 051e8846912f@5
 1_provenance,CAG,2025-06-30,cash_cb,172085,,,,,True,entry 6916; c93b1b9b37b9@10
 1_provenance,CAG,2025-06-30,cet1,114107,,,,,True,entry 6931; 051e8846912f@3
 1_provenance,CAG,2025-06-30,cet1_ratio_reported,17.58,,,,,True,entry 6934; 051e8846912f@3
@@ -3224,6 +3226,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,CAG,2025-12-31,at1_coupon_in_pl,0,,,,,True,entry 7089; d5cef261fb79@849
 1_provenance,CAG,2025-12-31,at1_coupons,554,,,,,True,entry 7077; d5cef261fb79@849
 1_provenance,CAG,2025-12-31,at1_in_equity,1,,,,,True,entry 7087; d5cef261fb79@975
+1_provenance,CAG,2025-12-31,at1_instruments,8143,,,,,True,entry 10969; fbea4477bdcc@243
 1_provenance,CAG,2025-12-31,cash_cb,168274,,,,,True,entry 6922; d5cef261fb79@847
 1_provenance,CAG,2025-12-31,cet1,114581,,,,,True,entry 6936; fbea4477bdcc@236
 1_provenance,CAG,2025-12-31,cet1_ratio_reported,17.29,,,,,True,entry 6939; fbea4477bdcc@236
@@ -3285,6 +3288,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 1_provenance,CAG,2026-06-30,at1_coupon_in_pl,0,,,,,True,entry 7091; d5cef261fb79@849
 1_provenance,CAG,2026-06-30,at1_coupons,269,,,,,True,entry 7078; 2f262a4131bf@267
 1_provenance,CAG,2026-06-30,at1_in_equity,1,,,,,True,entry 7093; d5cef261fb79@975
+1_provenance,CAG,2026-06-30,at1_instruments,8020,,,,,True,entry 10970; 11ee1c86d9bd@90
 1_provenance,CAG,2026-06-30,cash_cb,153529,,,,,True,entry 6928; 2f262a4131bf@265
 1_provenance,CAG,2026-06-30,cet1,118529,,,,,True,entry 6943; 11ee1c86d9bd@88
 1_provenance,CAG,2026-06-30,cet1_ratio_reported,17.23,,,,,True,entry 6946; 11ee1c86d9bd@88
@@ -21612,6 +21616,7 @@ check,bank_id,ref_date,field,value_a,value_b,diff_abs,diff_rel,threshold,passed,
 8_seam_pl,CABK,2025-06-30,total_operating_income,7390921000,8040000000,649079000,0.08782112541,,True,no threshold; report EUR
 8_seam_pl,CABK,2025-06-30,trading_assets,1.4059667e+10,7329000000,6730667000,0.4787216511,,True,no threshold; report EUR
 8_seam_pl,CAG,2025-06-30,admin_expenses,1.239418819e+10,1.0844e+10,1550188194,0.1250737983,,True,no threshold; report EUR
+8_seam_pl,CAG,2025-06-30,at1_instruments,8307566000,8612000000,304434000,0.03664539048,,True,no threshold; report EUR
 8_seam_pl,CAG,2025-06-30,cash_cb,1.825775001e+11,1.72085e+11,1.049250013e+10,0.05746874684,,True,no threshold; report EUR
 8_seam_pl,CAG,2025-06-30,debt_securities,1.758303562e+11,1.75831e+11,643847.95,3.661756503e-06,,True,no threshold; report EUR
 8_seam_pl,CAG,2025-06-30,deposits_customers,1.294335874e+12,1.167898e+12,1.264378738e+11,0.09768552069,,True,no threshold; report EUR

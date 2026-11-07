@@ -444,3 +444,10 @@ Raised in session 6 (step 6.6). Under instruction 06c B.1, ISP at 2025-12-31 is 
 
 - (a) A reviewer change to `config.toml`: replace ISP in `[gaps] hand_check_banks` with a bank that has both gaps. The test stays as it is, and the sheet then exercises the joint formula.
 - (b) Keep ISP, and change the test so that a bank with no sized gap in any group asserts an empty sheet.
+
+## OPEN-47: CAG's RoTE is also blank for lack of intangibles_deduction
+
+Raised in session 6 (step 6.6b). Instruction 06d B.2 enters CAG's at1_instruments at the 4 dates, and all 4 pass provenance, but CAG's RoTE and joint RoTE gap stay blank. CAG has no report family intangibles_deduction at any date, because that field is CC1 row 8 and CC1 is not printed (OPEN-45). `kpi.csv` gives `missing_input:intangibles_deduction` at 2025-12-31 and 2026-06-30, and `missing_input:tangible_equity` at 2024-12-31. The pages cited for at1_instruments print a line in the same table, "Goodwills and intangible assets": 19,143, 19,309, 19,604 and 20,747 (EUR m). At 2024-12-31 and 2025-06-30 that line agrees with the EBA intangibles_deduction, 19,143 and 19,309. It was not entered, because 06d B.2 covers at1_instruments only.
+
+- (a) Enter that printed line as intangibles_deduction for CAG at the 4 dates, as a second exception to amendment 12, with its own status.
+- (b) Leave CAG's RoTE blank at those dates, and say so in the README.

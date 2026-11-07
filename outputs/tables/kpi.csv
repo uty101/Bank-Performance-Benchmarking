@@ -3919,8 +3919,8 @@ CAG,2025-06-30,cost_fte,reported,,,,eur_k,,,missing_input:fte
 CAG,2025-06-30,cost_fte,underlying,,,,eur_k,,,missing_input:fte
 CAG,2025-06-30,cost_customer,reported,,,,eur,,,missing_input:customers
 CAG,2025-06-30,cost_customer,underlying,,,,eur,,,missing_input:customers
-CAG,2025-12-31,rote,reported,,,,pct,,,missing_input:at1_instruments
-CAG,2025-12-31,rote,underlying,,,,pct,,,missing_input:at1_instruments
+CAG,2025-12-31,rote,reported,,,,pct,,,missing_input:intangibles_deduction
+CAG,2025-12-31,rote,underlying,,,,pct,,,missing_input:intangibles_deduction
 CAG,2025-12-31,roa,reported,0.003313617172,8754000000,2.641826e+12,bps,report,8f907100c240;cd32d873b5cd;d8293ccb3794,ok
 CAG,2025-12-31,roa,underlying,0.003313617172,8754000000,2.641826e+12,bps,report,8f907100c240;cd32d873b5cd;d8293ccb3794,ok
 CAG,2025-12-31,ppp_assets,reported,0.006052631778,1.599e+10,2.641826e+12,bps,report,67bfaaccdbdb;90ceb2462c0a;c101da83b878;cd32d873b5cd;d8293ccb3794,levies_in_admin
@@ -3959,8 +3959,8 @@ CAG,2025-12-31,cost_fte,reported,148266.4284,2.3568e+10,158957.09,eur_k,report,4
 CAG,2025-12-31,cost_fte,underlying,148266.4284,2.3568e+10,158957.09,eur_k,report,47ce3104a0b4;67bfaaccdbdb;90ceb2462c0a;a3e50a6aa312,levies_in_admin
 CAG,2025-12-31,cost_customer,reported,,,,eur,,,missing_input:customers
 CAG,2025-12-31,cost_customer,underlying,,,,eur,,,missing_input:customers
-CAG,2026-06-30,rote,reported,,,,pct,,,missing_input:at1_instruments
-CAG,2026-06-30,rote,underlying,,,,pct,,,missing_input:at1_instruments
+CAG,2026-06-30,rote,reported,,,,pct,,,missing_input:intangibles_deduction
+CAG,2026-06-30,rote,underlying,,,,pct,,,missing_input:intangibles_deduction
 CAG,2026-06-30,roa,reported,0.003272194411,8826000000,2.6972725e+12,bps,report,3ca7133de6bd;8f907100c240;bc18e997d8b5;e50aca817f03;f05dfb1ece0e,ok
 CAG,2026-06-30,roa,underlying,0.003272194411,8826000000,2.6972725e+12,bps,report,3ca7133de6bd;8f907100c240;bc18e997d8b5;e50aca817f03;f05dfb1ece0e,ok
 CAG,2026-06-30,ppp_assets,reported,0.006192181176,1.6702e+10,2.6972725e+12,bps,report,080b63ec3971;0ca20c0fbffc;67bfaaccdbdb;90ceb2462c0a;a81cc235aef1;bc18e997d8b5;be89f6253dd7;bffe2ada9b98;c101da83b878;f05dfb1ece0e;f2843fb76468,levies_in_admin

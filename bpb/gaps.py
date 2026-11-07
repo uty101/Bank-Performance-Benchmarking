@@ -108,8 +108,8 @@ def joint_gap(bank: dict, targets: dict) -> float:
     income changes, which is the same thing because I = NII + F + O.
 
     `risk_adj_nim` (instruction 06c B.1 item 5) closes the margin gap through NII at the bank's current credit cost:
-    d = target x IEA - (NII - LLP), NII' = NII + d, LLP' = LLP. The pipeline sizes it in place of `nim` and
-    `cost_of_risk`, whose branches stay for `[gaps] sized` values that name them."""
+    d = target x IEA - (NII - LLP), NII' = NII + d, LLP' = LLP. The pipeline does not use the `nim` and
+    `cost_of_risk` branches since instruction 06c B.1; they stay by instruction 06d B.4."""
     d_nii = d_fee = d_cost = d_llp = 0.0
     nii = bank.get("NII", np.nan)
     if "nim" in targets:

@@ -41,7 +41,7 @@ This is how the project works today, with every amendment folded in. Parameters 
 - profit_owners is net profit minus non controlling interests.
 - Where only headcount is printed, it is entered into fte with status `headcount`.
 
-**AT1.** `at1_in_equity` is a flag read from the annual report. Where it is 0, AT1 is not in total_equity, so its term in tangible equity is 0. `at1_coupon_in_pl` is a flag that is 1 if coupons sit in interest expense. `at1_coupons` holds the coupons charged directly to equity, and is 0 where they are in the P&L or where the bank had no AT1 in equity.
+**AT1.** `at1_in_equity` is a flag read from the annual report. Where it is 0, AT1 is not in total_equity, so its term in tangible equity is 0. `at1_coupon_in_pl` is a flag that is 1 if coupons sit in interest expense. `at1_coupons` holds the coupons charged directly to equity, and is 0 where they are in the P&L or where the bank had no AT1 in equity. For CAG, whose Pillar 3 reports do not print CC1, at1_instruments is the printed line "(-) AT1 instruments accounted as equity", status `at1_from_reconciliation`. That line is the AT1 held in accounting equity, which is the amount the tangible equity deduction needs.
 
 **Derived quantities.**
 

@@ -338,3 +338,10 @@ Per EU bank, in `report_urls.csv`:
 48. **League tables by cluster (B.3).** A cluster group CSV has a `cluster` column after `rank`, and the rank restarts at 1 within each cluster. The league HTML shows 1 table per cluster. README Q1 ranks all banks, with a `Cluster` column on each side.
 49. **Dashboard (B.4).** `bpb/dashboard.py` reads `outputs/` under the path in `BPB_ROOT`, or the current directory if that is not set. `tests/test_dashboard.py::test_dashboard_runs` runs it on a build with `AppTest`.
 50. **spec_log.csv `status` (A.4 item 2).** spec_log.csv has a trailing `status` column (reviewer schema change): `ok`, or `no_git`.
+
+### Amendments from instructions/06d_section_6_finish.md (step 6.6; decisions in `decisions/section_6_review.md`)
+
+51. **Hand check banks (B.1, OPEN-46).** `[gaps] hand_check_banks` = `["LLOY", "INGA", "SWED"]`. INGA has both sized gaps, so the workbook exercises the joint formula on 2 gaps.
+52. **CAG at1_instruments (B.2, OPEN-45).** An exception to amendment 12, for CAG only: at1_instruments is the printed line "(-) AT1 instruments accounted as equity" of the Group Pillar 3 report at 2024-12-31, 2025-06-30, 2025-12-31 and 2026-06-30, with status `at1_from_reconciliation`, which is usable. It is the AT1 held in accounting equity. The website's CC1 tables are not fetched.
+53. **Rule 7 and the dashboard test (B.3).** `@pytest.mark.allow_hosts(["127.0.0.1"])` is allowed on `test_dashboard_runs` and on `test_dashboard_no_external` only. `test_dashboard_no_external` asserts that a connect to `example.com:80` raises under that marker.
+54. **`joint_gap` (B.4).** The `nim` and `cost_of_risk` branches stay. The pipeline does not use them since instruction 06c B.1.

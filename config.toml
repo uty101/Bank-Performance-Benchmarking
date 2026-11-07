@@ -46,7 +46,7 @@ ci = 0.90
 
 [gaps]
 sized = ["cost_income", "risk_adj_nim"]
-hand_check_banks = ["LLOY", "ISP", "SWED"]
+hand_check_banks = ["LLOY", "INGA", "SWED"]
 hand_check_tol_eur = 100000
 
 [drivers]

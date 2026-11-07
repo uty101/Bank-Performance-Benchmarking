@@ -134,7 +134,7 @@ Fields the 2 sources define alike agree closely: the median absolute difference 
 | Field | Banks | Median | 90th percentile |
 |---|---|---|---|
 | admin_expenses | 26 | 1.91% | 13.08% |
-| at1_instruments | 22 | 0.55% | 4.12% |
+| at1_instruments | 23 | 0.99% | 4.08% |
 | cash_cb | 25 | 2.94% | 12.21% |
 | debt_securities | 24 | 0.00% | 0.00% |
 | deposits_customers | 23 | 2.04% | 9.15% |
