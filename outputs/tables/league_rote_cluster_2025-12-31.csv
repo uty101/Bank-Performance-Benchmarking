@@ -1,32 +1,32 @@
-rank,bank_id,name,value,verdict,inside_noise,status
-1,NWG,NatWest Group,0.1889694957,leading,False,ok
-2,UCG,UniCredit,0.1845969382,leading,False,family_switch
-3,BBVA,BBVA,0.1842795715,leading,False,family_switch
-4,ISP,Intesa Sanpaolo,0.1808687541,leading,False,family_switch
-5,HSBA,HSBC Holdings,0.1755276179,leading,False,short_history
-6,NDA,Nordea Bank,0.1745056459,in_line,True,short_history
-7,BAMI,Banco BPM,0.172477579,in_line,True,family_switch
-8,DNB,DNB Bank,0.1683407049,in_line,True,family_switch
-9,KBC,KBC Group,0.1652066926,in_line,True,family_switch
-10,CABK,CaixaBank,0.1646427314,in_line,True,family_switch
-11,BMPS,Banca Monte dei Paschi di Siena,0.1642444945,in_line,True,family_switch
-12,SAN,Banco Santander,0.163324101,in_line,True,family_switch
-13,SWED,Swedbank,0.1613609443,in_line,False,family_switch
-14,SEB,Skandinaviska Enskilda Banken,0.140310449,lagging,False,family_switch
-15,DANSKE,Danske Bank,0.1342255679,lagging,False,family_switch
-16,SAB,Banco Sabadell,0.1325943253,lagging,False,family_switch
-17,INGA,ING Groep,0.129428852,lagging,False,family_switch
-18,LLOY,Lloyds Banking Group,0.1239222899,lagging,False,ok
-19,SHB,Svenska Handelsbanken,0.1217737305,lagging,False,family_switch
-20,BARC,Barclays,0.1213728607,in_line,True,short_history
-21,BNP,BNP Paribas,0.1177994671,in_line,True,family_switch
-22,DBK,Deutsche Bank,0.1062208815,lagging,False,family_switch
-23,GLE,Société Générale,0.1052690458,lagging,False,short_history
-24,UNI,Unicaja Banco,0.09584265842,lagging,False,family_switch
-25,RABO,Rabobank,0.09340311139,lagging,False,family_switch
-26,ABN,ABN AMRO Bank,0.09131762653,lagging,False,family_switch
-27,SANUK,Santander UK Group Holdings,0.08642359106,lagging,False,ok
-,BKT,Bankinter,,,,missing_input:intangibles_deduction;short_history
-,BPE,BPER Banca,,,,missing_input:at1_coupons;short_history
-,CAG,Crédit Agricole Group,,,,missing_input:intangibles_deduction;short_history
-,CBK,Commerzbank,,,,missing_input:at1_instruments;short_history
+rank,cluster,bank_id,name,value,verdict,inside_noise,status
+1,1,HSBA,HSBC Holdings,0.1755276179,leading,False,short_history
+2,1,BARC,Barclays,0.1213728607,in_line,True,short_history
+3,1,BNP,BNP Paribas,0.1177994671,in_line,True,family_switch
+4,1,DBK,Deutsche Bank,0.1062208815,lagging,False,family_switch
+5,1,GLE,Société Générale,0.1052690458,lagging,False,short_history
+1,2,NWG,NatWest Group,0.1889694957,leading,False,ok
+2,2,UCG,UniCredit,0.1845969382,leading,False,family_switch
+3,2,BBVA,BBVA,0.1842795715,leading,False,family_switch
+4,2,ISP,Intesa Sanpaolo,0.1808687541,leading,False,family_switch
+5,2,NDA,Nordea Bank,0.1745056459,in_line,True,short_history
+6,2,BAMI,Banco BPM,0.172477579,in_line,True,family_switch
+7,2,DNB,DNB Bank,0.1683407049,in_line,True,family_switch
+8,2,KBC,KBC Group,0.1652066926,in_line,True,family_switch
+9,2,CABK,CaixaBank,0.1646427314,in_line,True,family_switch
+10,2,BMPS,Banca Monte dei Paschi di Siena,0.1642444945,in_line,True,family_switch
+11,2,SAN,Banco Santander,0.163324101,in_line,True,family_switch
+12,2,SWED,Swedbank,0.1613609443,in_line,False,family_switch
+13,2,SEB,Skandinaviska Enskilda Banken,0.140310449,lagging,False,family_switch
+14,2,DANSKE,Danske Bank,0.1342255679,lagging,False,family_switch
+15,2,SAB,Banco Sabadell,0.1325943253,lagging,False,family_switch
+16,2,INGA,ING Groep,0.129428852,lagging,False,family_switch
+17,2,LLOY,Lloyds Banking Group,0.1239222899,lagging,False,ok
+18,2,SHB,Svenska Handelsbanken,0.1217737305,lagging,False,family_switch
+19,2,UNI,Unicaja Banco,0.09584265842,lagging,False,family_switch
+20,2,RABO,Rabobank,0.09340311139,lagging,False,family_switch
+21,2,ABN,ABN AMRO Bank,0.09131762653,lagging,False,family_switch
+22,2,SANUK,Santander UK Group Holdings,0.08642359106,lagging,False,ok
+,2,BKT,Bankinter,,,,missing_input:intangibles_deduction;short_history
+,2,BPE,BPER Banca,,,,missing_input:at1_coupons;short_history
+,2,CAG,Crédit Agricole Group,,,,missing_input:intangibles_deduction;short_history
+,2,CBK,Commerzbank,,,,missing_input:at1_instruments;short_history

@@ -349,35 +349,51 @@ def build_profile(bank_id: str, date, root: Path, out: Path) -> Path:
     return path
 
 
-def league_table(bench: pd.DataFrame, universe: pd.DataFrame, spec: dict, group: str, d: str) -> pd.DataFrame:
-    """Every bank on 1 ranked KPI at a date, best first, with each verdict against the bank's own peers in the group.
-    A blank value keeps its row (Convention 4.9), after the ranked banks and with no rank."""
+def _ranked(b: pd.DataFrame, spec: dict) -> pd.DataFrame:
+    """Best first, a blank value keeping its row (Convention 4.9) after the ranked banks and with no rank."""
+    b = b.sort_values(["value", "bank_id"], ascending=[spec["direction"] != "higher", True], na_position="last")
+    held = int(b["value"].notna().sum())
+    return b.assign(rank=pd.array(list(range(1, held + 1)) + [pd.NA] * (len(b) - held), dtype="Int64"))
+
+
+def league_table(bench: pd.DataFrame, universe: pd.DataFrame, spec: dict, group: str, d: str,
+                 peers: pd.DataFrame | None = None) -> pd.DataFrame:
+    """Every bank on 1 ranked KPI at a date, with each verdict against the bank's own peers in the group. In the
+    cluster group (instruction 06c B.3) a `cluster` column follows `rank`, and the rank restarts at 1 within each
+    cluster of the year `peers` gives for the date."""
     b = bench[(bench["kpi"] == spec["kpi"]) & (bench["group"] == group) & (bench["date"] == d)
               & (bench["basis"] == BASIS)]
     b = b.merge(universe[["bank_id", "name"]], on="bank_id", how="left", validate="one_to_one")
-    b = b.sort_values(["value", "bank_id"], ascending=[spec["direction"] != "higher", True], na_position="last")
-    held = int(b["value"].notna().sum())
-    b = b.assign(rank=pd.array(list(range(1, held + 1)) + [pd.NA] * (len(b) - held), dtype="Int64"))
-    return b[LEAGUE_COLUMNS].reset_index(drop=True)
+    if group != GROUP:
+        return _ranked(b, spec)[LEAGUE_COLUMNS].reset_index(drop=True)
+    p = peers[peers["year"] == cluster_year(d)].set_index("bank_id")["cluster"]
+    b = b.assign(cluster=b["bank_id"].map(p).astype("Int64"))
+    b = pd.concat([_ranked(g, spec) for _, g in b.groupby("cluster", sort=True, dropna=False)])
+    return b[["rank", "cluster", *LEAGUE_COLUMNS[1:]]].reset_index(drop=True)
 
 
 def _league_html(spec: dict, tables: list[tuple[str, str, pd.DataFrame]]) -> str:
     label = html.escape(LABELS[spec["kpi"]])
     head = (f"<!doctype html><html lang=\"en\"><head><meta charset=\"utf-8\"><title>{label} league table</title>"
             f"<style>{PAGE_STYLE}</style></head><body><h1>{label} league table</h1>"
-            "<p>Underlying basis, best first. Each verdict is against the bank's own peers in the group, so a cluster "
-            "table holds banks from every cluster.</p>")
+            "<p>Underlying basis, best first. Each verdict is against the bank's own peers in the group. The cluster "
+            "group has 1 table per cluster, ranked within it.</p>")
     parts = [head]
     for group, d, table in tables:
-        parts.append(f"<h2>{group.capitalize()} group at {d}</h2><table><tr><th>Rank</th><th>Bank</th><th>Value</th>"
-                     "<th>Verdict</th><th>Inside noise</th><th>Status</th></tr>")
-        for r in table.itertuples(index=False):
-            cells = ["" if pd.isna(r.rank) else str(r.rank), html.escape(r.name), _fmt(r.value, spec["unit"]),
-                     "" if pd.isna(r.verdict) else r.verdict, "" if pd.isna(r.inside_noise) else str(r.inside_noise),
-                     "" if pd.isna(r.status) else html.escape(str(r.status))]
-            parts.append(f"<tr><td class=\"n\">{cells[0]}</td><td>{cells[1]}</td><td class=\"n\">{cells[2]}</td>"
-                         + "".join(f"<td>{c}</td>" for c in cells[3:]) + "</tr>")
-        parts.append("</table>")
+        if "cluster" in table:  # instruction 06c B.3
+            sections = [(f"Cluster {c} at {d}", g) for c, g in table.groupby("cluster", sort=True, dropna=False)]
+        else:
+            sections = [(f"{group.capitalize()} group at {d}", table)]
+        for title, rows in sections:
+            parts.append(f"<h2>{title}</h2><table><tr><th>Rank</th><th>Bank</th><th>Value</th>"
+                         "<th>Verdict</th><th>Inside noise</th><th>Status</th></tr>")
+            for r in rows.itertuples(index=False):
+                cells = ["" if pd.isna(r.rank) else str(r.rank), html.escape(r.name), _fmt(r.value, spec["unit"]),
+                         "" if pd.isna(r.verdict) else r.verdict, "" if pd.isna(r.inside_noise) else str(r.inside_noise),
+                         "" if pd.isna(r.status) else html.escape(str(r.status))]
+                parts.append(f"<tr><td class=\"n\">{cells[0]}</td><td>{cells[1]}</td><td class=\"n\">{cells[2]}</td>"
+                             + "".join(f"<td>{c}</td>" for c in cells[3:]) + "</tr>")
+            parts.append("</table>")
     parts.append("</body></html>\n")
     return "".join(parts)
 
@@ -391,7 +407,7 @@ def league_tables(root: Path) -> None:
         pages = []
         for group in LEAGUE_GROUPS:
             for d in dates:
-                table = league_table(t["bench"], t["universe"], spec, group, d)
+                table = league_table(t["bench"], t["universe"], spec, group, d, t["peers"])
                 write_csv(table, out / f"league_{spec['kpi']}_{group}_{d}.csv")
                 if group in LEAGUE_PAGE_GROUPS:
                     pages.append((group, d, table))

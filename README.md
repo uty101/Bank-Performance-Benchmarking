@@ -1,10 +1,10 @@
 # Bank Performance Benchmarking
 
-[![ci](https://github.com/uty101/Bank-Performance-Benchmarking/actions/workflows/ci.yml/badge.svg)](https://github.com/uty101/Bank-Performance-Benchmarking/actions/workflows/ci.yml) 62 tests
+[![ci](https://github.com/uty101/Bank-Performance-Benchmarking/actions/workflows/ci.yml/badge.svg)](https://github.com/uty101/Bank-Performance-Benchmarking/actions/workflows/ci.yml) 65 tests
 
 This project benchmarks 31 European banks against peers with a similar business model, sizes each gap in euros and RoTE points, and explains it with 7 drivers.
 <!-- table:headline start -->
-At 2026-06-30 the largest joint gap to the best quartile is CAG's, EUR 16,690m a year, and a point of RoTE added 0.104x of price to tangible book at the end of 2025, against 0.045x at the end of 2022.
+At 2026-06-30, outside the banks whose scope differs between sources, the largest joint gap to the best quartile is INGA's, 10.20 points of RoTE or EUR 6,926m a year, and a point of RoTE added 0.104x of price to tangible book at the end of 2025, against 0.045x at the end of 2022.
 <!-- table:headline end -->
 
 See `outputs/reports/` for the 31 bank profiles, `outputs/tables/` for every table, and run `streamlit run bpb/dashboard.py` for the dashboard.
@@ -33,65 +33,65 @@ All results are at 2026-06-30, on the cluster group and the underlying basis, un
 ### Q1: where does each bank sit?
 
 <!-- table:q1 start -->
-NatWest Group leads on RoTE at 19.91% and Bankinter on cost to income at 35.30%. On RoTE, 3 banks are leading their peers and 10 are lagging. The table below ranks 22 banks on RoTE and 31 on cost to income, the rest being blank at this date. Each verdict is against the bank's own cluster, so the ranks and verdicts need not agree.
+NatWest Group leads on RoTE at 19.91% and Bankinter on cost to income at 35.30%. On RoTE, 3 banks are leading their peers and 10 are lagging. The table below ranks 22 banks on RoTE and 31 on cost to income, the rest being blank at this date. Each verdict is against the bank's own cluster, named beside it, so the ranks and verdicts need not agree.
 
-| Rank | RoTE: bank | RoTE | Verdict | Cost to income: bank | Cost to income | Verdict |
-|---|---|---|---|---|---|---|
-| 1 | NatWest Group | 19.91% | leading | Bankinter | 35.30% | leading |
-| 2 | BBVA | 19.08% | leading | KBC Group | 37.32% | leading |
-| 3 | Banca Monte dei Paschi di Siena | 18.71% | in_line | BBVA | 38.81% | leading |
-| 4 | HSBC Holdings | 18.04% | leading | DNB Bank | 39.04% | leading |
-| 5 | Intesa Sanpaolo | 17.99% | in_line | Intesa Sanpaolo | 39.44% | leading |
-| 6 | Nordea Bank | 17.55% | in_line | CaixaBank | 39.58% | in_line |
-| 7 | Banco Santander | 17.41% | in_line | Banco Santander | 41.26% | in_line |
-| 8 | CaixaBank | 17.01% | in_line | Swedbank | 41.66% | in_line |
-| 9 | Banco BPM | 16.98% | in_line | Danske Bank | 44.96% | in_line |
-| 10 | KBC Group | 16.85% | in_line | UniCredit | 45.74% | in_line |
-| 11 | Skandinaviska Enskilda Banken | 14.66% | lagging | Skandinaviska Enskilda Banken | 45.98% | in_line |
-| 12 | Danske Bank | 14.51% | lagging | Unicaja Banco | 46.05% | in_line |
-| 13 | Banco Sabadell | 14.32% | lagging | Nordea Bank | 46.24% | in_line |
-| 14 | ING Groep | 13.80% | lagging | HSBC Holdings | 46.43% | leading |
-| 15 | Lloyds Banking Group | 13.45% | lagging | Svenska Handelsbanken | 47.22% | lagging |
-| 16 | Barclays | 12.99% | in_line | Banco BPM | 47.82% | lagging |
-| 17 | BNP Paribas | 12.87% | in_line | NatWest Group | 48.34% | lagging |
-| 18 | Société Générale | 11.30% | lagging | Banco Sabadell | 49.01% | lagging |
-| 19 | Deutsche Bank | 11.12% | lagging | Santander UK Group Holdings | 53.05% | lagging |
-| 20 | ABN AMRO Bank | 9.80% | lagging | ING Groep | 53.17% | lagging |
-| 21 | Rabobank | 8.98% | lagging | Rabobank | 54.02% | lagging |
-| 22 | Santander UK Group Holdings | 6.43% | lagging | BPER Banca | 54.55% | lagging |
-| 23 |  |  |  | Commerzbank | 55.51% | lagging |
-| 24 |  |  |  | Barclays | 57.92% | in_line |
-| 25 |  |  |  | Crédit Agricole Group | 58.84% | lagging |
-| 26 |  |  |  | Lloyds Banking Group | 59.03% | lagging |
-| 27 |  |  |  | BNP Paribas | 59.75% | in_line |
-| 28 |  |  |  | Banca Monte dei Paschi di Siena | 59.81% | lagging |
-| 29 |  |  |  | Société Générale | 60.07% | lagging |
-| 30 |  |  |  | ABN AMRO Bank | 60.71% | lagging |
-| 31 |  |  |  | Deutsche Bank | 62.68% | lagging |
+| Rank | RoTE: bank | Cluster | RoTE | Verdict | Cost to income: bank | Cluster | Cost to income | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| 1 | NatWest Group | 2 | 19.91% | leading | Bankinter | 2 | 35.30% | leading |
+| 2 | BBVA | 2 | 19.08% | leading | KBC Group | 2 | 37.32% | leading |
+| 3 | Banca Monte dei Paschi di Siena | 2 | 18.71% | in_line | BBVA | 2 | 38.81% | leading |
+| 4 | HSBC Holdings | 1 | 18.04% | leading | DNB Bank | 2 | 39.04% | leading |
+| 5 | Intesa Sanpaolo | 2 | 17.99% | in_line | Intesa Sanpaolo | 2 | 39.44% | leading |
+| 6 | Nordea Bank | 2 | 17.55% | in_line | CaixaBank | 2 | 39.58% | in_line |
+| 7 | Banco Santander | 2 | 17.41% | in_line | Banco Santander | 2 | 41.26% | in_line |
+| 8 | CaixaBank | 2 | 17.01% | in_line | Swedbank | 2 | 41.66% | in_line |
+| 9 | Banco BPM | 2 | 16.98% | in_line | Danske Bank | 2 | 44.96% | in_line |
+| 10 | KBC Group | 2 | 16.85% | in_line | UniCredit | 2 | 45.74% | in_line |
+| 11 | Skandinaviska Enskilda Banken | 2 | 14.66% | lagging | Skandinaviska Enskilda Banken | 2 | 45.98% | in_line |
+| 12 | Danske Bank | 2 | 14.51% | lagging | Unicaja Banco | 2 | 46.05% | in_line |
+| 13 | Banco Sabadell | 2 | 14.32% | lagging | Nordea Bank | 2 | 46.24% | in_line |
+| 14 | ING Groep | 2 | 13.80% | lagging | HSBC Holdings | 1 | 46.43% | leading |
+| 15 | Lloyds Banking Group | 2 | 13.45% | lagging | Svenska Handelsbanken | 2 | 47.22% | lagging |
+| 16 | Barclays | 1 | 12.99% | in_line | Banco BPM | 2 | 47.82% | lagging |
+| 17 | BNP Paribas | 1 | 12.87% | in_line | NatWest Group | 2 | 48.34% | lagging |
+| 18 | Société Générale | 1 | 11.30% | lagging | Banco Sabadell | 2 | 49.01% | lagging |
+| 19 | Deutsche Bank | 1 | 11.12% | lagging | Santander UK Group Holdings | 2 | 53.05% | lagging |
+| 20 | ABN AMRO Bank | 2 | 9.80% | lagging | ING Groep | 2 | 53.17% | lagging |
+| 21 | Rabobank | 2 | 8.98% | lagging | Rabobank | 2 | 54.02% | lagging |
+| 22 | Santander UK Group Holdings | 2 | 6.43% | lagging | BPER Banca | 2 | 54.55% | lagging |
+| 23 |  |  |  |  | Commerzbank | 2 | 55.51% | lagging |
+| 24 |  |  |  |  | Barclays | 1 | 57.92% | in_line |
+| 25 |  |  |  |  | Crédit Agricole Group | 2 | 58.84% | lagging |
+| 26 |  |  |  |  | Lloyds Banking Group | 2 | 59.03% | lagging |
+| 27 |  |  |  |  | BNP Paribas | 1 | 59.75% | in_line |
+| 28 |  |  |  |  | Banca Monte dei Paschi di Siena | 2 | 59.81% | lagging |
+| 29 |  |  |  |  | Société Générale | 1 | 60.07% | lagging |
+| 30 |  |  |  |  | ABN AMRO Bank | 2 | 60.71% | lagging |
+| 31 |  |  |  |  | Deutsche Bank | 1 | 62.68% | lagging |
 <!-- table:q1 end -->
 
 ### Q2: which gaps are larger than the noise, and what are they worth?
 
 <!-- table:q2 start -->
-10 banks have the largest joint gaps, led by CAG at EUR 16,690m. Min and max run over the 3 peer groups and 2 bases, and the joint figure closes every sized gap at once, so it can be less than the sum of the bank's rows. Amounts are EUR m of annual pre tax profit.
+10 banks have the largest joint gaps, led by CAG at EUR 16,690m. Min and max run over the 3 peer groups and 2 bases, and the joint figure closes every sized gap at once, so it can be less than the sum of the bank's rows. Amounts are EUR m of annual pre tax profit. NIM and cost of risk are sized together as a risk adjusted margin, because a high cost of risk is the price of a high margin.
 
-| Bank | Gap | Headline | Min | Max | Joint |
-|---|---|---|---|---|---|
-| CAG | Risk adjusted NIM | 16,221 | 14,536 | 16,221 | 16,690 |
-| CAG | Cost to income | 7,154 | 6,525 | 7,154 | 16,690 |
-| INGA | Risk adjusted NIM | 6,943 | 5,920 | 6,943 | 6,926 |
-| INGA | Cost to income | 2,845 | 2,476 | 2,845 | 6,926 |
-| BARC | Risk adjusted NIM | 4,723 | 4,723 | 11,782 | 4,723 |
-| LLOY | Cost to income | 4,189 | 2,324 | 4,244 | 4,189 |
-| DBK | Cost to income | 3,658 | 3,043 | 6,869 | 3,658 |
-| GLE | Cost to income | 2,339 | 1,882 | 5,093 | 3,411 |
-| GLE | Risk adjusted NIM | 2,214 | 2,214 | 5,790 | 3,411 |
-| ABN | Risk adjusted NIM | 2,260 | 1,817 | 2,260 | 3,105 |
-| ABN | Cost to income | 1,776 | 1,653 | 1,778 | 3,105 |
-| DANSKE | Risk adjusted NIM | 2,209 | 1,866 | 2,209 | 2,209 |
-| RABO | Cost to income | 2,139 | 1,829 | 2,139 | 2,139 |
-| NDA | Risk adjusted NIM | 2,226 | 1,779 | 2,226 | 1,900 |
-| NDA | Cost to income | 592 | 437 | 760 | 1,900 |
+| Bank | Gap | Headline | Min | Max | Joint | Joint RoTE pts | Scope |
+|---|---|---|---|---|---|---|---|
+| CAG | Risk adjusted NIM | 16,221 | 14,536 | 16,221 | 16,690 |  | yes |
+| CAG | Cost to income | 7,154 | 6,525 | 7,154 | 16,690 |  | yes |
+| INGA | Risk adjusted NIM | 6,943 | 5,920 | 6,943 | 6,926 | 10.20 |  |
+| INGA | Cost to income | 2,845 | 2,476 | 2,845 | 6,926 | 10.20 |  |
+| BARC | Risk adjusted NIM | 4,723 | 4,723 | 11,782 | 4,723 | 5.88 |  |
+| LLOY | Cost to income | 4,189 | 2,324 | 4,244 | 4,189 | 7.62 |  |
+| DBK | Cost to income | 3,658 | 3,043 | 6,869 | 3,658 | 4.72 |  |
+| GLE | Cost to income | 2,339 | 1,882 | 5,093 | 3,411 | 5.01 | yes |
+| GLE | Risk adjusted NIM | 2,214 | 2,214 | 5,790 | 3,411 | 5.01 | yes |
+| ABN | Risk adjusted NIM | 2,260 | 1,817 | 2,260 | 3,105 | 9.77 |  |
+| ABN | Cost to income | 1,776 | 1,653 | 1,778 | 3,105 | 9.77 |  |
+| DANSKE | Risk adjusted NIM | 2,209 | 1,866 | 2,209 | 2,209 | 7.71 | yes |
+| RABO | Cost to income | 2,139 | 1,829 | 2,139 | 2,139 | 3.09 |  |
+| NDA | Risk adjusted NIM | 2,226 | 1,779 | 2,226 | 1,900 | 5.31 | yes |
+| NDA | Cost to income | 592 | 437 | 760 | 1,900 | 5.31 | yes |
 <!-- table:q2 end -->
 
 ### Q3: which drivers explain the RoTE gap?
@@ -113,15 +113,15 @@ Of the banks with a decomposition at 2026-06-30, RABO sits furthest from its pee
 ### Q4: what is a point of RoTE worth?
 
 <!-- table:q4 start -->
-The market paid more for each point of RoTE every year: β rises from 4.50 in 2022 to 10.43 in 2025, and the implied cost of equity falls from 24.2% to 11.6%. The cost of equity is blank in 2021, where the 90% interval of β contains 0. The test that the year slopes are equal is rejected: F(4, 26) = 10.00, p = 0.00005, over 120 bank years. So 1 pooled slope is the wrong model for anything but the significance gate, and the choice of slope matters: LLOY's uplift at the end of 2025 is +0.84x on that year's β and +0.28x on the pooled β. The figure below shows 2025, the tightest fit.
+β rose from 4.50 in 2022 to 10.43 in 2025, the first and last years with a significant β, and the implied cost of equity went from 24.22% to 11.58%. The cost of equity is blank in 2021, where the 90% interval of β contains 0. The test that the year slopes are equal is rejected: F(4, 26) = 10.00, p = 0.00005, over 120 bank years. So 1 pooled slope is the wrong model for anything but the significance gate, and the choice of slope matters: LLOY's uplift at the end of 2025 is +0.84x on that year's β and +0.28x on the pooled β. The figure below shows 2025, the tightest fit.
 
 | Year | β | R² | n | Implied CoE |
 |---|---|---|---|---|
 | 2021 | 1.05 | 0.09 | 22 | blank |
-| 2022 | 4.50 | 0.48 | 23 | 24.2% |
-| 2023 | 4.53 | 0.40 | 25 | 24.1% |
-| 2024 | 6.63 | 0.55 | 25 | 17.1% |
-| 2025 | 10.43 | 0.74 | 25 | 11.6% |
+| 2022 | 4.50 | 0.48 | 23 | 24.22% |
+| 2023 | 4.53 | 0.40 | 25 | 24.09% |
+| 2024 | 6.63 | 0.55 | 25 | 17.08% |
+| 2025 | 10.43 | 0.74 | 25 | 11.58% |
 
 ![P/TBV against RoTE](outputs/figures/valuation_2025.png)
 <!-- table:q4 end -->
@@ -129,7 +129,7 @@ The market paid more for each point of RoTE every year: β rises from 4.50 in 20
 ### Q5: how far apart are the 2 sources?
 
 <!-- table:q5 start -->
-Fields the 2 sources define alike agree closely: the median absolute difference is 0.0000% for loans and 0.02% for profit after tax. Total assets differ by a median of 8.54%, because the supervisory scope leaves out entities such as insurers. Small residual lines differ the most, since each source draws them differently. The table covers 2025-06-30, the date both sources report.
+Fields the 2 sources define alike agree closely: the median absolute difference is 0.00% for loans and 0.02% for profit after tax. Total assets differ by a median of 8.54%, because the supervisory scope leaves out entities such as insurers. Small residual lines differ the most, since each source draws them differently. The table covers 2025-06-30, the date both sources report, and lists the 29 fields that at least 15 banks report, leaving out 6.
 
 | Field | Banks | Median | 90th percentile |
 |---|---|---|---|
@@ -140,13 +140,9 @@ Fields the 2 sources define alike agree closely: the median absolute difference 
 | deposits_customers | 23 | 2.04% | 9.15% |
 | depreciation | 21 | 1.14% | 6.75% |
 | dividend_income | 15 | 0.70% | 62.13% |
-| exchange_differences | 6 | 0.07% | 7.50% |
 | gains_derecognition_not_fvtpl | 18 | 36.35% | 149.02% |
-| gains_designated_fvtpl | 9 | 59.03% | 187.56% |
-| gains_hedge_accounting | 12 | 0.23% | 46.05% |
 | gains_held_for_trading | 26 | 33.47% | 305.20% |
 | impairments_fin | 26 | 3.34% | 87.21% |
-| impairments_nonfin | 8 | 79.56% | 534.66% |
 | intangibles_deduction | 22 | 0.00% | 0.05% |
 | interest_expense | 26 | 0.97% | 23.33% |
 | interest_income | 26 | 1.33% | 12.30% |
@@ -161,8 +157,6 @@ Fields the 2 sources define alike agree closely: the median absolute difference 
 | pat | 26 | 0.02% | 2.81% |
 | pbt | 26 | 0.46% | 5.00% |
 | profit_owners | 26 | 0.01% | 2.29% |
-| provisions | 11 | 0.47% | 32.61% |
-| resolution_dgs_contrib | 6 | 15.87% | 105.51% |
 | total_assets | 25 | 8.54% | 16.65% |
 | total_equity | 24 | 0.02% | 1.41% |
 | total_liabilities | 19 | 9.89% | 17.47% |

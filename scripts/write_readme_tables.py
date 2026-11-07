@@ -21,6 +21,7 @@ from bpb.report import BASIS, LABELS
 README = ROOT / "README.md"
 BLOCK = re.compile(r"(<!-- table:(\w+) start -->\n)(.*?)(<!-- table:\2 end -->)", re.DOTALL)
 BIG = 1e6  # EUR m
+Q5_MIN_BANKS = 15  # instruction 06c B.2 item 5: the README went over 15 KB, so Q5 lists only fields this many banks report
 
 
 def _table(header: list[str], rows: list[list[str]]) -> str:
@@ -36,33 +37,41 @@ def _text(x) -> str:
     return "" if pd.isna(x) else str(x)
 
 
+def _significant(t: dict) -> pd.DataFrame:
+    """The fit years with a significant beta: the implied cost of equity is blank where the 90% interval holds 0."""
+    f = t["valuation_fits"]
+    return f[f["coe_implied"].notna()].reset_index(drop=True)
+
+
 def _headline(t: dict) -> str:
-    fits = t["valuation_fits"].set_index("year")
-    first, last = 2022, fits.index.max()  # 2021 is the year whose slope is not significant
-    g = a.largest_gaps(t)
-    return (f"At {t['latest']} the largest joint gap to the best quartile is {g.iloc[0]['bank_id']}'s, "
-            f"EUR {_eur(g.iloc[0]['joint_eur'])}m a year, and a point of RoTE added {fits.loc[last, 'beta'] / 100:.3f}x of "
-            f"price to tangible book at the end of {last}, against {fits.loc[first, 'beta'] / 100:.3f}x at the end of {first}.")
+    sig = _significant(t)
+    first, last = sig.iloc[0], sig.iloc[-1]
+    h = a.headline_gap(t)
+    return (f"At {t['latest']}, outside the banks whose scope differs between sources, the largest joint gap to the best "
+            f"quartile is {h['bank_id']}'s, {h['joint_rote_pts']:.2f} points of RoTE or EUR {_eur(h['joint_eur'])}m a year, "
+            f"and a point of RoTE added {last['beta'] / 100:.3f}x of price to tangible book at the end of {int(last['year'])}, "
+            f"against {first['beta'] / 100:.3f}x at the end of {int(first['year'])}.")
 
 
 def _q1(t: dict) -> str:
-    rote, ci = (t["league"][k] for k in ("rote", "cost_income"))
-    rote, ci = rote[rote["rank"].notna()], ci[ci["rank"].notna()]
+    rote, ci = a.overall(t, "rote"), a.overall(t, "cost_income")
     verdicts = rote["verdict"].value_counts()
     text = (f"{rote.iloc[0]['name']} leads on RoTE at {rote.iloc[0]['value'] * 100:.2f}% and {ci.iloc[0]['name']} on cost to "
             f"income at {ci.iloc[0]['value'] * 100:.2f}%. On RoTE, {verdicts.get('leading', 0)} banks are leading their "
             f"peers and {verdicts.get('lagging', 0)} are lagging. The table below ranks {len(rote)} banks on RoTE and "
             f"{len(ci)} on cost to income, the rest being blank at this date. Each verdict is against the bank's own "
-            "cluster, so the ranks and verdicts need not agree.")
+            "cluster, named beside it, so the ranks and verdicts need not agree.")
     rows = []
     for i in range(max(len(rote), len(ci))):
         r = rote.iloc[i] if i < len(rote) else None
         c = ci.iloc[i] if i < len(ci) else None
         rows.append([str(i + 1),
-                     *(["", "", ""] if r is None else [r["name"], f"{r['value'] * 100:.2f}%", _text(r["verdict"])]),
-                     *(["", "", ""] if c is None else [c["name"], f"{c['value'] * 100:.2f}%", _text(c["verdict"])])])
-    return text + "\n\n" + _table(["Rank", "RoTE: bank", "RoTE", "Verdict", "Cost to income: bank", "Cost to income",
-                                   "Verdict"], rows)
+                     *([""] * 4 if r is None else [r["name"], str(r["cluster"]), f"{r['value'] * 100:.2f}%",
+                                                   _text(r["verdict"])]),
+                     *([""] * 4 if c is None else [c["name"], str(c["cluster"]), f"{c['value'] * 100:.2f}%",
+                                                   _text(c["verdict"])])])
+    return text + "\n\n" + _table(["Rank", "RoTE: bank", "Cluster", "RoTE", "Verdict", "Cost to income: bank", "Cluster",
+                                   "Cost to income", "Verdict"], rows)
 
 
 def _q2(t: dict) -> str:
@@ -71,9 +80,12 @@ def _q2(t: dict) -> str:
     text = (f"{g['bank_id'].nunique()} banks have the largest joint gaps, led by {top['bank_id']} at EUR "
             f"{_eur(top['joint_eur'])}m. Min and max run over the 3 peer groups and 2 bases, and the joint figure closes "
             "every sized gap at once, so it can be less than the sum of the bank's rows. Amounts are EUR m of annual pre "
-            "tax profit.")
-    return text + "\n\n" + _table(["Bank", "Gap", "Headline", "Min", "Max", "Joint"], [
-        [r.bank_id, LABELS[r.gap], _eur(r.headline_eur), _eur(r.min_eur), _eur(r.max_eur), _eur(r.joint_eur)]
+            "tax profit. NIM and cost of risk are sized together as a risk adjusted margin, because a high cost of risk "
+            "is the price of a high margin.")
+    scope = set(a.scope_banks(t))
+    return text + "\n\n" + _table(["Bank", "Gap", "Headline", "Min", "Max", "Joint", "Joint RoTE pts", "Scope"], [
+        [r.bank_id, LABELS[r.gap], _eur(r.headline_eur), _eur(r.min_eur), _eur(r.max_eur), _eur(r.joint_eur),
+         "" if pd.isna(r.joint_rote_pts) else f"{r.joint_rote_pts:.2f}", "yes" if r.bank_id in scope else ""]
         for r in g.itertuples(index=False)])
 
 
@@ -98,10 +110,12 @@ def _q4(t: dict) -> str:
     v = v[v["uplift_ptbv"].notna()]
     lloy = v[v["bank_id"] == "LLOY"].iloc[0]
     last = f.iloc[-1]
+    sig = _significant(t)
+    s0, s1 = sig.iloc[0], sig.iloc[-1]
     blank = f[f["coe_implied"].isna()]["year"].tolist()
-    text = (f"The market paid more for each point of RoTE every year: β rises from {f.iloc[1]['beta']:.2f} in "
-            f"{int(f.iloc[1]['year'])} to {last['beta']:.2f} in {int(last['year'])}, and the implied cost of equity falls "
-            f"from {f.iloc[1]['coe_implied'] * 100:.1f}% to {last['coe_implied'] * 100:.1f}%. "
+    text = (f"β rose from {s0['beta']:.2f} in {int(s0['year'])} to {s1['beta']:.2f} in {int(s1['year'])}, the first and "
+            f"last years with a significant β, and the implied cost of equity went from {s0['coe_implied'] * 100:.2f}% to "
+            f"{s1['coe_implied'] * 100:.2f}%. "
             f"The cost of equity is blank in {', '.join(str(y) for y in blank)}, where the 90% interval of β contains 0. "
             f"The test that the year slopes are equal is rejected: F({int(s['df_num'])}, {int(s['df_denom'])}) = "
             f"{s['f_stat']:.2f}, p = {s['p_value']:.5f}, over {int(s['n'])} bank years. So 1 pooled slope is the wrong model "
@@ -109,7 +123,7 @@ def _q4(t: dict) -> str:
             f"{int(last['year'])} is {lloy['uplift_ptbv']:+.2f}x on that year's β and {lloy['uplift_pooled_ptbv']:+.2f}x on "
             f"the pooled β. The figure below shows {int(last['year'])}, the tightest fit.")
     rows = [[str(int(r.year)), f"{r.beta:.2f}", f"{r.r2:.2f}", str(int(r.n)),
-             "blank" if pd.isna(r.coe_implied) else f"{r.coe_implied * 100:.1f}%"] for r in f.itertuples(index=False)]
+             "blank" if pd.isna(r.coe_implied) else f"{r.coe_implied * 100:.2f}%"] for r in f.itertuples(index=False)]
     figure = f"![P/TBV against RoTE](outputs/figures/valuation_{int(last['year'])}.png)"
     return text + "\n\n" + _table(["Year", "β", "R²", "n", "Implied CoE"], rows) + "\n\n" + figure
 
@@ -117,13 +131,15 @@ def _q4(t: dict) -> str:
 def _q5(t: dict) -> str:
     s = a.seam_summary(t)
     x = s.set_index("field")
+    shown = s[s["banks"] >= Q5_MIN_BANKS]
     text = (f"Fields the 2 sources define alike agree closely: the median absolute difference is "
-            f"{x.loc['loans_all', 'median'] * 100:.4f}% for loans and {x.loc['pat', 'median'] * 100:.2f}% for profit after "
+            f"{x.loc['loans_all', 'median'] * 100:.2f}% for loans and {x.loc['pat', 'median'] * 100:.2f}% for profit after "
             f"tax. Total assets differ by a median of {x.loc[a.TOTAL_ASSETS, 'median'] * 100:.2f}%, because the supervisory "
             "scope leaves out entities such as insurers. Small residual lines differ the most, since each source draws "
-            "them differently. The table covers 2025-06-30, the date both sources report.")
+            "them differently. The table covers 2025-06-30, the date both sources report, and lists the "
+            f"{len(shown)} fields that at least {Q5_MIN_BANKS} banks report, leaving out {len(s) - len(shown)}.")
     table = _table(["Field", "Banks", "Median", "90th percentile"], [
-        [r.field, str(r.banks), f"{r.median * 100:.2f}%", f"{r.p90 * 100:.2f}%"] for r in s.itertuples(index=False)])
+        [r.field, str(r.banks), f"{r.median * 100:.2f}%", f"{r.p90 * 100:.2f}%"] for r in shown.itertuples(index=False)])
     note = (f"**Bank insurer scope.** {', '.join(a.scope_banks(t))} carry a scope difference between the 2 sources, as bank "
             f"insurers or with a total assets seam above {a.SCOPE_LIMIT * 100:.0f}%. For ISP and KBC, the income statement "
             "lines were read line by line and every one sits in the right field, so the size of other below the line is the "

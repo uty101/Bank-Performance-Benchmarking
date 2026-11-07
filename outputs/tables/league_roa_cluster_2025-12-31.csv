@@ -1,32 +1,32 @@
-rank,bank_id,name,value,verdict,inside_noise,status
-1,BMPS,Banca Monte dei Paschi di Siena,0.01491154262,leading,False,family_switch
-2,UCG,UniCredit,0.01319637635,leading,False,family_switch
-3,BBVA,BBVA,0.0128813011,leading,False,family_switch
-4,DNB,DNB Bank,0.01191531744,leading,False,family_switch
-5,SWED,Swedbank,0.01079032138,in_line,True,family_switch
-6,BPE,BPER Banca,0.01053435099,in_line,True,family_switch
-7,BAMI,Banco BPM,0.01046997655,in_line,True,family_switch
-8,ISP,Intesa Sanpaolo,0.009846965833,in_line,True,family_switch
-9,KBC,KBC Group,0.009742737727,in_line,True,family_switch
-10,HSBA,HSBC Holdings,0.009278278269,leading,False,ok
-11,CABK,CaixaBank,0.00909776741,in_line,True,family_switch
-12,BKT,Bankinter,0.008616727298,in_line,False,family_switch
-13,SEB,Skandinaviska Enskilda Banken,0.008474581975,in_line,False,family_switch
-14,NWG,NatWest Group,0.008093984133,in_line,False,ok
-15,SAN,Banco Santander,0.007864825206,lagging,False,family_switch
-16,NDA,Nordea Bank,0.007576083681,lagging,False,family_switch
-17,RABO,Rabobank,0.007513371957,lagging,False,family_switch
-18,SAB,Banco Sabadell,0.007321428586,lagging,False,family_switch
-19,SHB,Svenska Handelsbanken,0.006918984532,lagging,False,family_switch
-20,UNI,Unicaja Banco,0.006459431955,lagging,False,family_switch
-21,DANSKE,Danske Bank,0.006167910293,lagging,False,family_switch
-22,INGA,ING Groep,0.006098460204,lagging,False,family_switch
-23,ABN,ABN AMRO Bank,0.005787609755,lagging,False,family_switch
-24,DBK,Deutsche Bank,0.005168227836,in_line,True,family_switch
-25,LLOY,Lloyds Banking Group,0.005160017268,lagging,False,ok
-26,BARC,Barclays,0.004939969638,in_line,True,ok
-27,BNP,BNP Paribas,0.004665427039,lagging,False,family_switch
-28,CBK,Commerzbank,0.004586202258,lagging,False,family_switch
-29,SANUK,Santander UK Group Holdings,0.00412181345,lagging,False,ok
-30,GLE,Société Générale,0.004079884981,lagging,False,family_switch
-31,CAG,Crédit Agricole Group,0.003313617172,lagging,False,family_switch
+rank,cluster,bank_id,name,value,verdict,inside_noise,status
+1,1,HSBA,HSBC Holdings,0.009278278269,leading,False,ok
+2,1,DBK,Deutsche Bank,0.005168227836,in_line,True,family_switch
+3,1,BARC,Barclays,0.004939969638,in_line,True,ok
+4,1,BNP,BNP Paribas,0.004665427039,lagging,False,family_switch
+5,1,GLE,Société Générale,0.004079884981,lagging,False,family_switch
+1,2,BMPS,Banca Monte dei Paschi di Siena,0.01491154262,leading,False,family_switch
+2,2,UCG,UniCredit,0.01319637635,leading,False,family_switch
+3,2,BBVA,BBVA,0.0128813011,leading,False,family_switch
+4,2,DNB,DNB Bank,0.01191531744,leading,False,family_switch
+5,2,SWED,Swedbank,0.01079032138,in_line,True,family_switch
+6,2,BPE,BPER Banca,0.01053435099,in_line,True,family_switch
+7,2,BAMI,Banco BPM,0.01046997655,in_line,True,family_switch
+8,2,ISP,Intesa Sanpaolo,0.009846965833,in_line,True,family_switch
+9,2,KBC,KBC Group,0.009742737727,in_line,True,family_switch
+10,2,CABK,CaixaBank,0.00909776741,in_line,True,family_switch
+11,2,BKT,Bankinter,0.008616727298,in_line,False,family_switch
+12,2,SEB,Skandinaviska Enskilda Banken,0.008474581975,in_line,False,family_switch
+13,2,NWG,NatWest Group,0.008093984133,in_line,False,ok
+14,2,SAN,Banco Santander,0.007864825206,lagging,False,family_switch
+15,2,NDA,Nordea Bank,0.007576083681,lagging,False,family_switch
+16,2,RABO,Rabobank,0.007513371957,lagging,False,family_switch
+17,2,SAB,Banco Sabadell,0.007321428586,lagging,False,family_switch
+18,2,SHB,Svenska Handelsbanken,0.006918984532,lagging,False,family_switch
+19,2,UNI,Unicaja Banco,0.006459431955,lagging,False,family_switch
+20,2,DANSKE,Danske Bank,0.006167910293,lagging,False,family_switch
+21,2,INGA,ING Groep,0.006098460204,lagging,False,family_switch
+22,2,ABN,ABN AMRO Bank,0.005787609755,lagging,False,family_switch
+23,2,LLOY,Lloyds Banking Group,0.005160017268,lagging,False,ok
+24,2,CBK,Commerzbank,0.004586202258,lagging,False,family_switch
+25,2,SANUK,Santander UK Group Holdings,0.00412181345,lagging,False,ok
+26,2,CAG,Crédit Agricole Group,0.003313617172,lagging,False,family_switch

@@ -1,32 +1,32 @@
-rank,bank_id,name,value,verdict,inside_noise,status
-1,SHB,Svenska Handelsbanken,-0.0001369881899,leading,False,family_switch
-2,SWED,Swedbank,-1.828048392e-05,leading,False,family_switch
-3,NDA,Nordea Bank,6.170662906e-05,leading,False,family_switch
-4,ABN,ABN AMRO Bank,7.080172331e-05,leading,False,family_switch
-5,DANSKE,Danske Bank,0.000143026509,leading,False,family_switch
-6,SEB,Skandinaviska Enskilda Banken,0.0007642065026,in_line,True,family_switch
-7,SANUK,Santander UK Group Holdings,0.0008897514919,in_line,True,ok
-8,UCG,UniCredit,0.001159570706,in_line,True,family_switch
-9,DNB,DNB Bank,0.001186322291,in_line,True,family_switch
-10,KBC,KBC Group,0.001346750709,in_line,False,family_switch
-11,LLOY,Lloyds Banking Group,0.001536935756,in_line,False,ok
-12,RABO,Rabobank,0.001603489058,in_line,False,family_switch
-13,NWG,NatWest Group,0.00161595825,in_line,False,ok
-14,INGA,ING Groep,0.001728883491,in_line,False,family_switch
-15,DBK,Deutsche Bank,0.002494760564,leading,False,family_switch
-16,CABK,CaixaBank,0.002526344231,lagging,False,family_switch
-17,UNI,Unicaja Banco,0.002528830799,lagging,False,family_switch
-18,CAG,Crédit Agricole Group,0.002835513908,lagging,False,family_switch
-19,GLE,Société Générale,0.003082394041,in_line,True,family_switch
-20,HSBA,HSBC Holdings,0.003215568362,in_line,True,ok
-21,SAB,Banco Sabadell,0.003412256333,lagging,False,family_switch
-22,BAMI,Banco BPM,0.003551138223,lagging,False,family_switch
-23,BNP,BNP Paribas,0.003607653179,lagging,False,family_switch
-24,BARC,Barclays,0.00377899433,lagging,False,ok
-25,BPE,BPER Banca,0.004167226507,lagging,False,family_switch
-26,ISP,Intesa Sanpaolo,0.004333289444,lagging,False,family_switch
-27,BMPS,Banca Monte dei Paschi di Siena,0.007294874636,lagging,False,family_switch
-28,SAN,Banco Santander,0.01158602062,lagging,False,family_switch
-29,BBVA,BBVA,0.01352990648,lagging,False,family_switch
-,BKT,Bankinter,,,,missing_input:loans_customers_gross;short_history
-,CBK,Commerzbank,,,,missing_input:loans_customers_gross;short_history
+rank,cluster,bank_id,name,value,verdict,inside_noise,status
+1,1,DBK,Deutsche Bank,0.002494760564,leading,False,family_switch
+2,1,GLE,Société Générale,0.003082394041,in_line,True,family_switch
+3,1,HSBA,HSBC Holdings,0.003215568362,in_line,True,ok
+4,1,BNP,BNP Paribas,0.003607653179,lagging,False,family_switch
+5,1,BARC,Barclays,0.00377899433,lagging,False,ok
+1,2,SHB,Svenska Handelsbanken,-0.0001369881899,leading,False,family_switch
+2,2,SWED,Swedbank,-1.828048392e-05,leading,False,family_switch
+3,2,NDA,Nordea Bank,6.170662906e-05,leading,False,family_switch
+4,2,ABN,ABN AMRO Bank,7.080172331e-05,leading,False,family_switch
+5,2,DANSKE,Danske Bank,0.000143026509,leading,False,family_switch
+6,2,SEB,Skandinaviska Enskilda Banken,0.0007642065026,in_line,True,family_switch
+7,2,SANUK,Santander UK Group Holdings,0.0008897514919,in_line,True,ok
+8,2,UCG,UniCredit,0.001159570706,in_line,True,family_switch
+9,2,DNB,DNB Bank,0.001186322291,in_line,True,family_switch
+10,2,KBC,KBC Group,0.001346750709,in_line,False,family_switch
+11,2,LLOY,Lloyds Banking Group,0.001536935756,in_line,False,ok
+12,2,RABO,Rabobank,0.001603489058,in_line,False,family_switch
+13,2,NWG,NatWest Group,0.00161595825,in_line,False,ok
+14,2,INGA,ING Groep,0.001728883491,in_line,False,family_switch
+15,2,CABK,CaixaBank,0.002526344231,lagging,False,family_switch
+16,2,UNI,Unicaja Banco,0.002528830799,lagging,False,family_switch
+17,2,CAG,Crédit Agricole Group,0.002835513908,lagging,False,family_switch
+18,2,SAB,Banco Sabadell,0.003412256333,lagging,False,family_switch
+19,2,BAMI,Banco BPM,0.003551138223,lagging,False,family_switch
+20,2,BPE,BPER Banca,0.004167226507,lagging,False,family_switch
+21,2,ISP,Intesa Sanpaolo,0.004333289444,lagging,False,family_switch
+22,2,BMPS,Banca Monte dei Paschi di Siena,0.007294874636,lagging,False,family_switch
+23,2,SAN,Banco Santander,0.01158602062,lagging,False,family_switch
+24,2,BBVA,BBVA,0.01352990648,lagging,False,family_switch
+,2,BKT,Bankinter,,,,missing_input:loans_customers_gross;short_history
+,2,CBK,Commerzbank,,,,missing_input:loans_customers_gross;short_history

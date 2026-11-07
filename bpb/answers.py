@@ -17,6 +17,7 @@ P90 = 0.9  # instruction 06 B.4
 SCOPE_LIMIT = 0.05  # amendment 26: any bank with a total_assets seam above 5%
 INSURERS = ["NDA", "DANSKE", "SWED", "SEB", "SHB", "KBC", "BNP", "GLE", "CAG"]  # amendment 26
 TOTAL_ASSETS, SEAM = "total_assets", "8_seam_pl"
+LOWER_BETTER = {"cost_income"}  # direction of the 2 KPIs ranked in Q1
 
 
 def load(root: Path) -> dict:
@@ -29,6 +30,21 @@ def load(root: Path) -> dict:
     return t
 
 
+def overall(t: dict, kpi: str) -> pd.DataFrame:
+    """Instruction 06c B.3 item 3: every bank of a cluster league file with a value, ranked over all banks, best first."""
+    lg = t["league"][kpi]
+    lg = lg[lg["value"].notna()]
+    return lg.sort_values(["value", "bank_id"], ascending=[kpi in LOWER_BETTER, True]).reset_index(drop=True)
+
+
+def headline_gap(t: dict) -> pd.Series:
+    """Instruction 06c B.2 item 1: the largest joint RoTE gap in points among banks outside the scope list."""
+    j = t["gaps_joint"]
+    j = j[(j["date"] == t["latest"]) & (j["group"] == GROUP) & (j["basis"] == BASIS) & j["joint_rote_pts"].notna()
+          & ~j["bank_id"].isin(scope_banks(t))]
+    return j.sort_values(["joint_rote_pts", "bank_id"], ascending=[False, True]).iloc[0]
+
+
 def largest_gaps(t: dict) -> pd.DataFrame:
     """Every gap outside noise of the banks with the 10 largest joint gaps: a gap is sized only outside noise."""
     j = t["gaps_joint"]
@@ -36,7 +52,7 @@ def largest_gaps(t: dict) -> pd.DataFrame:
     top = j.sort_values(["joint_eur", "bank_id"], ascending=[False, True]).head(TOP_JOINT)
     g = t["gaps_range"]
     g = g[(g["date"] == t["latest"]) & g["headline_eur"].notna() & g["bank_id"].isin(top["bank_id"])]
-    out = g.merge(top[["bank_id", "joint_eur"]], on="bank_id")
+    out = g.merge(top[["bank_id", "joint_eur", "joint_rote_pts"]], on="bank_id")
     return out.sort_values(["joint_eur", "bank_id", "headline_eur"], ascending=[False, True, False]).reset_index(drop=True)
 
 
@@ -91,9 +107,10 @@ def answers(root: Path) -> pd.DataFrame:
     """outputs/tables/answers.csv: each claim is generated from the source named beside it."""
     t = load(root)
     d = t["latest"]
-    rote, ci = t["league"]["rote"].iloc[0], t["league"]["cost_income"].iloc[0]
+    rote, ci = overall(t, "rote").iloc[0], overall(t, "cost_income").iloc[0]
     gaps = largest_gaps(t)
     top = gaps.iloc[0]
+    head = headline_gap(t)
     drivers = driver_table(t)
     first = drivers.iloc[0]
     steps = first.drop(["bank_id", "gap", "reference", "bank"]).astype(float)
@@ -103,17 +120,21 @@ def answers(root: Path) -> pd.DataFrame:
     seam = seam_summary(t).set_index("field")
     rows = [
         (1, f"{rote['name']} has the highest RoTE at {d}, {rote['value'] * 100:.2f}%, with verdict {rote['verdict']}.",
-         f"league_rote_{GROUP}_{d}.csv, rank == 1"),
+         f"league_rote_{GROUP}_{d}.csv, largest value"),
         (1, f"{ci['name']} has the lowest cost to income at {d}, {ci['value'] * 100:.2f}%, with verdict {ci['verdict']}.",
-         f"league_cost_income_{GROUP}_{d}.csv, rank == 1"),
+         f"league_cost_income_{GROUP}_{d}.csv, lowest value"),
         (2, f"{top['bank_id']} has the largest joint gap at {d}, EUR {top['joint_eur'] / 1e6:,.0f}m.",
          f"gaps_joint.csv, date == {d}, group == {GROUP}, basis == {BASIS}, largest joint_eur"),
+        (2, (f"Outside the scope list, {head['bank_id']} has the largest joint RoTE gap at {d}, "
+            f"{head['joint_rote_pts']:.2f} points, EUR {head['joint_eur'] / 1e6:,.0f}m."),
+         (f"gaps_joint.csv, date == {d}, group == {GROUP}, basis == {BASIS}, bank_id not in the scope list, "
+          "largest joint_rote_pts")),
         (3, (f"{first['bank_id']} has the largest RoTE gap to the median among banks with a decomposition at {d}, "
             f"{first['gap']:+.2f} points; its largest step is {steps.abs().idxmax()}, "
             f"{steps[steps.abs().idxmax()]:+.2f} points."),
          f"drivers.csv, date == {d}, basis == {BASIS}, reference == {REFERENCE}, bank_id == {first['bank_id']}"),
         (4, (f"A point of RoTE added {fits.loc[last, 'beta'] / 100:.3f}x of P/TBV at the end of {last}, implying a cost of "
-            f"equity of {fits.loc[last, 'coe_implied'] * 100:.1f}%."), f"valuation_fits.csv, year == {last}"),
+            f"equity of {fits.loc[last, 'coe_implied'] * 100:.2f}%."), f"valuation_fits.csv, year == {last}"),
         (4, f"The year slopes differ: F {stable['f_stat']:.2f}, p {stable['p_value']:.5f}.", "valuation_stability.csv"),
         (5, (f"Total assets differ between EBA and bank reports by a median of {seam.loc[TOTAL_ASSETS, 'median'] * 100:.2f}% "
             f"and pbt by {seam.loc['pbt', 'median'] * 100:.2f}%."), f"checks.csv, check == {SEAM}, field in (total_assets, pbt)"),

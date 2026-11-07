@@ -1,6 +1,7 @@
 """Streamlit dashboard (instruction 06 B.2): `streamlit run bpb/dashboard.py`. It reads only outputs/.
 
-BPB_ROOT names another folder holding outputs/, which is how the test runs it on a build in tmp_path.
+It reads outputs/ under the folder in BPB_ROOT, or under the current directory if that is not set (instruction 06c
+B.4), which is how the test runs it on a build in tmp_path.
 """
 
 from __future__ import annotations
@@ -25,7 +26,7 @@ from bpb.report import (
     waterfall_steps,
 )
 
-ROOT = Path(os.environ.get("BPB_ROOT", Path(__file__).resolve().parents[1]))
+ROOT = Path(os.environ.get("BPB_ROOT", "."))
 GROUPS = [GROUP, "market", "universe"]
 BASES = [BASIS, "reported"]
 TREND_YEARS = 5  # instruction 06 B.2

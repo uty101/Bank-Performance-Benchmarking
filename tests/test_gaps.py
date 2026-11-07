@@ -54,6 +54,15 @@ def test_joint_single_synthetic(gap):
     assert abs(joint_gap(BANK, {gap: target}) / standalone - 1) < 1e-9
 
 
+
+def test_ram_joint():
+    """Instruction 06c step 6.7: the margin gap closes through NII at the bank's own credit cost."""
+    ram, ci = 0.035, 0.5
+    d = ram * BANK["IEA"] - (BANK["NII"] - BANK["LLP"])
+    assert abs(joint_gap(BANK, {"risk_adj_nim": ram}) - d) < 1e-9
+    both = d + BANK["C"] - ci * (BANK["I"] + d)
+    assert abs(joint_gap(BANK, {"risk_adj_nim": ram, "cost_income": ci}) - both) < 1e-9
+
 def test_joint_single(t):
     """Instruction 04b B.3: with the level rule the identity holds on real data."""
     gaps, joint = t["gaps"], t["joint"]
