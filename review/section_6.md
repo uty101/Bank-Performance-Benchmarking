@@ -1042,3 +1042,418 @@ pytest exit 1
 1. `instructions/06c_section_6_finish.status.md`
 2. `decisions/OPEN.md`, OPEN-45 and OPEN-46
 3. E6.6a, E6.6c and E6.6d
+
+---
+
+# Instruction 06d (steps 6.6b, 6.7 and 6.8)
+
+Steps 6.6b to 6.8 are done. The fresh clone and CI on the final commit give 65 passed, and a second `bpb build` leaves `git status --porcelain` empty. CAG's joint RoTE gap is still blank: the AT1 entries pass, but CAG also lacks intangibles_deduction (OPEN-47).
+
+## Steps completed
+
+- **6.6b** hand check bank and CAG AT1 (125e3e8). B.1: INGA replaces ISP in `[gaps] hand_check_banks`. B.2: CAG's at1_instruments from the printed line, status `at1_from_reconciliation`. B.4: the comment on the `joint_gap` branches. Amendments 51 to 54, the 06d decisions in `decisions/section_6_review.md`, `docs/METHODS.md`, OPEN-47.
+- **6.7** readme, league tables and dashboard test (51f3f45). 06c B.2, B.3 and B.4, and 06d B.3.
+- **6.8** build check (1588a2a). Only `spec_log.csv` moved, its `run_utc` now the date of the 6.7 commit.
+
+## Evidence
+
+### E6.6b-a: the 3 hand check sheets against the pipeline
+
+2025-12-31, cluster group, underlying basis, EUR. Each sheet is evaluated with pycel, as in `test_hand_check`. INGA has both gaps, so its sheet tests the joint formula on 2 gaps. Every difference is below EUR 0.50, within `hand_check_tol_eur`.
+
+```
+bank  group    line                                        sheet EUR       pipeline EUR       diff
+LLOY  cluster  delta_pi_eur cost_income             4,404,501,377.46   4,404,501,377.00     0.4567
+LLOY  cluster  joint_delta_pi_eur                   4,404,501,377.46   4,404,501,377.00     0.4567
+INGA  cluster  delta_pi_eur cost_income             2,988,753,379.64   2,988,753,380.00    -0.3607
+INGA  cluster  delta_pi_eur risk_adj_nim            6,081,719,060.76   6,081,719,061.00    -0.2368
+INGA  cluster  joint_delta_pi_eur                   6,537,127,779.51   6,537,127,780.00    -0.4950
+SWED  cluster  delta_pi_eur risk_adj_nim              293,668,355.39     293,668,355.40    -0.0143
+SWED  cluster  joint_delta_pi_eur                     293,668,355.39     293,668,355.40    -0.0143
+```
+
+### E6.6b-b: CAG at1_instruments and their pages
+
+All 4 pass provenance (check 1). The 2024-12-31 value, 7,218, is also in the equity statement cited for at1_in_equity, so both pages are printed below the entries.
+
+```
+2024-12-31 (7,218) 7218000000 CAG_pillar3_2024-12-31.pdf page 69 977eda77a688 at1_from_reconciliation
+    (-) AT1 instruments accounted as equity (7,218) (7,218) (7,220) (7,220)
+2025-06-30 (8 612) 8612000000 CAG_pillar3_2025-06-30.pdf page 5 051e8846912f at1_from_reconciliation
+    (-) AT1 instruments accounted as equity (8 612) (8 612) (7 218) (7 218)
+2025-12-31 (8,143) 8143000000 CAG_pillar3_2025-12-31.pdf page 243 fbea4477bdcc at1_from_reconciliation
+    (-) AT1 instruments accounted as equity (8,143) (8,143) (7,218) (7,218)
+2026-06-30 (8 020) 8020000000 CAG_pillar3_2026-06-30.pdf page 90 11ee1c86d9bd at1_from_reconciliation
+    (-) AT1 instruments accounted as equity (8 020) (8 020) (8 143) (8 143)
+
+CAG_half_year_2025-06-30.pdf page 12 (cited for at1_in_equity): Equity at 31 December 2024 / 13,183 / 115,125 / (458) / 7,218
+CAG_pillar3_2024-12-31.pdf page 69: (-) AT1 instruments accounted as equity / (7,218) / (7,218) / (7,220) / (7,220)
+```
+
+### E6.6b-c: CAG's joint RoTE gap at 2026-06-30
+
+Still blank. at1_instruments is now filled at all 4 dates, so RoTE's missing input moves to intangibles_deduction, which CAG lacks in the report family at every date, since it is CC1 row 8 (OPEN-47). The same pages print "Goodwills and intangible assets", 19,143, 19,309, 19,604 and 20,747 (EUR m). That was not entered, because 06d B.2 covers at1_instruments only. CAG is on the scope list, so the headline is not affected either way.
+
+```
+date bank_id    joint_eur  joint_rote_pts
+2026-06-30     CAG 1.668966e+10             NaN
+      date  kpi  value                              status
+2024-12-31 rote    NaN       missing_input:tangible_equity
+2025-06-30 rote    NaN    missing_input:profit_to_ordinary
+2025-12-31 rote    NaN missing_input:intangibles_deduction
+2026-06-30 rote    NaN missing_input:intangibles_deduction
+```
+
+### E6.6b-d: `test_hand_check` at the final commit
+
+```
+LLOY cluster 
+INGA cluster 
+SWED cluster 
+.
+1 passed in 223.81s (0:03:43)
+```
+
+### E6.7a: the final README
+
+14,844 bytes. With every B.2 and B.3 change it came to 15,051 bytes, over the 15,000 that `test_tables_match` allows. So, by B.2 item 5, Q5 lists only the 29 fields at least 15 banks report, and its callout says 6 are left out.
+
+````
+# Bank Performance Benchmarking
+
+[![ci](https://github.com/uty101/Bank-Performance-Benchmarking/actions/workflows/ci.yml/badge.svg)](https://github.com/uty101/Bank-Performance-Benchmarking/actions/workflows/ci.yml) 65 tests
+
+This project benchmarks 31 European banks against peers with a similar business model, sizes each gap in euros and RoTE points, and explains it with 7 drivers.
+<!-- table:headline start -->
+At 2026-06-30, outside the banks whose scope differs between sources, the largest joint gap to the best quartile is INGA's, 10.20 points of RoTE or EUR 6,926m a year, and a point of RoTE added 0.104x of price to tangible book at the end of 2025, against 0.045x at the end of 2022.
+<!-- table:headline end -->
+
+See `outputs/reports/` for the 31 bank profiles, `outputs/tables/` for every table, and run `streamlit run bpb/dashboard.py` for the dashboard.
+
+## What it does
+
+It joins EBA transparency data, used to 2025-06-30, to figures hand entered from each bank's own reports, with every figure checked against the cached page it came from. From those it computes 20 KPIs from FY2021 to H1 2026, forms peer groups by business model, and measures each bank against the best quartile of its peers. It then says which gaps are larger than the noise, what they are worth, which drivers explain RoTE, and how the market prices RoTE.
+
+## How to run it
+
+```
+uv venv --python 3.12
+uv pip install -r requirements-lock.txt
+uv pip install -e . --no-deps
+bpb build
+streamlit run bpb/dashboard.py
+bpb trace <lineage_id>
+```
+
+`bpb build` rebuilds every output from `data/raw/` and `data/manual/`, with no network, and takes about 6 minutes. `bpb trace` prints the chain behind a figure, down to the EBA item or the report page. The dashboard shows the ID of every figure.
+
+## Results
+
+All results are at 2026-06-30, on the cluster group and the underlying basis, unless they say otherwise.
+
+### Q1: where does each bank sit?
+
+<!-- table:q1 start -->
+NatWest Group leads on RoTE at 19.91% and Bankinter on cost to income at 35.30%. On RoTE, 3 banks are leading their peers and 10 are lagging. The table below ranks 22 banks on RoTE and 31 on cost to income, the rest being blank at this date. Each verdict is against the bank's own cluster, named beside it, so the ranks and verdicts need not agree.
+
+| Rank | RoTE: bank | Cluster | RoTE | Verdict | Cost to income: bank | Cluster | Cost to income | Verdict |
+|---|---|---|---|---|---|---|---|---|
+| 1 | NatWest Group | 2 | 19.91% | leading | Bankinter | 2 | 35.30% | leading |
+| 2 | BBVA | 2 | 19.08% | leading | KBC Group | 2 | 37.32% | leading |
+| 3 | Banca Monte dei Paschi di Siena | 2 | 18.71% | in_line | BBVA | 2 | 38.81% | leading |
+| 4 | HSBC Holdings | 1 | 18.04% | leading | DNB Bank | 2 | 39.04% | leading |
+| 5 | Intesa Sanpaolo | 2 | 17.99% | in_line | Intesa Sanpaolo | 2 | 39.44% | leading |
+| 6 | Nordea Bank | 2 | 17.55% | in_line | CaixaBank | 2 | 39.58% | in_line |
+| 7 | Banco Santander | 2 | 17.41% | in_line | Banco Santander | 2 | 41.26% | in_line |
+| 8 | CaixaBank | 2 | 17.01% | in_line | Swedbank | 2 | 41.66% | in_line |
+| 9 | Banco BPM | 2 | 16.98% | in_line | Danske Bank | 2 | 44.96% | in_line |
+| 10 | KBC Group | 2 | 16.85% | in_line | UniCredit | 2 | 45.74% | in_line |
+| 11 | Skandinaviska Enskilda Banken | 2 | 14.66% | lagging | Skandinaviska Enskilda Banken | 2 | 45.98% | in_line |
+| 12 | Danske Bank | 2 | 14.51% | lagging | Unicaja Banco | 2 | 46.05% | in_line |
+| 13 | Banco Sabadell | 2 | 14.32% | lagging | Nordea Bank | 2 | 46.24% | in_line |
+| 14 | ING Groep | 2 | 13.80% | lagging | HSBC Holdings | 1 | 46.43% | leading |
+| 15 | Lloyds Banking Group | 2 | 13.45% | lagging | Svenska Handelsbanken | 2 | 47.22% | lagging |
+| 16 | Barclays | 1 | 12.99% | in_line | Banco BPM | 2 | 47.82% | lagging |
+| 17 | BNP Paribas | 1 | 12.87% | in_line | NatWest Group | 2 | 48.34% | lagging |
+| 18 | Société Générale | 1 | 11.30% | lagging | Banco Sabadell | 2 | 49.01% | lagging |
+| 19 | Deutsche Bank | 1 | 11.12% | lagging | Santander UK Group Holdings | 2 | 53.05% | lagging |
+| 20 | ABN AMRO Bank | 2 | 9.80% | lagging | ING Groep | 2 | 53.17% | lagging |
+| 21 | Rabobank | 2 | 8.98% | lagging | Rabobank | 2 | 54.02% | lagging |
+| 22 | Santander UK Group Holdings | 2 | 6.43% | lagging | BPER Banca | 2 | 54.55% | lagging |
+| 23 |  |  |  |  | Commerzbank | 2 | 55.51% | lagging |
+| 24 |  |  |  |  | Barclays | 1 | 57.92% | in_line |
+| 25 |  |  |  |  | Crédit Agricole Group | 2 | 58.84% | lagging |
+| 26 |  |  |  |  | Lloyds Banking Group | 2 | 59.03% | lagging |
+| 27 |  |  |  |  | BNP Paribas | 1 | 59.75% | in_line |
+| 28 |  |  |  |  | Banca Monte dei Paschi di Siena | 2 | 59.81% | lagging |
+| 29 |  |  |  |  | Société Générale | 1 | 60.07% | lagging |
+| 30 |  |  |  |  | ABN AMRO Bank | 2 | 60.71% | lagging |
+| 31 |  |  |  |  | Deutsche Bank | 1 | 62.68% | lagging |
+<!-- table:q1 end -->
+
+### Q2: which gaps are larger than the noise, and what are they worth?
+
+<!-- table:q2 start -->
+10 banks have the largest joint gaps, led by CAG at EUR 16,690m. Min and max run over the 3 peer groups and 2 bases, and the joint figure closes every sized gap at once, so it can be less than the sum of the bank's rows. Amounts are EUR m of annual pre tax profit. NIM and cost of risk are sized together as a risk adjusted margin, because a high cost of risk is the price of a high margin.
+
+| Bank | Gap | Headline | Min | Max | Joint | Joint RoTE pts | Scope |
+|---|---|---|---|---|---|---|---|
+| CAG | Risk adjusted NIM | 16,221 | 14,536 | 16,221 | 16,690 |  | yes |
+| CAG | Cost to income | 7,154 | 6,525 | 7,154 | 16,690 |  | yes |
+| INGA | Risk adjusted NIM | 6,943 | 5,920 | 6,943 | 6,926 | 10.20 |  |
+| INGA | Cost to income | 2,845 | 2,476 | 2,845 | 6,926 | 10.20 |  |
+| BARC | Risk adjusted NIM | 4,723 | 4,723 | 11,782 | 4,723 | 5.88 |  |
+| LLOY | Cost to income | 4,189 | 2,324 | 4,244 | 4,189 | 7.62 |  |
+| DBK | Cost to income | 3,658 | 3,043 | 6,869 | 3,658 | 4.72 |  |
+| GLE | Cost to income | 2,339 | 1,882 | 5,093 | 3,411 | 5.01 | yes |
+| GLE | Risk adjusted NIM | 2,214 | 2,214 | 5,790 | 3,411 | 5.01 | yes |
+| ABN | Risk adjusted NIM | 2,260 | 1,817 | 2,260 | 3,105 | 9.77 |  |
+| ABN | Cost to income | 1,776 | 1,653 | 1,778 | 3,105 | 9.77 |  |
+| DANSKE | Risk adjusted NIM | 2,209 | 1,866 | 2,209 | 2,209 | 7.71 | yes |
+| RABO | Cost to income | 2,139 | 1,829 | 2,139 | 2,139 | 3.09 |  |
+| NDA | Risk adjusted NIM | 2,226 | 1,779 | 2,226 | 1,900 | 5.31 | yes |
+| NDA | Cost to income | 592 | 437 | 760 | 1,900 | 5.31 | yes |
+<!-- table:q2 end -->
+
+### Q3: which drivers explain the RoTE gap?
+
+Decomposition explains where a RoTE gap comes from, and business mix is a legitimate part of that, while sizing in Q2 is where mix must not count as opportunity.
+
+<!-- table:q3 start -->
+Of the banks with a decomposition at 2026-06-30, RABO sits furthest from its peer median, -7.31 points, and its largest step is assets / tangible equity at -5.66 points. Each row runs from the reference RoTE, every driver at the peer median, to the bank's RoTE, in points.
+
+| Bank | Gap to median | Reference | NII / assets | Fees / assets | Other income / assets | Costs / assets | Credit losses / assets | Tax rate | Assets / tangible equity | Other below the line | Minorities and AT1 | Bank RoTE |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| RABO | -7.31 | 15.86 | +4.12 | -2.81 | +0.38 | -2.36 | -0.60 | +0.17 | -5.66 | +0.29 | -0.40 | 8.98 |
+| ABN | -6.49 | 16.23 | -1.75 | -0.88 | -2.65 | -1.02 | +1.71 | -0.16 | -1.04 | +0.29 | -0.92 | 9.80 |
+| HSBA | +5.97 | 14.38 | +4.58 | -1.01 | +3.26 | +1.63 | -0.12 | +0.60 | -5.81 | +1.66 | -1.13 | 18.04 |
+| NWG | +4.20 | 14.94 | +4.25 | -4.38 | -1.82 | +1.73 | +0.83 | +0.36 | +4.82 | +0.28 | -1.09 | 19.91 |
+| BBVA | +3.37 | 15.40 | +21.73 | +5.52 | +0.78 | -7.53 | -8.20 | -1.41 | -4.92 | -0.34 | -1.94 | 19.08 |
+<!-- table:q3 end -->
+
+### Q4: what is a point of RoTE worth?
+
+<!-- table:q4 start -->
+β rose from 4.50 in 2022 to 10.43 in 2025, the first and last years with a significant β, and the implied cost of equity went from 24.22% to 11.58%. The cost of equity is blank in 2021, where the 90% interval of β contains 0. The test that the year slopes are equal is rejected: F(4, 26) = 10.00, p = 0.00005, over 120 bank years. So 1 pooled slope is the wrong model for anything but the significance gate, and the choice of slope matters: LLOY's uplift at the end of 2025 is +0.84x on that year's β and +0.28x on the pooled β. The figure below shows 2025, the tightest fit.
+
+| Year | β | R² | n | Implied CoE |
+|---|---|---|---|---|
+| 2021 | 1.05 | 0.09 | 22 | blank |
+| 2022 | 4.50 | 0.48 | 23 | 24.22% |
+| 2023 | 4.53 | 0.40 | 25 | 24.09% |
+| 2024 | 6.63 | 0.55 | 25 | 17.08% |
+| 2025 | 10.43 | 0.74 | 25 | 11.58% |
+
+![P/TBV against RoTE](outputs/figures/valuation_2025.png)
+<!-- table:q4 end -->
+
+### Q5: how far apart are the 2 sources?
+
+<!-- table:q5 start -->
+Fields the 2 sources define alike agree closely: the median absolute difference is 0.00% for loans and 0.02% for profit after tax. Total assets differ by a median of 8.54%, because the supervisory scope leaves out entities such as insurers. Small residual lines differ the most, since each source draws them differently. The table covers 2025-06-30, the date both sources report, and lists the 29 fields that at least 15 banks report, leaving out 6.
+
+| Field | Banks | Median | 90th percentile |
+|---|---|---|---|
+| admin_expenses | 26 | 1.91% | 13.08% |
+| at1_instruments | 23 | 0.99% | 4.08% |
+| cash_cb | 25 | 2.94% | 12.21% |
+| debt_securities | 24 | 0.00% | 0.00% |
+| deposits_customers | 23 | 2.04% | 9.15% |
+| depreciation | 21 | 1.14% | 6.75% |
+| dividend_income | 15 | 0.70% | 62.13% |
+| gains_derecognition_not_fvtpl | 18 | 36.35% | 149.02% |
+| gains_held_for_trading | 26 | 33.47% | 305.20% |
+| impairments_fin | 26 | 3.34% | 87.21% |
+| intangibles_deduction | 22 | 0.00% | 0.05% |
+| interest_expense | 26 | 0.97% | 23.33% |
+| interest_income | 26 | 1.33% | 12.30% |
+| loans_all | 24 | 0.00% | 0.00% |
+| loans_customers_allowance | 24 | 0.00% | 0.03% |
+| loans_customers_gross | 24 | 0.00% | 0.00% |
+| loans_households_gross | 24 | 0.00% | 0.00% |
+| net_fees | 26 | 0.80% | 14.41% |
+| npl_allowance | 24 | 0.00% | 0.02% |
+| npl_gross | 24 | 0.00% | 0.01% |
+| other_operating_net | 26 | 127.58% | 1093.47% |
+| pat | 26 | 0.02% | 2.81% |
+| pbt | 26 | 0.46% | 5.00% |
+| profit_owners | 26 | 0.01% | 2.29% |
+| total_assets | 25 | 8.54% | 16.65% |
+| total_equity | 24 | 0.02% | 1.41% |
+| total_liabilities | 19 | 9.89% | 17.47% |
+| total_operating_income | 26 | 3.12% | 7.86% |
+| trading_assets | 17 | 0.40% | 59.54% |
+
+**Bank insurer scope.** NDA, DANSKE, SWED, SEB, SHB, KBC, BNP, GLE, CAG, BAMI, CABK, DNB, ISP, UCG carry a scope difference between the 2 sources, as bank insurers or with a total assets seam above 5%. For ISP and KBC, the income statement lines were read line by line and every one sits in the right field, so the size of other below the line is the insurance effect: -7.85 points of RoTE for ISP and -10.11 for KBC at 2026-06-30. The same treatment flatters their cost to income.
+<!-- table:q5 end -->
+
+## Peer groups
+
+<!-- table:peers start -->
+The clustering splits the 31 banks into 5 and 26. The 5 are BARC, BNP, DBK, GLE, HSBA: global banks, far larger than the rest, with a much higher share of trading assets and a lower share of loans. Everyone else, from Lloyds to Unicaja, is 1 broad group of retail and commercial banks, so the cluster says more about what the global banks are than about how the others differ. That is why every sized gap is shown with its range across the 3 groups. The silhouette is 0.29, and mean stability is 0.57 for the 5 bank cluster and 0.78 for the other.
+<!-- table:peers end -->
+
+## Caveats
+
+- **Accounting scope.** Bank insurers report insurance lines that the supervisory scope leaves out, so their cost and income ratios are not like for like.
+- **FX inside averages.** Averages and rolling figures of EBA balances for the 5 non EUR banks carry the currency move between their 2 ends.
+- **The 2 seams.** Seam 1 sets EBA capital against Pillar 3, and seam 2 sets EBA against the banks' own reports. EBA feeds the history and reports the latest dates, so no time comparison crosses the switch, and such a cell is blank with status `family_switch`.
+- **One offs.** Underlying figures adjust only for what each bank discloses, never for judgement.
+- **Broad cluster 2.** The cluster group for most banks is broad, so read every sized gap with its range across the 3 groups.
+- **Small peer groups.** Market groups hold few banks, intervals are wide, and a group that is too small gives no benchmark.
+- **Valuation slope.** The slope changes every year, so an uplift holds only at the date of its fit.
+- **BMPS prices.** Earlier BMPS prices may carry a rights issue adjustment that `Stock Splits` does not undo. It touches no P/TBV, since BMPS's 2021 TBV per share is blank.
+<!-- table:headcount start -->
+- **Headcount.** 9 banks publish only headcount, which stands in for FTE.
+<!-- table:headcount end -->
+<!-- table:coverage start -->
+- **Coverage.** 97 of 620 KPI cells are blank at 2026-06-30 on the underlying basis, because an input is not published or not comparable. The largest causes are customers (27), fte (24), mixed_family (8).
+<!-- table:coverage end -->
+
+## What it does not do
+
+- It does not forecast. Every figure is historical, and a sized gap says what a bank would earn at peer levels on today's balance sheet.
+- It does not say a gap can be closed. Some gaps are structural, and the peer grouping reduces that without removing it.
+- It does not harmonise accounting across countries beyond what FINREP and Pillar 3 already standardise. The seam table shows the difference that remains.
+- It does not adjust for one offs on judgement, only for those the bank itself discloses.
+- It does not cover banks outside the 7 markets, or smaller banks outside the EBA sample.
+- It does not give investment advice. The valuation describes a cross sectional relationship with its uncertainty, not a target price.
+
+## Repository map
+
+- `bpb/`: the package: ingestion, KPIs, checks, peers, benchmarks, gaps, drivers, valuation, reports, trace and the dashboard.
+- `config/`: field, KPI and source maps. `config.toml` holds every parameter.
+- `data/raw/`: pulled data, the cached report pages and their hashes.
+- `data/manual/`: hand entered figures, one offs, mergers and the universe.
+- `docs/`: `METHODS.md` and the resolved conventions.
+- `outputs/`: profiles, figures and tables, all rebuilt by `bpb build`.
+- `project_outline/`: the original outline.
+- `scripts/`: data pulls and the README table writer.
+- `tests/`: the test suite, which runs offline.
+- `instructions/`, `review/`, `decisions/` and `PLAN.md`: the build record.
+````
+
+### E6.7b: 1 cluster league CSV
+
+`outputs/tables/league_rote_cluster_2026-06-30.csv`. The rank restarts at 1 in each cluster, and a blank value keeps its row at the end of its cluster, with no rank.
+
+```
+rank,cluster,bank_id,name,value,verdict,inside_noise,status
+1,1,HSBA,HSBC Holdings,0.1804393503,leading,False,short_history
+2,1,BARC,Barclays,0.1299357126,in_line,True,short_history
+3,1,BNP,BNP Paribas,0.1286840444,in_line,True,family_switch
+4,1,GLE,Société Générale,0.1130067157,lagging,False,short_history
+5,1,DBK,Deutsche Bank,0.1111670976,lagging,False,family_switch
+1,2,NWG,NatWest Group,0.1990902912,leading,False,ok
+2,2,BBVA,BBVA,0.1907909977,leading,False,family_switch
+3,2,BMPS,Banca Monte dei Paschi di Siena,0.1870500564,in_line,True,family_switch
+4,2,ISP,Intesa Sanpaolo,0.179910862,in_line,True,family_switch
+5,2,NDA,Nordea Bank,0.1755164088,in_line,True,short_history
+6,2,SAN,Banco Santander,0.1741288538,in_line,True,family_switch
+7,2,CABK,CaixaBank,0.1701318667,in_line,True,family_switch
+8,2,BAMI,Banco BPM,0.169794497,in_line,True,family_switch
+9,2,KBC,KBC Group,0.168533708,in_line,True,family_switch
+10,2,SEB,Skandinaviska Enskilda Banken,0.1466175988,lagging,False,family_switch
+11,2,DANSKE,Danske Bank,0.1450961496,lagging,False,family_switch
+12,2,SAB,Banco Sabadell,0.1431662651,lagging,False,family_switch
+13,2,INGA,ING Groep,0.138017135,lagging,False,family_switch
+14,2,LLOY,Lloyds Banking Group,0.1345007663,lagging,False,ok
+15,2,ABN,ABN AMRO Bank,0.09797875985,lagging,False,family_switch
+16,2,RABO,Rabobank,0.08977790852,lagging,False,family_switch
+17,2,SANUK,Santander UK Group Holdings,0.06433013467,lagging,False,ok
+,2,BKT,Bankinter,,,,mixed_family;short_history
+,2,BPE,BPER Banca,,,,missing_input:at1_coupons;short_history
+,2,CAG,Crédit Agricole Group,,,,missing_input:intangibles_deduction;short_history
+,2,CBK,Commerzbank,,,,missing_input:at1_instruments;short_history
+,2,DNB,DNB Bank,,,,missing_input:at1_instruments;family_switch
+,2,SHB,Svenska Handelsbanken,,,,missing_input:intangibles_deduction;family_switch
+,2,SWED,Swedbank,,,,missing_input:minority_interests;family_switch
+,2,UCG,UniCredit,,,,missing_input:at1_instruments;family_switch
+,2,UNI,Unicaja Banco,,,,mixed_family;family_switch
+```
+
+### E6.8: build check and CI
+
+The first build after step 6.7 moved only `spec_log.csv`, committed as step 6.8. The second build, at 1588a2a:
+
+```
+build exit 0
+git status --porcelain: 0 lines
+```
+
+CI on 1588a2a:
+
+```
+success 1588a2a1e3bb039ac4f45131029111d1397a8f32 (run 42613178468)
+65 passed, 214 warnings in 790.70s (0:13:10)
+```
+
+## Tests run
+
+The full suite, `pytest -p socket --disable-socket -q`, passed before each commit: 62 at 6.6b and 65 at 6.7. ruff is clean. The 6.6b run took 47 hours of wall time, because the machine slept during it, so its timing says nothing about the code.
+
+## Fresh-clone check
+
+Clone path `C:/bpbs6e`, with the commands of rule 12, plus ruff. Full output:
+
+```
+1588a2a step 6.8: build check
+install ok
+All checks passed!
+ruff exit 0
+.................................................................        [100%]
+============================== warnings summary ===============================
+.venv\Lib\site-packages\_pytest\config\__init__.py:894
+  C:\bpbs6e\.venv\Lib\site-packages\_pytest\config\__init__.py:894: PytestAssertRewriteWarning: Module already imported so cannot be rewritten; socket
+    self.import_plugin(arg, consider_entry_points=True)
+
+tests/test_dashboard.py: 69 warnings
+  C:\bpbs6e\.venv\Lib\site-packages\streamlit\elements\lib\built_in_chart_utils.py:620: Pandas4Warning: The inplace keyword in DataFrame.reset_index is deprecated and will be removed in a future version (PDEP-8).
+  See https://pandas.pydata.org/docs/dev/whatsnew/v3.1.0.html#deprecation-inplace for more details.
+    df.reset_index(inplace=True)  # noqa: PD002
+
+tests/test_dashboard.py::test_dashboard_no_external
+  C:\bpbs6e\.venv\Lib\site-packages\pytest_socket\__init__.py:365: UserWarning: A test tried to use socket.socket.connect() with host "2606:4700:10::6814:179a" (allowed: "127.0.0.1").
+    raise SocketConnectBlockedError(allowed_list, host)
+
+tests/test_gaps.py: 72 warnings
+  C:\bpbs6e\.venv\Lib\site-packages\pycel\excelformula.py:995: DeprecationWarning: ast.Str is deprecated and will be removed in Python 3.14; use ast.Constant instead
+    op = ast.Str(s=type(node_op).__name__)
+
+tests/test_gaps.py: 71 warnings
+  C:\Users\astha\AppData\Roaming\uv\python\cpython-3.12-windows-x86_64-none\Lib\ast.py:587: DeprecationWarning: Attribute s is deprecated and will be removed in Python 3.14; use value instead
+    return Constant(*args, **kwargs)
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+65 passed, 214 warnings in 1692.83s (0:28:12)
+pytest exit 0
+```
+
+## Deviations from PLAN.md
+
+1. **Q5 lists 29 of 35 fields**, by 06c B.2 item 5 (E6.7a).
+2. **The headline** names INGA, 10.20 points and EUR 6,926m. The valuation clause now takes its first year from the fits, as the first year with a significant β, which is still 2022.
+3. **Q4** reads "β rose from 4.50 in 2022 to 10.43 in 2025, the first and last years with a significant β". The implied cost of equity is now 2 decimals in the text, the table and `answers.csv` (Convention 4.7).
+4. **`answers.csv`** has a second Q2 row for the headline bank. The Q1 sources read "largest value" and "lowest value", since rank 1 in a cluster file is now 1 per cluster.
+5. **The page text cache** for the 4 cited CAG Pillar 3 documents was rebuilt with `scripts/fetch_reports.py --cache-pages`, which uses no network. Without it, the 4 entries failed provenance with "page not in cache".
+6. **The venv left the lock once.** An early `uv run` synced 9 packages to newer versions, including pandas 3.1.1. I reinstalled from `requirements-lock.txt`, deleted the `uv.lock` it created, and rebuilt. Nothing built on those versions was committed.
+7. **`test_dashboard_runs`** also asserts that each selection took, and `test_dashboard_no_external` expects `SocketConnectBlockedError`, the error pytest-socket raises.
+8. **README limitations** keep "The slope changes every year". That bullet is about the F test, not Q4's wording.
+
+## Not verified
+
+Nothing left open from 06c. CI on Linux passed the dashboard test with the loopback marker, so the 06c concern about Linux is closed.
+
+## Open questions
+
+1. **OPEN-47:** enter CAG's printed "Goodwills and intangible assets" as intangibles_deduction, or leave CAG's RoTE blank? Option (a) would fill CAG's RoTE and joint RoTE gap.
+
+## Files changed
+
+6.6b: `CLAUDE.md`, `README.md`, `bpb/gaps.py`, `bpb/ingest.py`, `bpb/kpi.py`, `config.toml`, `data/manual/report_entries.csv`, 4 files in `data/raw/report_text/`, `decisions/OPEN.md`, `decisions/section_6_review.md`, `docs/METHODS.md`, `tests/fixtures/hand_check.xlsx`, rebuilt outputs. 6.7: `README.md`, `bpb/answers.py`, `bpb/dashboard.py`, `bpb/report.py`, `scripts/write_readme_tables.py`, `tests/test_gaps.py`, `tests/test_dashboard.py` (new), `outputs/tables/answers.csv`, the 36 cluster league CSVs and 18 league HTML pages, `outputs/tables/spec_log.csv`. 6.8: `outputs/tables/spec_log.csv`.
+
+## Reviewer reads
+
+1. `instructions/06d_section_6_finish.status.md`
+2. E6.6b-c and `decisions/OPEN.md` OPEN-47
+3. E6.7a, the README
