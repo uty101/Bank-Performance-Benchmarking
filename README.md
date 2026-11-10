@@ -10,11 +10,11 @@ This project benchmarks 31 European banks against peers with a similar business 
 
 See `outputs/reports/` for the 31 bank profiles, `outputs/tables/` for every table, and run `streamlit run bpb/dashboard.py` for the dashboard.
 
-Data: EBA EU wide transparency exercise, the banks' own annual, half year and Pillar 3 reports, ECB exchange rates and Yahoo Finance prices.
+Data: the EBA transparency exercise, the banks' annual, half year and Pillar 3 reports, ECB exchange rates and Yahoo Finance prices.
 
 ## What it does
 
-It joins EBA transparency data, used to 2025-06-30, to figures hand entered from each bank's own reports, with every figure checked against the cached page it came from. From those it computes 20 KPIs from FY2021 to H1 2026, forms peer groups by business model, and measures each bank against the best quartile of its peers. It then says which gaps are larger than the noise, what they are worth, which drivers explain RoTE, and how the market prices RoTE.
+It joins EBA transparency data, used to 2025-06-30, to figures hand entered from each bank's own reports, each checked against the cached page it came from. It computes 20 KPIs from FY2021 to H1 2026, forms peer groups by business model, and says which gaps to the best quartile are larger than the noise, what they are worth, which drivers explain RoTE, and how the market prices RoTE.
 
 ## How to run it
 
@@ -27,7 +27,7 @@ streamlit run bpb/dashboard.py
 bpb trace <lineage_id>
 ```
 
-`bpb build` rebuilds every output from `data/raw/` and `data/manual/`, with no network, and takes about 6 minutes. `bpb trace` prints the chain behind a figure, down to the EBA item or the report page. The dashboard shows the ID of every figure.
+`bpb build` rebuilds every output from `data/raw/` and `data/manual/` offline in about 6 minutes. `bpb trace` prints the chain behind a figure, down to the EBA item or the report page.
 
 ## Results
 
@@ -179,12 +179,12 @@ The clustering splits the 31 banks into 5 and 26. The 5 are BARC, BNP, DBK, GLE,
 
 - **Accounting scope.** Bank insurers report insurance lines that the supervisory scope leaves out, so their cost and income ratios are not like for like.
 - **FX inside averages.** Averages and rolling figures of EBA balances for the 5 non EUR banks carry the currency move between their 2 ends.
-- **The 2 seams.** Seam 1 sets EBA capital against Pillar 3, and seam 2 sets EBA against the banks' own reports. EBA feeds the history and reports the latest dates, so no time comparison crosses the switch, and such a cell is blank with status `family_switch`.
+- **The 2 seams.** Seam 1 sets EBA capital against Pillar 3, and seam 2 sets EBA against the banks' reports. No time comparison crosses from 1 source to the other, so such a cell is blank with status `family_switch`.
 - **One offs.** Underlying figures adjust only for what each bank discloses, never for judgement.
 - **Broad cluster 2.** The cluster group for most banks is broad, so read every sized gap with its range across the 3 groups.
 - **Small peer groups.** Market groups hold few banks, intervals are wide, and a group that is too small gives no benchmark.
 - **Valuation slope.** The slope changes every year, so an uplift holds only at the date of its fit.
-- **BMPS prices.** Earlier BMPS prices may carry a rights issue adjustment that `Stock Splits` does not undo. It touches no P/TBV, since BMPS's 2021 TBV per share is blank.
+- **BMPS prices.** Prices before BMPS's rights issue may keep an adjustment that `Stock Splits` does not undo; no P/TBV uses them.
 <!-- table:headcount start -->
 - **Headcount.** 9 banks publish only headcount, which stands in for FTE.
 <!-- table:headcount end -->
@@ -196,20 +196,18 @@ The clustering splits the 31 banks into 5 and 26. The 5 are BARC, BNP, DBK, GLE,
 
 - It does not forecast. Every figure is historical, and a sized gap says what a bank would earn at peer levels on today's balance sheet.
 - It does not say a gap can be closed. Some gaps are structural, and the peer grouping reduces that without removing it.
-- It does not harmonise accounting across countries beyond what FINREP and Pillar 3 already standardise. The seam table shows the difference that remains.
-- It does not adjust for one offs on judgement, only for those the bank itself discloses.
+- It does not harmonise accounting beyond what FINREP and Pillar 3 already standardise; Q5 shows what remains.
 - It does not cover banks outside the 7 markets, or smaller banks outside the EBA sample.
 - It does not give investment advice. The valuation describes a cross sectional relationship with its uncertainty, not a target price.
 
 ## Repository map
 
-- `bpb/`: the package: ingestion, KPIs, checks, peers, benchmarks, gaps, drivers, valuation, reports, trace and the dashboard.
+- `bpb/`: the package, from ingestion to the dashboard.
 - `config/`: field, KPI and source maps. `config.toml` holds every parameter.
 - `data/raw/`: pulled data, the cached report pages and their hashes.
 - `data/manual/`: hand entered figures, one offs, mergers and the universe.
 - `docs/`: `METHODS.md` and the resolved conventions.
 - `outputs/`: profiles, figures and tables, all rebuilt by `bpb build`.
-- `project_outline/`: the original outline.
 - `scripts/`: data pulls and the README table writer.
 - `tests/`: the test suite, which runs offline.
-- `instructions/`, `review/`, `decisions/` and `PLAN.md`: the build record.
+- `project_outline/`, `instructions/`, `review/`, `decisions/` and `PLAN.md`: the outline and the build record.

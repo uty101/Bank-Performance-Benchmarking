@@ -21,3 +21,9 @@ CAG's RoTE stays blank. The README coverage caveat already counts the blank cell
 ## Housekeeping
 
 `C:\bpbs6e` joins the other `C:\bpbs*` folders for the owner to delete.
+
+## OPEN-48: neither (a) nor (b)
+
+The README went over 15 KB because of the reviewer's badge commit, f28cfae. The reviewer did not run `test_tables_match` before pushing it, so the stop was correct.
+
+Neither option is taken. (a) would drop 8 fields from Q5, and (b) would loosen a fixed test. The reviewer instead trimmed the hand written text outside the generated markers. The cuts remove lines that repeat a caveat or a generated paragraph, and shorten 4 others. The README is now 14,894 bytes, and no generated table changed.
