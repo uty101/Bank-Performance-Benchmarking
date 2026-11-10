@@ -6,3 +6,5 @@
 *.gz binary
 data/raw/** -text
 tests/fixtures/** -text
+outputs/** linguist-generated=true
+*.html linguist-detectable=false
