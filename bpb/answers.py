@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pandas as pd
 
+from bpb.ingest import ROOT, read_universe
 from bpb.report import BASIS, GROUP, REFERENCE, waterfall_steps
 
 ANSWERS_COLUMNS = ["question", "claim", "source"]
@@ -43,6 +44,20 @@ def headline_gap(t: dict) -> pd.Series:
     j = j[(j["date"] == t["latest"]) & (j["group"] == GROUP) & (j["basis"] == BASIS) & j["joint_rote_pts"].notna()
           & ~j["bank_id"].isin(scope_banks(t))]
     return j.sort_values(["joint_rote_pts", "bank_id"], ascending=[False, True]).iloc[0]
+
+
+def prose_date(d: str) -> str:
+    """Instruction 06e B.1: a date in the headline reads "30 June 2026"; tables keep ISO dates."""
+    ts = pd.Timestamp(d)
+    return f"{ts.day} {ts:%B %Y}"
+
+
+def headline_claim(t: dict) -> str:
+    """Instruction 06e B.1: the README's bold result, named by the universe's `name` column, never the ticker."""
+    h = headline_gap(t)
+    name = read_universe(ROOT).set_index("bank_id").loc[h["bank_id"], "name"]
+    return (f"At {prose_date(t['latest'])}, {name} has the largest gap to the best quartile of its peers: "
+            f"{h['joint_rote_pts']:.2f} RoTE points, or EUR {h['joint_eur'] / 1e6:,.0f}m of annual pre tax profit.")
 
 
 def largest_gaps(t: dict) -> pd.DataFrame:
@@ -110,7 +125,6 @@ def answers(root: Path) -> pd.DataFrame:
     rote, ci = overall(t, "rote").iloc[0], overall(t, "cost_income").iloc[0]
     gaps = largest_gaps(t)
     top = gaps.iloc[0]
-    head = headline_gap(t)
     drivers = driver_table(t)
     first = drivers.iloc[0]
     steps = first.drop(["bank_id", "gap", "reference", "bank"]).astype(float)
@@ -125,8 +139,7 @@ def answers(root: Path) -> pd.DataFrame:
          f"league_cost_income_{GROUP}_{d}.csv, lowest value"),
         (2, f"{top['bank_id']} has the largest joint gap at {d}, EUR {top['joint_eur'] / 1e6:,.0f}m.",
          f"gaps_joint.csv, date == {d}, group == {GROUP}, basis == {BASIS}, largest joint_eur"),
-        (2, (f"Outside the scope list, {head['bank_id']} has the largest joint RoTE gap at {d}, "
-            f"{head['joint_rote_pts']:.2f} points, EUR {head['joint_eur'] / 1e6:,.0f}m."),
+        (2, f"{headline_claim(t)} Banks whose accounting scope differs between the 2 sources are left out.",
          (f"gaps_joint.csv, date == {d}, group == {GROUP}, basis == {BASIS}, bank_id not in the scope list, "
           "largest joint_rote_pts")),
         (3, (f"{first['bank_id']} has the largest RoTE gap to the median among banks with a decomposition at {d}, "

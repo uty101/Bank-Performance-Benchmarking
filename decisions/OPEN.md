@@ -451,3 +451,10 @@ Raised in session 6 (step 6.6b). Instruction 06d B.2 enters CAG's at1_instrument
 
 - (a) Enter that printed line as intangibles_deduction for CAG at the 4 dates, as a second exception to amendment 12, with its own status.
 - (b) Leave CAG's RoTE blank at those dates, and say so in the README.
+
+## OPEN-48: the README lead takes README.md over 15 KB (blocking, rule 4 stop)
+
+Raised in session 6 (step 6.9). Commit f28cfae's badges took README.md from 14,844 to 15,020 bytes, so `test_tables_match` already fails on `main` (CI run 42833253149: `assert 15020 < 15000`). Instruction 06e B adds the longer bold lead and the data line, which brings the file to 15,332 bytes. 06e says `test_tables_match` passes unchanged, and rule 5 forbids changing it. The only shrink rule on record, 06c B.2 item 5, is already applied: Q5 lists the 29 fields that at least 15 banks report. Measured with the 06e text in place, Q5 at a threshold of 20 gives 15,148 bytes, at 22 gives 15,110, at 24 gives 14,978 and at 25 gives 14,644.
+
+- (a) Raise `Q5_MIN_BANKS` from 15 to 24, as a reviewer amendment to 06c B.2 item 5. Q5 then lists 21 fields and leaves out 14, among them at1_instruments and intangibles_deduction, and the file is 14,978 bytes, 22 under the limit.
+- (b) Keep Q5 at 15 and raise `LIMIT` in `tests/test_readme.py`, for example to 16,000, as a reviewer change to instruction 06 B.4's 15 KB.

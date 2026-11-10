@@ -2,12 +2,15 @@
 
 [![ci](https://github.com/uty101/Bank-Performance-Benchmarking/actions/workflows/ci.yml/badge.svg)](https://github.com/uty101/Bank-Performance-Benchmarking/actions/workflows/ci.yml) ![tests](https://img.shields.io/badge/tests-65%20passing-brightgreen) ![python](https://img.shields.io/badge/python-3.12-blue) ![licence](https://img.shields.io/badge/licence-MIT-blue)
 
-This project benchmarks 31 European banks against peers with a similar business model, sizes each gap in euros and RoTE points, and explains it with 7 drivers.
 <!-- table:headline start -->
-At 2026-06-30, outside the banks whose scope differs between sources, the largest joint gap to the best quartile is INGA's, 10.20 points of RoTE or EUR 6,926m a year, and a point of RoTE added 0.104x of price to tangible book at the end of 2025, against 0.045x at the end of 2022.
+**At 30 June 2026, ING Groep has the largest gap to the best quartile of its peers: 10.20 RoTE points, or EUR 6,926m of annual pre tax profit.** Each RoTE point was worth 0.104x of price to tangible book at the end of 2025, against 0.045x at the end of 2022, so the market now pays about 2.3 times as much for the same gap. Banks whose accounting scope differs between the 2 sources, mainly bank insurers, are left out of the headline (see Caveats).
 <!-- table:headline end -->
 
+This project benchmarks 31 European banks against peers with a similar business model, sizes each gap in euros and RoTE points, and explains it with 7 drivers.
+
 See `outputs/reports/` for the 31 bank profiles, `outputs/tables/` for every table, and run `streamlit run bpb/dashboard.py` for the dashboard.
+
+Data: EBA EU wide transparency exercise, the banks' own annual, half year and Pillar 3 reports, ECB exchange rates and Yahoo Finance prices.
 
 ## What it does
 

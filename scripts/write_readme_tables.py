@@ -44,13 +44,14 @@ def _significant(t: dict) -> pd.DataFrame:
 
 
 def _headline(t: dict) -> str:
+    """Instruction 06e B.1: the result in bold, then what a RoTE point is worth to the market."""
     sig = _significant(t)
     first, last = sig.iloc[0], sig.iloc[-1]
-    h = a.headline_gap(t)
-    return (f"At {t['latest']}, outside the banks whose scope differs between sources, the largest joint gap to the best "
-            f"quartile is {h['bank_id']}'s, {h['joint_rote_pts']:.2f} points of RoTE or EUR {_eur(h['joint_eur'])}m a year, "
-            f"and a point of RoTE added {last['beta'] / 100:.3f}x of price to tangible book at the end of {int(last['year'])}, "
-            f"against {first['beta'] / 100:.3f}x at the end of {int(first['year'])}.")
+    return (f"**{a.headline_claim(t)}** Each RoTE point was worth {last['beta'] / 100:.3f}x of price to tangible book at "
+            f"the end of {int(last['year'])}, against {first['beta'] / 100:.3f}x at the end of {int(first['year'])}, so "
+            f"the market now pays about {last['beta'] / first['beta']:.1f} times as much for the same gap. Banks whose "
+            "accounting scope differs between the 2 sources, mainly bank insurers, are left out of the headline (see "
+            "Caveats).")
 
 
 def _q1(t: dict) -> str:

@@ -2,7 +2,7 @@ question,claim,source
 1,"NatWest Group has the highest RoTE at 2026-06-30, 19.91%, with verdict leading.","league_rote_cluster_2026-06-30.csv, largest value"
 1,"Bankinter has the lowest cost to income at 2026-06-30, 35.30%, with verdict leading.","league_cost_income_cluster_2026-06-30.csv, lowest value"
 2,"CAG has the largest joint gap at 2026-06-30, EUR 16,690m.","gaps_joint.csv, date == 2026-06-30, group == cluster, basis == underlying, largest joint_eur"
-2,"Outside the scope list, INGA has the largest joint RoTE gap at 2026-06-30, 10.20 points, EUR 6,926m.","gaps_joint.csv, date == 2026-06-30, group == cluster, basis == underlying, bank_id not in the scope list, largest joint_rote_pts"
+2,"At 30 June 2026, ING Groep has the largest gap to the best quartile of its peers: 10.20 RoTE points, or EUR 6,926m of annual pre tax profit. Banks whose accounting scope differs between the 2 sources are left out.","gaps_joint.csv, date == 2026-06-30, group == cluster, basis == underlying, bank_id not in the scope list, largest joint_rote_pts"
 3,"RABO has the largest RoTE gap to the median among banks with a decomposition at 2026-06-30, -7.31 points; its largest step is Assets / tangible equity, -5.66 points.","drivers.csv, date == 2026-06-30, basis == underlying, reference == median, bank_id == RABO"
 4,"A point of RoTE added 0.104x of P/TBV at the end of 2025, implying a cost of equity of 11.58%.","valuation_fits.csv, year == 2025"
 4,"The year slopes differ: F 10.00, p 0.00005.",valuation_stability.csv
