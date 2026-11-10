@@ -1457,3 +1457,101 @@ Nothing left open from 06c. CI on Linux passed the dashboard test with the loopb
 1. `instructions/06d_section_6_finish.status.md`
 2. E6.6b-c and `decisions/OPEN.md` OPEN-47
 3. E6.7a, the README
+
+---
+
+# Instruction 06e (step 6.9)
+
+**Stopped** under rules 4 and 5 at step 6.9. Instruction 06e B is applied and committed (849b84c), but README.md is 15,332 bytes. So `test_tables_match` fails on its size check, `assert 15332 < 15000`, and 06e says it passes unchanged (OPEN-48). Every other test passes, including `test_no_dashes`. `main` was already red before this step: commit f28cfae's badges took the README to 15,020 bytes (CI run 42833253149).
+
+## Step completed, as far as the stop
+
+- **6.9** readme lead (849b84c). B.1: `_headline` writes the bold result and the valuation sentence, using the universe's `name` column and the date in words. The shared sentence is `headline_claim` in `bpb/answers.py`. B.2: the opening sentence moves below the headline markers. B.3: the data line follows the outputs pointer. B.4: `answers.csv`'s headline row uses the same wording. OPEN-48 is in `decisions/OPEN.md`.
+- **Not done:** the second `bpb build` check (C.3). The commit moves the date of the last input commit, so the next build will move `spec_log.csv`'s `run_utc`, as in step 6.8. That build check waits for the decision on OPEN-48.
+
+## Evidence
+
+### E6.9a: the README's first 15 lines, 15,332 bytes
+
+```text
+# Bank Performance Benchmarking
+
+[![ci](https://github.com/uty101/Bank-Performance-Benchmarking/actions/workflows/ci.yml/badge.svg)](https://github.com/uty101/Bank-Performance-Benchmarking/actions/workflows/ci.yml) ![tests](https://img.shields.io/badge/tests-65%20passing-brightgreen) ![python](https://img.shields.io/badge/python-3.12-blue) ![licence](https://img.shields.io/badge/licence-MIT-blue)
+
+<!-- table:headline start -->
+**At 30 June 2026, ING Groep has the largest gap to the best quartile of its peers: 10.20 RoTE points, or EUR 6,926m of annual pre tax profit.** Each RoTE point was worth 0.104x of price to tangible book at the end of 2025, against 0.045x at the end of 2022, so the market now pays about 2.3 times as much for the same gap. Banks whose accounting scope differs between the 2 sources, mainly bank insurers, are left out of the headline (see Caveats).
+<!-- table:headline end -->
+
+This project benchmarks 31 European banks against peers with a similar business model, sizes each gap in euros and RoTE points, and explains it with 7 drivers.
+
+See `outputs/reports/` for the 31 bank profiles, `outputs/tables/` for every table, and run `streamlit run bpb/dashboard.py` for the dashboard.
+
+Data: EBA EU wide transparency exercise, the banks' own annual, half year and Pillar 3 reports, ECB exchange rates and Yahoo Finance prices.
+
+## What it does
+```
+
+The ratio is 10.4334 ÷ 4.4999 = 2.32, from the unrounded slopes in `valuation_fits.csv`, shown to 1 decimal as 2.3.
+
+### E6.9b: the size against Q5's threshold
+
+With the 06e text in place, measured with `scripts/write_readme_tables.py`:
+
+| `Q5_MIN_BANKS` | README bytes |
+|---|---|
+| 15 (as now) | 15,332 |
+| 20 | 15,148 |
+| 22 | 15,110 |
+| 24 | 14,978 |
+| 25 | 14,644 |
+
+### E6.9c: the answers.csv headline row
+
+```text
+2,"At 30 June 2026, ING Groep has the largest gap to the best quartile of its peers: 10.20 RoTE points, or EUR 6,926m of annual pre tax profit. Banks whose accounting scope differs between the 2 sources are left out.","gaps_joint.csv, date == 2026-06-30, group == cluster, basis == underlying, bank_id not in the scope list, largest joint_rote_pts"
+```
+
+### E6.9d: CI on 849b84c
+
+Run 42842974012, `failure`:
+
+```text
+FAILED tests/test_readme.py::test_tables_match - assert 15332 < 15000
+1 failed, 64 passed, 214 warnings in 515.37s (0:08:35)
+```
+
+## Tests run
+
+The full suite, `pytest -p socket --disable-socket -q`, before the commit: 1 failed, 64 passed. The 1 failure is `test_tables_match`, on the size check only. The README blocks match the build. ruff is clean.
+
+## Fresh-clone check
+
+Clone path `C:/bpbs6f`, with the commands of rule 12, plus ruff. Full output:
+
+```text
+849b84c step 6.9: readme lead (stopped: README over 15 KB, OPEN-48)
+installed
+E       assert 15332 < 15000
+FAILED tests/test_readme.py::test_tables_match - assert 15332 < 15000
+1 failed, 64 passed, 214 warnings in 1017.68s (0:16:57)
+All checks passed!
+```
+
+## Deviations from PLAN.md
+
+1. **The valuation multiples** keep 3 decimals, 0.104x and 0.045x, as before. 06e B.1 says "everything else is as now". At 2 decimals they would read 0.10x and 0.05x, and the ratio would no longer follow from the printed figures.
+2. **The answers.csv headline row** ends "Banks whose accounting scope differs between the 2 sources are left out.", so the claim states the scope rule its source column applies.
+
+## Open questions
+
+1. **OPEN-48 (blocking):** raise `Q5_MIN_BANKS` to 24, leaving 22 bytes of headroom, or raise the test's 15 KB limit?
+
+## Files changed
+
+`README.md`, `bpb/answers.py`, `scripts/write_readme_tables.py`, `outputs/tables/answers.csv`, `decisions/OPEN.md`.
+
+## Reviewer reads
+
+1. `instructions/06e_readme_lead.status.md`
+2. OPEN-48 in `decisions/OPEN.md`, and E6.9b
+3. E6.9a
